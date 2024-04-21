@@ -206,15 +206,13 @@ $ make
 *** When you successfully run `ufo2herwig` but get some errors after `make` such as `cannot find FRModel.so` (which is nominally due to another `*.cc` files in the directory), you should erase the model directory (i.e. 2HDMtII_NLO in this case) because it might already include some errors inside
 
 
-
-
-
 ufo2herwig /address/to/ufo --allow-fcnc
 
 
 
 
---- Additionals ---
+# Optionals
+
 # 1. Mercurial
 Below page gives a nice tutorial for the mercurial and hg
 http://btsweet.blogspot.com/2013/12/hg-1-mecurial-basics.html
