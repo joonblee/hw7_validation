@@ -1,0 +1,74 @@
+# -*- ThePEG-repository -*-
+
+##################################################
+# Example generator based on LHC parameters
+# usage: Herwig read LHC.in
+##################################################
+
+read snippets/PPCollider.in
+
+##################################################
+# Technical parameters for this run
+##################################################
+cd /Herwig/Generators
+
+##################################################
+# LHC physics parameters (override defaults here) 
+##################################################
+
+read FRModel.model
+
+##################################################
+# Technical parameters for this run
+##################################################
+
+cd /Herwig/Generators
+set EventGenerator:NumberOfEvents __NEVENTS__
+set EventGenerator:RandomNumberGenerator:Seed __SEED__
+set EventGenerator:PrintEvent 100
+set EventGenerator:MaxErrors 1000000
+
+########################
+## sqrt(s) = 100 TeV ##
+########################
+set EventGenerator:EventHandler:LuminosityFunction:Energy 100000.0
+
+##################################################
+# Matrix Elements for hadron-hadron collisions 
+# (by default only gamma/Z switched on)
+##################################################
+cd /Herwig/MatrixElements/
+
+#  QCD and gamma processes
+#
+# QCD 2-2 scattering
+insert SubProcess:MatrixElements[0] MEHeavyQuark
+set MEHeavyQuark:QuarkType Top
+set MEHeavyQuark:Process All
+
+#set /Herwig/FRModel/Particles/h1:Stable Stable
+#set /Herwig/FRModel/Particles/h2:Stable Stable
+#set /Herwig/FRModel/Particles/h3:Stable Stable
+#set /Herwig/FRModel/Particles/h4:Stable Stable
+#set /Herwig/FRModel/Particles/h+:Stable Stable
+#set /Herwig/FRModel/Particles/h-:Stable Stable
+set /Herwig/FRModel/Particles/Ad:Stable Stable
+
+set /Herwig/Cuts/Cuts:MHatMin 5000.*GeV
+read Matchbox/FiveFlavourScheme.in
+set /Herwig/Shower/ShowerHandler:Interactions ALL
+#set /Herwig/Generators/EventGenerator:EventHandler:DecayHandler NULL
+
+##################################################
+## prepare for Rivet analysis or HepMC output
+## when running with parton shower
+##################################################
+read snippets/Rivet.in
+insert /Herwig/Analysis/Rivet:Analyses 0 Find
+
+##################################################
+# Save run for later usage with 'Herwig run'
+##################################################
+cd /Herwig/Generators
+do /Herwig/MatrixElements/Matchbox/Factory:ProductionMode
+saverun LHC-__RUN__ EventGenerator
