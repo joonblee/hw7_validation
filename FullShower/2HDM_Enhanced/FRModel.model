@@ -1,0 +1,1786 @@
+# -*- ThePEG-repository -*-
+###################################################
+#
+#  Particle Data objects
+#
+###################################################
+mkdir /Herwig/FRModel
+
+mkdir /Herwig/FRModel/Particles
+cd /Herwig/FRModel/Particles
+
+create Herwig::GenericHPPVertex /Herwig/FRModel/V_GenericHPP
+create Herwig::GenericHGGVertex /Herwig/FRModel/V_GenericHGG
+
+
+create ThePEG::ParticleData h+
+# values set to 999999 are recalculated later from other model parameters
+setup h+ 37 h+ 150 1 10 1.973269631e-13 3 0 1 0
+insert /Herwig/NewPhysics/NewModel:DecayParticles 0 h+
+insert /Herwig/Shower/ShowerHandler:DecayInShower 0 37 #  h+
+create ThePEG::ParticleData h-
+# values set to 999999 are recalculated later from other model parameters
+setup h- -37 h- 150 1 10 1.973269631e-13 -3 0 1 0
+makeanti h+ h-
+
+set /Herwig/Particles/h0:Mass_generator NULL
+set /Herwig/Particles/h0:Width_generator NULL
+rm /Herwig/Masses/HiggsMass
+rm /Herwig/Widths/hWidth
+
+create ThePEG::ParticleData h1
+# values set to 999999 are recalculated later from other model parameters
+setup h1 25 h1 120 1 10 1.973269631e-13 0 0 1 0
+insert /Herwig/NewPhysics/NewModel:DecayParticles 0 h1
+insert /Herwig/Shower/ShowerHandler:DecayInShower 0 25 #  h1
+insert /Herwig/FRModel/V_GenericHGG:Bosons 0 h1
+
+create ThePEG::ParticleData h2
+# values set to 999999 are recalculated later from other model parameters
+setup h2 35 h2 130 1 10 1.973269631e-13 0 0 1 0
+insert /Herwig/NewPhysics/NewModel:DecayParticles 0 h2
+insert /Herwig/Shower/ShowerHandler:DecayInShower 0 35 #  h2
+insert /Herwig/FRModel/V_GenericHGG:Bosons 0 h2
+
+create ThePEG::ParticleData h3
+# values set to 999999 are recalculated later from other model parameters
+setup h3 36 h3 140 1 10 1.973269631e-13 0 0 1 0
+insert /Herwig/NewPhysics/NewModel:DecayParticles 0 h3
+insert /Herwig/Shower/ShowerHandler:DecayInShower 0 36 #  h3
+insert /Herwig/FRModel/V_GenericHGG:Bosons 0 h3
+
+create Herwig::ZeroZeroOneSplitFn h+SplitFnQED
+set h+SplitFnQED:InteractionType QED
+set h+SplitFnQED:ColourStructure ChargedChargedNeutral
+cp /Herwig/Shower/SudakovCommon h+SudakovQED
+set h+SudakovQED:SplittingFunction h+SplitFnQED
+set h+SudakovQED:Alpha /Herwig/Shower/AlphaQED
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h+->h+,gamma; h+SudakovQED
+
+create Herwig::HalfHalfZeroEWSplitFn udhpSplitFnEW
+set udhpSplitFnEW:InteractionType EW
+set udhpSplitFnEW:ColourStructure EW
+set udhpSplitFnEW:CouplingValue.CP0.Im -0.22577256042857208
+set udhpSplitFnEW:CouplingValue.CP0.Re 0.0
+set udhpSplitFnEW:CouplingValue.CP1.Im 97.4180040319821
+set udhpSplitFnEW:CouplingValue.CP1.Re 0.0
+cp /Herwig/Shower/SudakovCommon udhpSudakovEW
+set udhpSudakovEW:SplittingFunction udhpSplitFnEW
+set udhpSudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting u->d,h+; udhpSudakovEW
+
+create Herwig::HalfHalfZeroEWSplitFn cdhpSplitFnEW
+set cdhpSplitFnEW:InteractionType EW
+set cdhpSplitFnEW:ColourStructure EW
+set cdhpSplitFnEW:CouplingValue.CP0.Im 0.0
+set cdhpSplitFnEW:CouplingValue.CP0.Re 0.0
+set cdhpSplitFnEW:CouplingValue.CP1.Im -21.603076002537108
+set cdhpSplitFnEW:CouplingValue.CP1.Re 0.0
+cp /Herwig/Shower/SudakovCommon cdhpSudakovEW
+set cdhpSudakovEW:SplittingFunction cdhpSplitFnEW
+set cdhpSudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting c->d,h+; cdhpSudakovEW
+
+create Herwig::HalfHalfZeroEWSplitFn ushpSplitFnEW
+set ushpSplitFnEW:InteractionType EW
+set ushpSplitFnEW:ColourStructure EW
+set ushpSplitFnEW:CouplingValue.CP0.Im 0.0
+set ushpSplitFnEW:CouplingValue.CP0.Re 0.0
+set ushpSplitFnEW:CouplingValue.CP1.Im 23.551436083176752
+set ushpSplitFnEW:CouplingValue.CP1.Re 0.0
+cp /Herwig/Shower/SudakovCommon ushpSudakovEW
+set ushpSudakovEW:SplittingFunction ushpSplitFnEW
+set ushpSudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting u->s,h+; ushpSudakovEW
+
+create Herwig::HalfHalfZeroEWSplitFn cshpSplitFnEW
+set cshpSplitFnEW:InteractionType EW
+set cshpSplitFnEW:ColourStructure EW
+set cshpSplitFnEW:CouplingValue.CP0.Im 0.22577256042857208
+set cshpSplitFnEW:CouplingValue.CP0.Re 0.0
+set cshpSplitFnEW:CouplingValue.CP1.Im 97.4180040319821
+set cshpSplitFnEW:CouplingValue.CP1.Re 0.0
+cp /Herwig/Shower/SudakovCommon cshpSudakovEW
+set cshpSudakovEW:SplittingFunction cshpSplitFnEW
+set cshpSudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting c->s,h+; cshpSudakovEW
+
+create Herwig::HalfHalfZeroEWSplitFn ubhpSplitFnEW
+set ubhpSplitFnEW:InteractionType EW
+set ubhpSplitFnEW:ColourStructure EW
+set ubhpSplitFnEW:CouplingValue.CP0.Im -0.0999763003741951
+set ubhpSplitFnEW:CouplingValue.CP0.Re 0.0
+set ubhpSplitFnEW:CouplingValue.CP1.Im 1.099976300374195
+set ubhpSplitFnEW:CouplingValue.CP1.Re 0.0
+cp /Herwig/Shower/SudakovCommon ubhpSudakovEW
+set ubhpSudakovEW:SplittingFunction ubhpSplitFnEW
+set ubhpSudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting u->b,h+; ubhpSudakovEW
+
+create Herwig::HalfHalfZeroEWSplitFn cbhpSplitFnEW
+set cbhpSplitFnEW:InteractionType EW
+set cbhpSplitFnEW:ColourStructure EW
+set cbhpSplitFnEW:CouplingValue.CP0.Im 0.1257962600543742
+set cbhpSplitFnEW:CouplingValue.CP0.Re 0.0
+set cbhpSplitFnEW:CouplingValue.CP1.Im 0.8742037399456257
+set cbhpSplitFnEW:CouplingValue.CP1.Re 0.0
+cp /Herwig/Shower/SudakovCommon cbhpSudakovEW
+set cbhpSudakovEW:SplittingFunction cbhpSplitFnEW
+set cbhpSudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting c->b,h+; cbhpSudakovEW
+
+create Herwig::ZeroZeroZeroEWSplitFn hph1hpSplitFnEW
+set hph1hpSplitFnEW:InteractionType EW
+set hph1hpSplitFnEW:ColourStructure EW
+set hph1hpSplitFnEW:CouplingValue.Im -21988.756162896448
+set hph1hpSplitFnEW:CouplingValue.Re 0.0
+cp /Herwig/Shower/SudakovCommon hph1hpSudakovEW
+set hph1hpSudakovEW:SplittingFunction hph1hpSplitFnEW
+set hph1hpSudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h+->h1,h+; hph1hpSudakovEW
+
+create Herwig::ZeroZeroZeroEWSplitFn h1hmhpSplitFnEW
+set h1hmhpSplitFnEW:InteractionType EW
+set h1hmhpSplitFnEW:ColourStructure EW
+set h1hmhpSplitFnEW:CouplingValue.Im -21988.756162896448
+set h1hmhpSplitFnEW:CouplingValue.Re 0.0
+cp /Herwig/Shower/SudakovCommon h1hmhpSudakovEW
+set h1hmhpSudakovEW:SplittingFunction h1hmhpSplitFnEW
+set h1hmhpSudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h1->h-,h+; h1hmhpSudakovEW
+
+create Herwig::ZeroZeroZeroEWSplitFn hphph1SplitFnEW
+set hphph1SplitFnEW:InteractionType EW
+set hphph1SplitFnEW:ColourStructure EW
+set hphph1SplitFnEW:CouplingValue.Im -21988.756162896448
+set hphph1SplitFnEW:CouplingValue.Re 0.0
+cp /Herwig/Shower/SudakovCommon hphph1SudakovEW
+set hphph1SudakovEW:SplittingFunction hphph1SplitFnEW
+set hphph1SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h+->h+,h1; hphph1SudakovEW
+
+create Herwig::ZeroZeroZeroEWSplitFn hph2hpSplitFnEW
+set hph2hpSplitFnEW:InteractionType EW
+set hph2hpSplitFnEW:ColourStructure EW
+set hph2hpSplitFnEW:CouplingValue.Im -10351.899901654691
+set hph2hpSplitFnEW:CouplingValue.Re 0.0
+cp /Herwig/Shower/SudakovCommon hph2hpSudakovEW
+set hph2hpSudakovEW:SplittingFunction hph2hpSplitFnEW
+set hph2hpSudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h+->h2,h+; hph2hpSudakovEW
+
+create Herwig::ZeroZeroZeroEWSplitFn h2hmhpSplitFnEW
+set h2hmhpSplitFnEW:InteractionType EW
+set h2hmhpSplitFnEW:ColourStructure EW
+set h2hmhpSplitFnEW:CouplingValue.Im -10351.899901654691
+set h2hmhpSplitFnEW:CouplingValue.Re 0.0
+cp /Herwig/Shower/SudakovCommon h2hmhpSudakovEW
+set h2hmhpSudakovEW:SplittingFunction h2hmhpSplitFnEW
+set h2hmhpSudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h2->h-,h+; h2hmhpSudakovEW
+
+create Herwig::ZeroZeroZeroEWSplitFn hphph2SplitFnEW
+set hphph2SplitFnEW:InteractionType EW
+set hphph2SplitFnEW:ColourStructure EW
+set hphph2SplitFnEW:CouplingValue.Im -10351.899901654691
+set hphph2SplitFnEW:CouplingValue.Re 0.0
+cp /Herwig/Shower/SudakovCommon hphph2SudakovEW
+set hphph2SudakovEW:SplittingFunction hphph2SplitFnEW
+set hphph2SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h+->h+,h2; hphph2SudakovEW
+
+create Herwig::ZeroZeroZeroEWSplitFn hph3hpSplitFnEW
+set hph3hpSplitFnEW:InteractionType EW
+set hph3hpSplitFnEW:ColourStructure EW
+set hph3hpSplitFnEW:CouplingValue.Im 6773.464880707803
+set hph3hpSplitFnEW:CouplingValue.Re 0.0
+cp /Herwig/Shower/SudakovCommon hph3hpSudakovEW
+set hph3hpSudakovEW:SplittingFunction hph3hpSplitFnEW
+set hph3hpSudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h+->h3,h+; hph3hpSudakovEW
+
+create Herwig::ZeroZeroZeroEWSplitFn h3hmhpSplitFnEW
+set h3hmhpSplitFnEW:InteractionType EW
+set h3hmhpSplitFnEW:ColourStructure EW
+set h3hmhpSplitFnEW:CouplingValue.Im 6773.464880707803
+set h3hmhpSplitFnEW:CouplingValue.Re 0.0
+cp /Herwig/Shower/SudakovCommon h3hmhpSudakovEW
+set h3hmhpSudakovEW:SplittingFunction h3hmhpSplitFnEW
+set h3hmhpSudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h3->h-,h+; h3hmhpSudakovEW
+
+create Herwig::ZeroZeroZeroEWSplitFn hphph3SplitFnEW
+set hphph3SplitFnEW:InteractionType EW
+set hphph3SplitFnEW:ColourStructure EW
+set hphph3SplitFnEW:CouplingValue.Im 6773.464880707803
+set hphph3SplitFnEW:CouplingValue.Re 0.0
+cp /Herwig/Shower/SudakovCommon hphph3SudakovEW
+set hphph3SudakovEW:SplittingFunction hphph3SplitFnEW
+set hphph3SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h+->h+,h3; hphph3SudakovEW
+
+create Herwig::ZeroZeroOneEWSplitFn hph1WpSplitFnEW
+set hph1WpSplitFnEW:InteractionType EW
+set hph1WpSplitFnEW:ColourStructure EW
+set hph1WpSplitFnEW:CouplingValue.Im 8.775563763786692
+set hph1WpSplitFnEW:CouplingValue.Re 4.933850004749909
+cp /Herwig/Shower/SudakovCommon hph1WpSudakovEW
+set hph1WpSudakovEW:SplittingFunction hph1WpSplitFnEW
+set hph1WpSudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h+->h1,W+; hph1WpSudakovEW
+
+create Herwig::ZeroZeroOneEWSplitFn h1hpWmSplitFnEW
+set h1hpWmSplitFnEW:InteractionType EW
+set h1hpWmSplitFnEW:ColourStructure EW
+set h1hpWmSplitFnEW:CouplingValue.Im 8.775563763786692
+set h1hpWmSplitFnEW:CouplingValue.Re 4.933850004749909
+cp /Herwig/Shower/SudakovCommon h1hpWmSudakovEW
+set h1hpWmSudakovEW:SplittingFunction h1hpWmSplitFnEW
+set h1hpWmSudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h1->h+,W-; h1hpWmSudakovEW
+
+create Herwig::ZeroZeroOneEWSplitFn hph2WpSplitFnEW
+set hph2WpSplitFnEW:InteractionType EW
+set hph2WpSplitFnEW:ColourStructure EW
+set hph2WpSplitFnEW:CouplingValue.Im -30.544897525546183
+set hph2WpSplitFnEW:CouplingValue.Re -5.215815264331947
+cp /Herwig/Shower/SudakovCommon hph2WpSudakovEW
+set hph2WpSudakovEW:SplittingFunction hph2WpSplitFnEW
+set hph2WpSudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h+->h2,W+; hph2WpSudakovEW
+
+create Herwig::ZeroZeroOneEWSplitFn h2hpWmSplitFnEW
+set h2hpWmSplitFnEW:InteractionType EW
+set h2hpWmSplitFnEW:ColourStructure EW
+set h2hpWmSplitFnEW:CouplingValue.Im -30.544897525546183
+set h2hpWmSplitFnEW:CouplingValue.Re -5.215815264331947
+cp /Herwig/Shower/SudakovCommon h2hpWmSudakovEW
+set h2hpWmSudakovEW:SplittingFunction h2hpWmSplitFnEW
+set h2hpWmSudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h2->h+,W-; h2hpWmSudakovEW
+
+create Herwig::ZeroZeroOneEWSplitFn hph3WpSplitFnEW
+set hph3WpSplitFnEW:InteractionType EW
+set hph3WpSplitFnEW:ColourStructure EW
+set hph3WpSplitFnEW:CouplingValue.Im -6.40873328870152
+set hph3WpSplitFnEW:CouplingValue.Re 31.615273869493926
+cp /Herwig/Shower/SudakovCommon hph3WpSudakovEW
+set hph3WpSudakovEW:SplittingFunction hph3WpSplitFnEW
+set hph3WpSudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h+->h3,W+; hph3WpSudakovEW
+
+create Herwig::ZeroZeroOneEWSplitFn h3hpWmSplitFnEW
+set h3hpWmSplitFnEW:InteractionType EW
+set h3hpWmSplitFnEW:ColourStructure EW
+set h3hpWmSplitFnEW:CouplingValue.Im -6.40873328870152
+set h3hpWmSplitFnEW:CouplingValue.Re 31.615273869493926
+cp /Herwig/Shower/SudakovCommon h3hpWmSudakovEW
+set h3hpWmSudakovEW:SplittingFunction h3hpWmSplitFnEW
+set h3hpWmSudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h3->h+,W-; h3hpWmSudakovEW
+
+create Herwig::ZeroZeroOneEWSplitFn hphpZ0SplitFnEW
+set hphpZ0SplitFnEW:InteractionType EW
+set hphpZ0SplitFnEW:ColourStructure EW
+set hphpZ0SplitFnEW:CouplingValue.Im -19.725460738025713
+set hphpZ0SplitFnEW:CouplingValue.Re 0.0
+cp /Herwig/Shower/SudakovCommon hphpZ0SudakovEW
+set hphpZ0SudakovEW:SplittingFunction hphpZ0SplitFnEW
+set hphpZ0SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h+->h+,Z0; hphpZ0SudakovEW
+
+create Herwig::HalfHalfZeroEWSplitFn duhmSplitFnEW
+set duhmSplitFnEW:InteractionType EW
+set duhmSplitFnEW:ColourStructure EW
+set duhmSplitFnEW:CouplingValue.CP0.Im -0.22577256042857208
+set duhmSplitFnEW:CouplingValue.CP0.Re 0.0
+set duhmSplitFnEW:CouplingValue.CP1.Im -97.4180040319821
+set duhmSplitFnEW:CouplingValue.CP1.Re 0.0
+cp /Herwig/Shower/SudakovCommon duhmSudakovEW
+set duhmSudakovEW:SplittingFunction duhmSplitFnEW
+set duhmSudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting d->u,h-; duhmSudakovEW
+
+create Herwig::HalfHalfZeroEWSplitFn suhmSplitFnEW
+set suhmSplitFnEW:InteractionType EW
+set suhmSplitFnEW:ColourStructure EW
+set suhmSplitFnEW:CouplingValue.CP0.Im 0.0
+set suhmSplitFnEW:CouplingValue.CP0.Re 0.0
+set suhmSplitFnEW:CouplingValue.CP1.Im -23.551436083176752
+set suhmSplitFnEW:CouplingValue.CP1.Re 0.0
+cp /Herwig/Shower/SudakovCommon suhmSudakovEW
+set suhmSudakovEW:SplittingFunction suhmSplitFnEW
+set suhmSudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting s->u,h-; suhmSudakovEW
+
+create Herwig::HalfHalfZeroEWSplitFn buhmSplitFnEW
+set buhmSplitFnEW:InteractionType EW
+set buhmSplitFnEW:ColourStructure EW
+set buhmSplitFnEW:CouplingValue.CP0.Im -0.0999763003741951
+set buhmSplitFnEW:CouplingValue.CP0.Re 0.0
+set buhmSplitFnEW:CouplingValue.CP1.Im -1.099976300374195
+set buhmSplitFnEW:CouplingValue.CP1.Re 0.0
+cp /Herwig/Shower/SudakovCommon buhmSudakovEW
+set buhmSudakovEW:SplittingFunction buhmSplitFnEW
+set buhmSudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting b->u,h-; buhmSudakovEW
+
+create Herwig::HalfHalfZeroEWSplitFn dchmSplitFnEW
+set dchmSplitFnEW:InteractionType EW
+set dchmSplitFnEW:ColourStructure EW
+set dchmSplitFnEW:CouplingValue.CP0.Im 0.0
+set dchmSplitFnEW:CouplingValue.CP0.Re 0.0
+set dchmSplitFnEW:CouplingValue.CP1.Im 21.603076002537108
+set dchmSplitFnEW:CouplingValue.CP1.Re 0.0
+cp /Herwig/Shower/SudakovCommon dchmSudakovEW
+set dchmSudakovEW:SplittingFunction dchmSplitFnEW
+set dchmSudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting d->c,h-; dchmSudakovEW
+
+create Herwig::HalfHalfZeroEWSplitFn schmSplitFnEW
+set schmSplitFnEW:InteractionType EW
+set schmSplitFnEW:ColourStructure EW
+set schmSplitFnEW:CouplingValue.CP0.Im 0.22577256042857208
+set schmSplitFnEW:CouplingValue.CP0.Re 0.0
+set schmSplitFnEW:CouplingValue.CP1.Im -97.4180040319821
+set schmSplitFnEW:CouplingValue.CP1.Re 0.0
+cp /Herwig/Shower/SudakovCommon schmSudakovEW
+set schmSudakovEW:SplittingFunction schmSplitFnEW
+set schmSudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting s->c,h-; schmSudakovEW
+
+create Herwig::HalfHalfZeroEWSplitFn bchmSplitFnEW
+set bchmSplitFnEW:InteractionType EW
+set bchmSplitFnEW:ColourStructure EW
+set bchmSplitFnEW:CouplingValue.CP0.Im 0.1257962600543742
+set bchmSplitFnEW:CouplingValue.CP0.Re 0.0
+set bchmSplitFnEW:CouplingValue.CP1.Im -0.8742037399456257
+set bchmSplitFnEW:CouplingValue.CP1.Re 0.0
+cp /Herwig/Shower/SudakovCommon bchmSudakovEW
+set bchmSudakovEW:SplittingFunction bchmSplitFnEW
+set bchmSudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting b->c,h-; bchmSudakovEW
+
+create Herwig::HalfHalfZeroEWSplitFn dthmSplitFnEW
+set dthmSplitFnEW:InteractionType EW
+set dthmSplitFnEW:ColourStructure EW
+set dthmSplitFnEW:CouplingValue.CP0.Im -0.1257962600543742
+set dthmSplitFnEW:CouplingValue.CP0.Re 0.0
+set dthmSplitFnEW:CouplingValue.CP1.Im -0.8742037399456257
+set dthmSplitFnEW:CouplingValue.CP1.Re 0.0
+cp /Herwig/Shower/SudakovCommon dthmSudakovEW
+set dthmSudakovEW:SplittingFunction dthmSplitFnEW
+set dthmSudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting d->t,h-; dthmSudakovEW
+
+create Herwig::HalfHalfZeroEWSplitFn sthmSplitFnEW
+set sthmSplitFnEW:InteractionType EW
+set sthmSplitFnEW:ColourStructure EW
+set sthmSplitFnEW:CouplingValue.CP0.Im 0.0999763003741951
+set sthmSplitFnEW:CouplingValue.CP0.Re 0.0
+set sthmSplitFnEW:CouplingValue.CP1.Im -1.099976300374195
+set sthmSplitFnEW:CouplingValue.CP1.Re 0.0
+cp /Herwig/Shower/SudakovCommon sthmSudakovEW
+set sthmSudakovEW:SplittingFunction sthmSplitFnEW
+set sthmSudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting s->t,h-; sthmSudakovEW
+
+create Herwig::HalfHalfZeroEWSplitFn bthmSplitFnEW
+set bthmSplitFnEW:InteractionType EW
+set bthmSplitFnEW:ColourStructure EW
+set bthmSplitFnEW:CouplingValue.CP0.Im 0.0
+set bthmSplitFnEW:CouplingValue.CP0.Re 0.0
+set bthmSplitFnEW:CouplingValue.CP1.Im -1.0
+set bthmSplitFnEW:CouplingValue.CP1.Re 0.0
+cp /Herwig/Shower/SudakovCommon bthmSudakovEW
+set bthmSudakovEW:SplittingFunction bthmSplitFnEW
+set bthmSudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting b->t,h-; bthmSudakovEW
+
+create Herwig::ZeroZeroZeroEWSplitFn h1hphmSplitFnEW
+set h1hphmSplitFnEW:InteractionType EW
+set h1hphmSplitFnEW:ColourStructure EW
+set h1hphmSplitFnEW:CouplingValue.Im -21988.756162896448
+set h1hphmSplitFnEW:CouplingValue.Re 0.0
+cp /Herwig/Shower/SudakovCommon h1hphmSudakovEW
+set h1hphmSudakovEW:SplittingFunction h1hphmSplitFnEW
+set h1hphmSudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h1->h+,h-; h1hphmSudakovEW
+
+create Herwig::ZeroZeroZeroEWSplitFn h2hphmSplitFnEW
+set h2hphmSplitFnEW:InteractionType EW
+set h2hphmSplitFnEW:ColourStructure EW
+set h2hphmSplitFnEW:CouplingValue.Im -10351.899901654691
+set h2hphmSplitFnEW:CouplingValue.Re 0.0
+cp /Herwig/Shower/SudakovCommon h2hphmSudakovEW
+set h2hphmSudakovEW:SplittingFunction h2hphmSplitFnEW
+set h2hphmSudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h2->h+,h-; h2hphmSudakovEW
+
+create Herwig::ZeroZeroZeroEWSplitFn h3hphmSplitFnEW
+set h3hphmSplitFnEW:InteractionType EW
+set h3hphmSplitFnEW:ColourStructure EW
+set h3hphmSplitFnEW:CouplingValue.Im 6773.464880707803
+set h3hphmSplitFnEW:CouplingValue.Re 0.0
+cp /Herwig/Shower/SudakovCommon h3hphmSudakovEW
+set h3hphmSudakovEW:SplittingFunction h3hphmSplitFnEW
+set h3hphmSudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h3->h+,h-; h3hphmSudakovEW
+
+create Herwig::ZeroZeroOneEWSplitFn h1hmWpSplitFnEW
+set h1hmWpSplitFnEW:InteractionType EW
+set h1hmWpSplitFnEW:ColourStructure EW
+set h1hmWpSplitFnEW:CouplingValue.Im -8.775563763786692
+set h1hmWpSplitFnEW:CouplingValue.Re 4.933850004749909
+cp /Herwig/Shower/SudakovCommon h1hmWpSudakovEW
+set h1hmWpSudakovEW:SplittingFunction h1hmWpSplitFnEW
+set h1hmWpSudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h1->h-,W+; h1hmWpSudakovEW
+
+create Herwig::ZeroZeroOneEWSplitFn h2hmWpSplitFnEW
+set h2hmWpSplitFnEW:InteractionType EW
+set h2hmWpSplitFnEW:ColourStructure EW
+set h2hmWpSplitFnEW:CouplingValue.Im 30.544897525546183
+set h2hmWpSplitFnEW:CouplingValue.Re -5.215815264331947
+cp /Herwig/Shower/SudakovCommon h2hmWpSudakovEW
+set h2hmWpSudakovEW:SplittingFunction h2hmWpSplitFnEW
+set h2hmWpSudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h2->h-,W+; h2hmWpSudakovEW
+
+create Herwig::ZeroZeroOneEWSplitFn h3hmWpSplitFnEW
+set h3hmWpSplitFnEW:InteractionType EW
+set h3hmWpSplitFnEW:ColourStructure EW
+set h3hmWpSplitFnEW:CouplingValue.Im 6.40873328870152
+set h3hmWpSplitFnEW:CouplingValue.Re 31.615273869493926
+cp /Herwig/Shower/SudakovCommon h3hmWpSudakovEW
+set h3hmWpSudakovEW:SplittingFunction h3hmWpSplitFnEW
+set h3hmWpSudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h3->h-,W+; h3hmWpSudakovEW
+
+create Herwig::ZeroZeroZeroEWSplitFn h1h1h1SplitFnEW
+set h1h1h1SplitFnEW:InteractionType EW
+set h1h1h1SplitFnEW:ColourStructure EW
+set h1h1h1SplitFnEW:CouplingValue.Im -19621.542895684925
+set h1h1h1SplitFnEW:CouplingValue.Re 0.0
+cp /Herwig/Shower/SudakovCommon h1h1h1SudakovEW
+set h1h1h1SudakovEW:SplittingFunction h1h1h1SplitFnEW
+set h1h1h1SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h1->h1,h1; h1h1h1SudakovEW
+
+create Herwig::ZeroZeroZeroEWSplitFn h1h1h2SplitFnEW
+set h1h1h2SplitFnEW:InteractionType EW
+set h1h1h2SplitFnEW:ColourStructure EW
+set h1h1h2SplitFnEW:CouplingValue.Im 3592.2988518579935
+set h1h1h2SplitFnEW:CouplingValue.Re 0.0
+cp /Herwig/Shower/SudakovCommon h1h1h2SudakovEW
+set h1h1h2SudakovEW:SplittingFunction h1h1h2SplitFnEW
+set h1h1h2SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h1->h1,h2; h1h1h2SudakovEW
+
+create Herwig::ZeroZeroZeroEWSplitFn h1h2h1SplitFnEW
+set h1h2h1SplitFnEW:InteractionType EW
+set h1h2h1SplitFnEW:ColourStructure EW
+set h1h2h1SplitFnEW:CouplingValue.Im 3592.2988518579935
+set h1h2h1SplitFnEW:CouplingValue.Re 0.0
+cp /Herwig/Shower/SudakovCommon h1h2h1SudakovEW
+set h1h2h1SudakovEW:SplittingFunction h1h2h1SplitFnEW
+set h1h2h1SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h1->h2,h1; h1h2h1SudakovEW
+
+create Herwig::ZeroZeroZeroEWSplitFn h2h1h1SplitFnEW
+set h2h1h1SplitFnEW:InteractionType EW
+set h2h1h1SplitFnEW:ColourStructure EW
+set h2h1h1SplitFnEW:CouplingValue.Im 3592.2988518579935
+set h2h1h1SplitFnEW:CouplingValue.Re 0.0
+cp /Herwig/Shower/SudakovCommon h2h1h1SudakovEW
+set h2h1h1SudakovEW:SplittingFunction h2h1h1SplitFnEW
+set h2h1h1SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h2->h1,h1; h2h1h1SudakovEW
+
+create Herwig::ZeroZeroZeroEWSplitFn h1h1h3SplitFnEW
+set h1h1h3SplitFnEW:InteractionType EW
+set h1h1h3SplitFnEW:ColourStructure EW
+set h1h1h3SplitFnEW:CouplingValue.Im -1004.3313408666728
+set h1h1h3SplitFnEW:CouplingValue.Re 0.0
+cp /Herwig/Shower/SudakovCommon h1h1h3SudakovEW
+set h1h1h3SudakovEW:SplittingFunction h1h1h3SplitFnEW
+set h1h1h3SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h1->h1,h3; h1h1h3SudakovEW
+
+create Herwig::ZeroZeroZeroEWSplitFn h1h3h1SplitFnEW
+set h1h3h1SplitFnEW:InteractionType EW
+set h1h3h1SplitFnEW:ColourStructure EW
+set h1h3h1SplitFnEW:CouplingValue.Im -1004.3313408666728
+set h1h3h1SplitFnEW:CouplingValue.Re 0.0
+cp /Herwig/Shower/SudakovCommon h1h3h1SudakovEW
+set h1h3h1SudakovEW:SplittingFunction h1h3h1SplitFnEW
+set h1h3h1SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h1->h3,h1; h1h3h1SudakovEW
+
+create Herwig::ZeroZeroZeroEWSplitFn h3h1h1SplitFnEW
+set h3h1h1SplitFnEW:InteractionType EW
+set h3h1h1SplitFnEW:ColourStructure EW
+set h3h1h1SplitFnEW:CouplingValue.Im -1004.3313408666728
+set h3h1h1SplitFnEW:CouplingValue.Re 0.0
+cp /Herwig/Shower/SudakovCommon h3h1h1SudakovEW
+set h3h1h1SudakovEW:SplittingFunction h3h1h1SplitFnEW
+set h3h1h1SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h3->h1,h1; h3h1h1SudakovEW
+
+create Herwig::ZeroZeroZeroEWSplitFn h1h2h2SplitFnEW
+set h1h2h2SplitFnEW:InteractionType EW
+set h1h2h2SplitFnEW:ColourStructure EW
+set h1h2h2SplitFnEW:CouplingValue.Im -12874.147140966403
+set h1h2h2SplitFnEW:CouplingValue.Re 0.0
+cp /Herwig/Shower/SudakovCommon h1h2h2SudakovEW
+set h1h2h2SudakovEW:SplittingFunction h1h2h2SplitFnEW
+set h1h2h2SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h1->h2,h2; h1h2h2SudakovEW
+
+create Herwig::ZeroZeroZeroEWSplitFn h2h2h1SplitFnEW
+set h2h2h1SplitFnEW:InteractionType EW
+set h2h2h1SplitFnEW:ColourStructure EW
+set h2h2h1SplitFnEW:CouplingValue.Im -12874.147140966403
+set h2h2h1SplitFnEW:CouplingValue.Re 0.0
+cp /Herwig/Shower/SudakovCommon h2h2h1SudakovEW
+set h2h2h1SudakovEW:SplittingFunction h2h2h1SplitFnEW
+set h2h2h1SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h2->h2,h1; h2h2h1SudakovEW
+
+create Herwig::ZeroZeroZeroEWSplitFn h2h1h2SplitFnEW
+set h2h1h2SplitFnEW:InteractionType EW
+set h2h1h2SplitFnEW:ColourStructure EW
+set h2h1h2SplitFnEW:CouplingValue.Im -12874.147140966403
+set h2h1h2SplitFnEW:CouplingValue.Re 0.0
+cp /Herwig/Shower/SudakovCommon h2h1h2SudakovEW
+set h2h1h2SudakovEW:SplittingFunction h2h1h2SplitFnEW
+set h2h1h2SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h2->h1,h2; h2h1h2SudakovEW
+
+create Herwig::ZeroZeroZeroEWSplitFn h1h2h3SplitFnEW
+set h1h2h3SplitFnEW:InteractionType EW
+set h1h2h3SplitFnEW:ColourStructure EW
+set h1h2h3SplitFnEW:CouplingValue.Im -2567.9837701635734
+set h1h2h3SplitFnEW:CouplingValue.Re 0.0
+cp /Herwig/Shower/SudakovCommon h1h2h3SudakovEW
+set h1h2h3SudakovEW:SplittingFunction h1h2h3SplitFnEW
+set h1h2h3SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h1->h2,h3; h1h2h3SudakovEW
+
+create Herwig::ZeroZeroZeroEWSplitFn h2h3h1SplitFnEW
+set h2h3h1SplitFnEW:InteractionType EW
+set h2h3h1SplitFnEW:ColourStructure EW
+set h2h3h1SplitFnEW:CouplingValue.Im -2567.9837701635734
+set h2h3h1SplitFnEW:CouplingValue.Re 0.0
+cp /Herwig/Shower/SudakovCommon h2h3h1SudakovEW
+set h2h3h1SudakovEW:SplittingFunction h2h3h1SplitFnEW
+set h2h3h1SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h2->h3,h1; h2h3h1SudakovEW
+
+create Herwig::ZeroZeroZeroEWSplitFn h3h1h2SplitFnEW
+set h3h1h2SplitFnEW:InteractionType EW
+set h3h1h2SplitFnEW:ColourStructure EW
+set h3h1h2SplitFnEW:CouplingValue.Im -2567.9837701635734
+set h3h1h2SplitFnEW:CouplingValue.Re 0.0
+cp /Herwig/Shower/SudakovCommon h3h1h2SudakovEW
+set h3h1h2SudakovEW:SplittingFunction h3h1h2SplitFnEW
+set h3h1h2SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h3->h1,h2; h3h1h2SudakovEW
+
+create Herwig::ZeroZeroZeroEWSplitFn h1h3h3SplitFnEW
+set h1h3h3SplitFnEW:InteractionType EW
+set h1h3h3SplitFnEW:ColourStructure EW
+set h1h3h3SplitFnEW:CouplingValue.Im -185.58056408102297
+set h1h3h3SplitFnEW:CouplingValue.Re 0.0
+cp /Herwig/Shower/SudakovCommon h1h3h3SudakovEW
+set h1h3h3SudakovEW:SplittingFunction h1h3h3SplitFnEW
+set h1h3h3SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h1->h3,h3; h1h3h3SudakovEW
+
+create Herwig::ZeroZeroZeroEWSplitFn h3h3h1SplitFnEW
+set h3h3h1SplitFnEW:InteractionType EW
+set h3h3h1SplitFnEW:ColourStructure EW
+set h3h3h1SplitFnEW:CouplingValue.Im -185.58056408102297
+set h3h3h1SplitFnEW:CouplingValue.Re 0.0
+cp /Herwig/Shower/SudakovCommon h3h3h1SudakovEW
+set h3h3h1SudakovEW:SplittingFunction h3h3h1SplitFnEW
+set h3h3h1SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h3->h3,h1; h3h3h1SudakovEW
+
+create Herwig::ZeroZeroZeroEWSplitFn h3h1h3SplitFnEW
+set h3h1h3SplitFnEW:InteractionType EW
+set h3h1h3SplitFnEW:ColourStructure EW
+set h3h1h3SplitFnEW:CouplingValue.Im -185.58056408102297
+set h3h1h3SplitFnEW:CouplingValue.Re 0.0
+cp /Herwig/Shower/SudakovCommon h3h1h3SudakovEW
+set h3h1h3SudakovEW:SplittingFunction h3h1h3SplitFnEW
+set h3h1h3SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h3->h1,h3; h3h1h3SudakovEW
+
+create Herwig::HalfHalfZeroEWSplitFn uuh1SplitFnEW
+set uuh1SplitFnEW:InteractionType EW
+set uuh1SplitFnEW:ColourStructure EW
+set uuh1SplitFnEW:CouplingValue.CP0.Im 0.19140071598358266
+set uuh1SplitFnEW:CouplingValue.CP0.Re 0.0
+set uuh1SplitFnEW:CouplingValue.CP1.Im 0.0
+set uuh1SplitFnEW:CouplingValue.CP1.Re -0.10761045659102447
+cp /Herwig/Shower/SudakovCommon uuh1SudakovEW
+set uuh1SudakovEW:SplittingFunction uuh1SplitFnEW
+set uuh1SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting u->u,h1; uuh1SudakovEW
+
+create Herwig::HalfHalfZeroEWSplitFn cch1SplitFnEW
+set cch1SplitFnEW:InteractionType EW
+set cch1SplitFnEW:ColourStructure EW
+set cch1SplitFnEW:CouplingValue.CP0.Im 0.19140071598358266
+set cch1SplitFnEW:CouplingValue.CP0.Re 0.0
+set cch1SplitFnEW:CouplingValue.CP1.Im 0.0
+set cch1SplitFnEW:CouplingValue.CP1.Re -0.10761045659102447
+cp /Herwig/Shower/SudakovCommon cch1SudakovEW
+set cch1SudakovEW:SplittingFunction cch1SplitFnEW
+set cch1SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting c->c,h1; cch1SudakovEW
+
+create Herwig::HalfHalfZeroEWSplitFn tth1SplitFnEW
+set tth1SplitFnEW:InteractionType EW
+set tth1SplitFnEW:ColourStructure EW
+set tth1SplitFnEW:CouplingValue.CP0.Im -0.4726314302618688
+set tth1SplitFnEW:CouplingValue.CP0.Re 0.0
+set tth1SplitFnEW:CouplingValue.CP1.Im 0.0
+set tth1SplitFnEW:CouplingValue.CP1.Re -0.10761045659102447
+cp /Herwig/Shower/SudakovCommon tth1SudakovEW
+set tth1SudakovEW:SplittingFunction tth1SplitFnEW
+set tth1SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting t->t,h1; tth1SudakovEW
+
+create Herwig::HalfHalfZeroEWSplitFn ddh1SplitFnEW
+set ddh1SplitFnEW:InteractionType EW
+set ddh1SplitFnEW:ColourStructure EW
+set ddh1SplitFnEW:CouplingValue.CP0.Im 0.19140071598358266
+set ddh1SplitFnEW:CouplingValue.CP0.Re 0.0
+set ddh1SplitFnEW:CouplingValue.CP1.Im 0.0
+set ddh1SplitFnEW:CouplingValue.CP1.Re 0.10761045659102447
+cp /Herwig/Shower/SudakovCommon ddh1SudakovEW
+set ddh1SudakovEW:SplittingFunction ddh1SplitFnEW
+set ddh1SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting d->d,h1; ddh1SudakovEW
+
+create Herwig::HalfHalfZeroEWSplitFn ssh1SplitFnEW
+set ssh1SplitFnEW:InteractionType EW
+set ssh1SplitFnEW:ColourStructure EW
+set ssh1SplitFnEW:CouplingValue.CP0.Im 0.19140071598358266
+set ssh1SplitFnEW:CouplingValue.CP0.Re 0.0
+set ssh1SplitFnEW:CouplingValue.CP1.Im 0.0
+set ssh1SplitFnEW:CouplingValue.CP1.Re 0.10761045659102447
+cp /Herwig/Shower/SudakovCommon ssh1SudakovEW
+set ssh1SudakovEW:SplittingFunction ssh1SplitFnEW
+set ssh1SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting s->s,h1; ssh1SudakovEW
+
+create Herwig::HalfHalfZeroEWSplitFn bbh1SplitFnEW
+set bbh1SplitFnEW:InteractionType EW
+set bbh1SplitFnEW:ColourStructure EW
+set bbh1SplitFnEW:CouplingValue.CP0.Im 0.17325565152222439
+set bbh1SplitFnEW:CouplingValue.CP0.Re 0.0
+set bbh1SplitFnEW:CouplingValue.CP1.Im 0.0
+set bbh1SplitFnEW:CouplingValue.CP1.Re 0.10761045659102447
+cp /Herwig/Shower/SudakovCommon bbh1SudakovEW
+set bbh1SudakovEW:SplittingFunction bbh1SplitFnEW
+set bbh1SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting b->b,h1; bbh1SudakovEW
+
+create Herwig::OneOneZeroEWSplitFn WpWph1SplitFnEW
+set WpWph1SplitFnEW:InteractionType EW
+set WpWph1SplitFnEW:ColourStructure EW
+set WpWph1SplitFnEW:CouplingValue.Im 49.19996664454304
+set WpWph1SplitFnEW:CouplingValue.Re 0.0
+cp /Herwig/Shower/SudakovCommon WpWph1SudakovEW
+set WpWph1SudakovEW:SplittingFunction WpWph1SplitFnEW
+set WpWph1SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting W+->W+,h1; WpWph1SudakovEW
+
+create Herwig::ZeroZeroOneEWSplitFn h1h2Z0SplitFnEW
+set h1h2Z0SplitFnEW:InteractionType EW
+set h1h2Z0SplitFnEW:ColourStructure EW
+set h1h2Z0SplitFnEW:CouplingValue.Im 0.0
+set h1h2Z0SplitFnEW:CouplingValue.Re -0.03697354671947379
+cp /Herwig/Shower/SudakovCommon h1h2Z0SudakovEW
+set h1h2Z0SudakovEW:SplittingFunction h1h2Z0SplitFnEW
+set h1h2Z0SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h1->h2,Z0; h1h2Z0SudakovEW
+
+create Herwig::ZeroZeroOneEWSplitFn h2h1Z0SplitFnEW
+set h2h1Z0SplitFnEW:InteractionType EW
+set h2h1Z0SplitFnEW:ColourStructure EW
+set h2h1Z0SplitFnEW:CouplingValue.Im 0.0
+set h2h1Z0SplitFnEW:CouplingValue.Re -0.03697354671947379
+cp /Herwig/Shower/SudakovCommon h2h1Z0SudakovEW
+set h2h1Z0SudakovEW:SplittingFunction h2h1Z0SplitFnEW
+set h2h1Z0SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h2->h1,Z0; h2h1Z0SudakovEW
+
+create Herwig::ZeroZeroOneEWSplitFn h1h3Z0SplitFnEW
+set h1h3Z0SplitFnEW:InteractionType EW
+set h1h3Z0SplitFnEW:ColourStructure EW
+set h1h3Z0SplitFnEW:CouplingValue.Im 0.0
+set h1h3Z0SplitFnEW:CouplingValue.Re -0.10889984429545985
+cp /Herwig/Shower/SudakovCommon h1h3Z0SudakovEW
+set h1h3Z0SudakovEW:SplittingFunction h1h3Z0SplitFnEW
+set h1h3Z0SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h1->h3,Z0; h1h3Z0SudakovEW
+
+create Herwig::ZeroZeroOneEWSplitFn h3h1Z0SplitFnEW
+set h3h1Z0SplitFnEW:InteractionType EW
+set h3h1Z0SplitFnEW:ColourStructure EW
+set h3h1Z0SplitFnEW:CouplingValue.Im 0.0
+set h3h1Z0SplitFnEW:CouplingValue.Re -0.10889984429545985
+cp /Herwig/Shower/SudakovCommon h3h1Z0SudakovEW
+set h3h1Z0SudakovEW:SplittingFunction h3h1Z0SplitFnEW
+set h3h1Z0SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h3->h1,Z0; h3h1Z0SudakovEW
+
+create Herwig::OneOneZeroEWSplitFn Z0Z0h1SplitFnEW
+set Z0Z0h1SplitFnEW:InteractionType EW
+set Z0Z0h1SplitFnEW:ColourStructure EW
+set Z0Z0h1SplitFnEW:CouplingValue.Im 64.20402040956115
+set Z0Z0h1SplitFnEW:CouplingValue.Re 0.0
+cp /Herwig/Shower/SudakovCommon Z0Z0h1SudakovEW
+set Z0Z0h1SudakovEW:SplittingFunction Z0Z0h1SplitFnEW
+set Z0Z0h1SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting Z0->Z0,h1; Z0Z0h1SudakovEW
+
+create Herwig::ZeroZeroZeroEWSplitFn h2h1h3SplitFnEW
+set h2h1h3SplitFnEW:InteractionType EW
+set h2h1h3SplitFnEW:ColourStructure EW
+set h2h1h3SplitFnEW:CouplingValue.Im -2567.9837701635734
+set h2h1h3SplitFnEW:CouplingValue.Re 0.0
+cp /Herwig/Shower/SudakovCommon h2h1h3SudakovEW
+set h2h1h3SudakovEW:SplittingFunction h2h1h3SplitFnEW
+set h2h1h3SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h2->h1,h3; h2h1h3SudakovEW
+
+create Herwig::ZeroZeroZeroEWSplitFn h1h3h2SplitFnEW
+set h1h3h2SplitFnEW:InteractionType EW
+set h1h3h2SplitFnEW:ColourStructure EW
+set h1h3h2SplitFnEW:CouplingValue.Im -2567.9837701635734
+set h1h3h2SplitFnEW:CouplingValue.Re 0.0
+cp /Herwig/Shower/SudakovCommon h1h3h2SudakovEW
+set h1h3h2SudakovEW:SplittingFunction h1h3h2SplitFnEW
+set h1h3h2SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h1->h3,h2; h1h3h2SudakovEW
+
+create Herwig::ZeroZeroZeroEWSplitFn h3h2h1SplitFnEW
+set h3h2h1SplitFnEW:InteractionType EW
+set h3h2h1SplitFnEW:ColourStructure EW
+set h3h2h1SplitFnEW:CouplingValue.Im -2567.9837701635734
+set h3h2h1SplitFnEW:CouplingValue.Re 0.0
+cp /Herwig/Shower/SudakovCommon h3h2h1SudakovEW
+set h3h2h1SudakovEW:SplittingFunction h3h2h1SplitFnEW
+set h3h2h1SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h3->h2,h1; h3h2h1SudakovEW
+
+create Herwig::ZeroZeroZeroEWSplitFn h2h2h2SplitFnEW
+set h2h2h2SplitFnEW:InteractionType EW
+set h2h2h2SplitFnEW:ColourStructure EW
+set h2h2h2SplitFnEW:CouplingValue.Im -25228.372347924793
+set h2h2h2SplitFnEW:CouplingValue.Re 0.0
+cp /Herwig/Shower/SudakovCommon h2h2h2SudakovEW
+set h2h2h2SudakovEW:SplittingFunction h2h2h2SplitFnEW
+set h2h2h2SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h2->h2,h2; h2h2h2SudakovEW
+
+create Herwig::ZeroZeroZeroEWSplitFn h2h2h3SplitFnEW
+set h2h2h3SplitFnEW:InteractionType EW
+set h2h2h3SplitFnEW:ColourStructure EW
+set h2h2h3SplitFnEW:CouplingValue.Im 5411.996120048947
+set h2h2h3SplitFnEW:CouplingValue.Re 0.0
+cp /Herwig/Shower/SudakovCommon h2h2h3SudakovEW
+set h2h2h3SudakovEW:SplittingFunction h2h2h3SplitFnEW
+set h2h2h3SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h2->h2,h3; h2h2h3SudakovEW
+
+create Herwig::ZeroZeroZeroEWSplitFn h2h3h2SplitFnEW
+set h2h3h2SplitFnEW:InteractionType EW
+set h2h3h2SplitFnEW:ColourStructure EW
+set h2h3h2SplitFnEW:CouplingValue.Im 5411.996120048947
+set h2h3h2SplitFnEW:CouplingValue.Re 0.0
+cp /Herwig/Shower/SudakovCommon h2h3h2SudakovEW
+set h2h3h2SudakovEW:SplittingFunction h2h3h2SplitFnEW
+set h2h3h2SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h2->h3,h2; h2h3h2SudakovEW
+
+create Herwig::ZeroZeroZeroEWSplitFn h3h2h2SplitFnEW
+set h3h2h2SplitFnEW:InteractionType EW
+set h3h2h2SplitFnEW:ColourStructure EW
+set h3h2h2SplitFnEW:CouplingValue.Im 5411.996120048947
+set h3h2h2SplitFnEW:CouplingValue.Re 0.0
+cp /Herwig/Shower/SudakovCommon h3h2h2SudakovEW
+set h3h2h2SudakovEW:SplittingFunction h3h2h2SplitFnEW
+set h3h2h2SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h3->h2,h2; h3h2h2SudakovEW
+
+create Herwig::ZeroZeroZeroEWSplitFn h2h3h3SplitFnEW
+set h2h3h3SplitFnEW:InteractionType EW
+set h2h3h3SplitFnEW:ColourStructure EW
+set h2h3h3SplitFnEW:CouplingValue.Im -9252.302815323887
+set h2h3h3SplitFnEW:CouplingValue.Re 0.0
+cp /Herwig/Shower/SudakovCommon h2h3h3SudakovEW
+set h2h3h3SudakovEW:SplittingFunction h2h3h3SplitFnEW
+set h2h3h3SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h2->h3,h3; h2h3h3SudakovEW
+
+create Herwig::ZeroZeroZeroEWSplitFn h3h3h2SplitFnEW
+set h3h3h2SplitFnEW:InteractionType EW
+set h3h3h2SplitFnEW:ColourStructure EW
+set h3h3h2SplitFnEW:CouplingValue.Im -9252.302815323887
+set h3h3h2SplitFnEW:CouplingValue.Re 0.0
+cp /Herwig/Shower/SudakovCommon h3h3h2SudakovEW
+set h3h3h2SudakovEW:SplittingFunction h3h3h2SplitFnEW
+set h3h3h2SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h3->h3,h2; h3h3h2SudakovEW
+
+create Herwig::ZeroZeroZeroEWSplitFn h3h2h3SplitFnEW
+set h3h2h3SplitFnEW:InteractionType EW
+set h3h2h3SplitFnEW:ColourStructure EW
+set h3h2h3SplitFnEW:CouplingValue.Im -9252.302815323887
+set h3h2h3SplitFnEW:CouplingValue.Re 0.0
+cp /Herwig/Shower/SudakovCommon h3h2h3SudakovEW
+set h3h2h3SudakovEW:SplittingFunction h3h2h3SplitFnEW
+set h3h2h3SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h3->h2,h3; h3h2h3SudakovEW
+
+create Herwig::HalfHalfZeroEWSplitFn uuh2SplitFnEW
+set uuh2SplitFnEW:InteractionType EW
+set uuh2SplitFnEW:ColourStructure EW
+set uuh2SplitFnEW:CouplingValue.CP0.Im -66.62039514954184
+set uuh2SplitFnEW:CouplingValue.CP0.Re 0.0
+set uuh2SplitFnEW:CouplingValue.CP1.Im 0.0
+set uuh2SplitFnEW:CouplingValue.CP1.Re 11.376030109323243
+cp /Herwig/Shower/SudakovCommon uuh2SudakovEW
+set uuh2SudakovEW:SplittingFunction uuh2SplitFnEW
+set uuh2SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting u->u,h2; uuh2SudakovEW
+
+create Herwig::HalfHalfZeroEWSplitFn cch2SplitFnEW
+set cch2SplitFnEW:InteractionType EW
+set cch2SplitFnEW:ColourStructure EW
+set cch2SplitFnEW:CouplingValue.CP0.Im -66.62039514954184
+set cch2SplitFnEW:CouplingValue.CP0.Re 0.0
+set cch2SplitFnEW:CouplingValue.CP1.Im 0.0
+set cch2SplitFnEW:CouplingValue.CP1.Re 11.376030109323243
+cp /Herwig/Shower/SudakovCommon cch2SudakovEW
+set cch2SudakovEW:SplittingFunction cch2SplitFnEW
+set cch2SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting c->c,h2; cch2SudakovEW
+
+create Herwig::HalfHalfZeroEWSplitFn tth2SplitFnEW
+set tth2SplitFnEW:InteractionType EW
+set tth2SplitFnEW:ColourStructure EW
+set tth2SplitFnEW:CouplingValue.CP0.Im -0.8716131652352153
+set tth2SplitFnEW:CouplingValue.CP0.Re 0.0
+set tth2SplitFnEW:CouplingValue.CP1.Im 0.0
+set tth2SplitFnEW:CouplingValue.CP1.Re 11.376030109323243
+cp /Herwig/Shower/SudakovCommon tth2SudakovEW
+set tth2SudakovEW:SplittingFunction tth2SplitFnEW
+set tth2SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting t->t,h2; tth2SudakovEW
+
+create Herwig::HalfHalfZeroEWSplitFn ddh2SplitFnEW
+set ddh2SplitFnEW:InteractionType EW
+set ddh2SplitFnEW:ColourStructure EW
+set ddh2SplitFnEW:CouplingValue.CP0.Im -66.62039514954184
+set ddh2SplitFnEW:CouplingValue.CP0.Re 0.0
+set ddh2SplitFnEW:CouplingValue.CP1.Im 0.0
+set ddh2SplitFnEW:CouplingValue.CP1.Re -11.376030109323243
+cp /Herwig/Shower/SudakovCommon ddh2SudakovEW
+set ddh2SudakovEW:SplittingFunction ddh2SplitFnEW
+set ddh2SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting d->d,h2; ddh2SudakovEW
+
+create Herwig::HalfHalfZeroEWSplitFn ssh2SplitFnEW
+set ssh2SplitFnEW:InteractionType EW
+set ssh2SplitFnEW:ColourStructure EW
+set ssh2SplitFnEW:CouplingValue.CP0.Im -66.62039514954184
+set ssh2SplitFnEW:CouplingValue.CP0.Re 0.0
+set ssh2SplitFnEW:CouplingValue.CP1.Im 0.0
+set ssh2SplitFnEW:CouplingValue.CP1.Re -11.376030109323243
+cp /Herwig/Shower/SudakovCommon ssh2SudakovEW
+set ssh2SudakovEW:SplittingFunction ssh2SplitFnEW
+set ssh2SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting s->s,h2; ssh2SudakovEW
+
+create Herwig::HalfHalfZeroEWSplitFn bbh2SplitFnEW
+set bbh2SplitFnEW:InteractionType EW
+set bbh2SplitFnEW:ColourStructure EW
+set bbh2SplitFnEW:CouplingValue.CP0.Im -67.18168776848199
+set bbh2SplitFnEW:CouplingValue.CP0.Re 0.0
+set bbh2SplitFnEW:CouplingValue.CP1.Im 0.0
+set bbh2SplitFnEW:CouplingValue.CP1.Re -11.376030109323243
+cp /Herwig/Shower/SudakovCommon bbh2SudakovEW
+set bbh2SudakovEW:SplittingFunction bbh2SplitFnEW
+set bbh2SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting b->b,h2; bbh2SudakovEW
+
+create Herwig::OneOneZeroEWSplitFn WpWph2SplitFnEW
+set WpWph2SplitFnEW:InteractionType EW
+set WpWph2SplitFnEW:ColourStructure EW
+set WpWph2SplitFnEW:CouplingValue.Im 1521.9333162741501
+set WpWph2SplitFnEW:CouplingValue.Re 0.0
+cp /Herwig/Shower/SudakovCommon WpWph2SudakovEW
+set WpWph2SudakovEW:SplittingFunction WpWph2SplitFnEW
+set WpWph2SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting W+->W+,h2; WpWph2SudakovEW
+
+create Herwig::ZeroZeroOneEWSplitFn h2h3Z0SplitFnEW
+set h2h3Z0SplitFnEW:InteractionType EW
+set h2h3Z0SplitFnEW:ColourStructure EW
+set h2h3Z0SplitFnEW:CouplingValue.Im 0.0
+set h2h3Z0SplitFnEW:CouplingValue.Re 35.20435915056496
+cp /Herwig/Shower/SudakovCommon h2h3Z0SudakovEW
+set h2h3Z0SudakovEW:SplittingFunction h2h3Z0SplitFnEW
+set h2h3Z0SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h2->h3,Z0; h2h3Z0SudakovEW
+
+create Herwig::ZeroZeroOneEWSplitFn h3h2Z0SplitFnEW
+set h3h2Z0SplitFnEW:InteractionType EW
+set h3h2Z0SplitFnEW:ColourStructure EW
+set h3h2Z0SplitFnEW:CouplingValue.Im 0.0
+set h3h2Z0SplitFnEW:CouplingValue.Re 35.20435915056496
+cp /Herwig/Shower/SudakovCommon h3h2Z0SudakovEW
+set h3h2Z0SudakovEW:SplittingFunction h3h2Z0SplitFnEW
+set h3h2Z0SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h3->h2,Z0; h3h2Z0SudakovEW
+
+create Herwig::OneOneZeroEWSplitFn Z0Z0h2SplitFnEW
+set Z0Z0h2SplitFnEW:InteractionType EW
+set Z0Z0h2SplitFnEW:ColourStructure EW
+set Z0Z0h2SplitFnEW:CouplingValue.Im 1986.0630883353355
+set Z0Z0h2SplitFnEW:CouplingValue.Re 0.0
+cp /Herwig/Shower/SudakovCommon Z0Z0h2SudakovEW
+set Z0Z0h2SudakovEW:SplittingFunction Z0Z0h2SplitFnEW
+set Z0Z0h2SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting Z0->Z0,h2; Z0Z0h2SudakovEW
+
+create Herwig::ZeroZeroZeroEWSplitFn h3h3h3SplitFnEW
+set h3h3h3SplitFnEW:InteractionType EW
+set h3h3h3SplitFnEW:ColourStructure EW
+set h3h3h3SplitFnEW:CouplingValue.Im 19443.148583675108
+set h3h3h3SplitFnEW:CouplingValue.Re 0.0
+cp /Herwig/Shower/SudakovCommon h3h3h3SudakovEW
+set h3h3h3SudakovEW:SplittingFunction h3h3h3SplitFnEW
+set h3h3h3SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting h3->h3,h3; h3h3h3SudakovEW
+
+create Herwig::HalfHalfZeroEWSplitFn uuh3SplitFnEW
+set uuh3SplitFnEW:InteractionType EW
+set uuh3SplitFnEW:ColourStructure EW
+set uuh3SplitFnEW:CouplingValue.CP0.Im -13.977861400393865
+set uuh3SplitFnEW:CouplingValue.CP0.Re 0.0
+set uuh3SplitFnEW:CouplingValue.CP1.Im 0.0
+set uuh3SplitFnEW:CouplingValue.CP1.Re -68.95495511763083
+cp /Herwig/Shower/SudakovCommon uuh3SudakovEW
+set uuh3SudakovEW:SplittingFunction uuh3SplitFnEW
+set uuh3SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting u->u,h3; uuh3SudakovEW
+
+create Herwig::HalfHalfZeroEWSplitFn cch3SplitFnEW
+set cch3SplitFnEW:InteractionType EW
+set cch3SplitFnEW:ColourStructure EW
+set cch3SplitFnEW:CouplingValue.CP0.Im -13.977861400393865
+set cch3SplitFnEW:CouplingValue.CP0.Re 0.0
+set cch3SplitFnEW:CouplingValue.CP1.Im 0.0
+set cch3SplitFnEW:CouplingValue.CP1.Re -68.95495511763083
+cp /Herwig/Shower/SudakovCommon cch3SudakovEW
+set cch3SudakovEW:SplittingFunction cch3SplitFnEW
+set cch3SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting c->c,h3; cch3SudakovEW
+
+create Herwig::HalfHalfZeroEWSplitFn tth3SplitFnEW
+set tth3SplitFnEW:InteractionType EW
+set tth3SplitFnEW:ColourStructure EW
+set tth3SplitFnEW:CouplingValue.CP0.Im -0.07003831997547984
+set tth3SplitFnEW:CouplingValue.CP0.Re 0.0
+set tth3SplitFnEW:CouplingValue.CP1.Im 0.0
+set tth3SplitFnEW:CouplingValue.CP1.Re -68.95495511763083
+cp /Herwig/Shower/SudakovCommon tth3SudakovEW
+set tth3SudakovEW:SplittingFunction tth3SplitFnEW
+set tth3SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting t->t,h3; tth3SudakovEW
+
+create Herwig::HalfHalfZeroEWSplitFn ddh3SplitFnEW
+set ddh3SplitFnEW:InteractionType EW
+set ddh3SplitFnEW:ColourStructure EW
+set ddh3SplitFnEW:CouplingValue.CP0.Im -13.977861400393865
+set ddh3SplitFnEW:CouplingValue.CP0.Re 0.0
+set ddh3SplitFnEW:CouplingValue.CP1.Im 0.0
+set ddh3SplitFnEW:CouplingValue.CP1.Re 68.95495511763083
+cp /Herwig/Shower/SudakovCommon ddh3SudakovEW
+set ddh3SudakovEW:SplittingFunction ddh3SplitFnEW
+set ddh3SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting d->d,h3; ddh3SudakovEW
+
+create Herwig::HalfHalfZeroEWSplitFn ssh3SplitFnEW
+set ssh3SplitFnEW:InteractionType EW
+set ssh3SplitFnEW:ColourStructure EW
+set ssh3SplitFnEW:CouplingValue.CP0.Im -13.977861400393865
+set ssh3SplitFnEW:CouplingValue.CP0.Re 0.0
+set ssh3SplitFnEW:CouplingValue.CP1.Im 0.0
+set ssh3SplitFnEW:CouplingValue.CP1.Re 68.95495511763083
+cp /Herwig/Shower/SudakovCommon ssh3SudakovEW
+set ssh3SudakovEW:SplittingFunction ssh3SplitFnEW
+set ssh3SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting s->s,h3; ssh3SudakovEW
+
+create Herwig::HalfHalfZeroEWSplitFn bbh3SplitFnEW
+set bbh3SplitFnEW:InteractionType EW
+set bbh3SplitFnEW:ColourStructure EW
+set bbh3SplitFnEW:CouplingValue.CP0.Im -13.787291992292844
+set bbh3SplitFnEW:CouplingValue.CP0.Re 0.0
+set bbh3SplitFnEW:CouplingValue.CP1.Im 0.0
+set bbh3SplitFnEW:CouplingValue.CP1.Re 68.95495511763083
+cp /Herwig/Shower/SudakovCommon bbh3SudakovEW
+set bbh3SudakovEW:SplittingFunction bbh3SplitFnEW
+set bbh3SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting b->b,h3; bbh3SudakovEW
+
+create Herwig::OneOneZeroEWSplitFn WpWph3SplitFnEW
+set WpWph3SplitFnEW:InteractionType EW
+set WpWph3SplitFnEW:ColourStructure EW
+set WpWph3SplitFnEW:CouplingValue.Im -516.7250048633171
+set WpWph3SplitFnEW:CouplingValue.Re 0.0
+cp /Herwig/Shower/SudakovCommon WpWph3SudakovEW
+set WpWph3SudakovEW:SplittingFunction WpWph3SplitFnEW
+set WpWph3SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting W+->W+,h3; WpWph3SudakovEW
+
+create Herwig::OneOneZeroEWSplitFn Z0Z0h3SplitFnEW
+set Z0Z0h3SplitFnEW:InteractionType EW
+set Z0Z0h3SplitFnEW:ColourStructure EW
+set Z0Z0h3SplitFnEW:CouplingValue.Im -674.3057977673377
+set Z0Z0h3SplitFnEW:CouplingValue.Re 0.0
+cp /Herwig/Shower/SudakovCommon Z0Z0h3SudakovEW
+set Z0Z0h3SudakovEW:SplittingFunction Z0Z0h3SplitFnEW
+set Z0Z0h3SudakovEW:Alpha /Herwig/Shower/AlphaEW
+do /Herwig/Shower/SplittingGenerator:AddFinalSplitting Z0->Z0,h3; Z0Z0h3SudakovEW
+
+
+
+
+###################################################
+#
+#  Main directory and model object
+#
+###################################################
+mkdir /Herwig/FRModel
+cd /Herwig/FRModel
+
+library FRModel.so
+
+#### create Herwig::FRModel FRModel
+create Herwig::FRModel FRModel
+# cp /Herwig/Model FRModel
+
+# SM couplings
+
+set FRModel:QCD/RunningAlphaS /Herwig/Couplings/NLOAlphaS
+set FRModel:EW/RunningAlphaEM /Herwig/Couplings/AlphaEM
+set FRModel:EW/CKM /Herwig/CKM
+set FRModel:RunningMass /Herwig/RunningMass
+
+set FRModel:cabi 0.227736
+set FRModel:l2 0.5
+set FRModel:l3 1
+set FRModel:lR7 0.1
+set FRModel:lI7 0.2
+set FRModel:mixh 0.3
+set FRModel:mixh2 0.1
+set FRModel:mixh3 0.2
+set FRModel:aEWM1 127.9
+set FRModel:Gf 1.1663900000000002e-05
+set FRModel:aS 11.8
+set FRModel:ymb 4.7
+set FRModel:ymt 172
+set FRModel:ymtau 1.777
+set FRModel:GDI1x1 0
+set FRModel:GDI1x2 0
+set FRModel:GDI1x3 0
+set FRModel:GDI2x1 0
+set FRModel:GDI2x2 0
+set FRModel:GDI2x3 0
+set FRModel:GDI3x1 0
+set FRModel:GDI3x2 0
+set FRModel:GDI3x3 0
+set FRModel:GDR1x1 1
+set FRModel:GDR1x2 0.01
+set FRModel:GDR1x3 0.01
+set FRModel:GDR2x1 0.01
+set FRModel:GDR2x2 1
+set FRModel:GDR2x3 0.01
+set FRModel:GDR3x1 0.01
+set FRModel:GDR3x2 0.01
+set FRModel:GDR3x3 1
+set FRModel:GLI1x1 0
+set FRModel:GLI1x2 0
+set FRModel:GLI1x3 0
+set FRModel:GLI2x1 0
+set FRModel:GLI2x2 0
+set FRModel:GLI2x3 0
+set FRModel:GLI3x1 0
+set FRModel:GLI3x2 0
+set FRModel:GLI3x3 0
+set FRModel:GLR1x1 1
+set FRModel:GLR1x2 0.01
+set FRModel:GLR1x3 0.01
+set FRModel:GLR2x1 0.01
+set FRModel:GLR2x2 1
+set FRModel:GLR2x3 0.01
+set FRModel:GLR3x1 0.01
+set FRModel:GLR3x2 0.01
+set FRModel:GLR3x3 1
+set FRModel:GUI1x1 0
+set FRModel:GUI1x2 0
+set FRModel:GUI1x3 0
+set FRModel:GUI2x1 0
+set FRModel:GUI2x2 0
+set FRModel:GUI2x3 0
+set FRModel:GUI3x1 0
+set FRModel:GUI3x2 0
+set FRModel:GUI3x3 0
+set FRModel:GUR1x1 1
+set FRModel:GUR1x2 0.01
+set FRModel:GUR1x3 0.01
+set FRModel:GUR2x1 0.01
+set FRModel:GUR2x2 1
+set FRModel:GUR2x3 0.01
+set FRModel:GUR3x1 0.01
+set FRModel:GUR3x2 0.01
+set FRModel:GUR3x3 1
+# MZ is taken from the particle setup
+# MT is taken from the particle setup
+# MB is taken from the particle setup
+# mhc is taken from the particle setup
+# mh1 is taken from the particle setup
+# mh2 is taken from the particle setup
+# mh3 is taken from the particle setup
+# WZ is taken from the particle setup
+# WW is taken from the particle setup
+# WT is taken from the particle setup
+# whc is taken from the particle setup
+# Wh1 is taken from the particle setup
+# Wh2 is taken from the particle setup
+# Wh3 is taken from the particle setup
+
+###################################################
+#
+#  Vertices
+#
+###################################################
+# create FR model vertices
+
+# SM vertices
+set FRModel:Vertex/FFZ /Herwig/Vertices/FFZVertex
+set FRModel:Vertex/FFW /Herwig/Vertices/FFWVertex
+set FRModel:Vertex/FFH /Herwig/Vertices/FFHVertex
+set FRModel:Vertex/FFG /Herwig/Vertices/FFGVertex
+set FRModel:Vertex/FFP /Herwig/Vertices/FFPVertex
+set FRModel:Vertex/GGG /Herwig/Vertices/GGGVertex
+set FRModel:Vertex/GGGG /Herwig/Vertices/GGGGVertex
+set FRModel:Vertex/WWH /Herwig/Vertices/WWHVertex
+set FRModel:Vertex/WWW /Herwig/Vertices/WWWVertex
+set FRModel:Vertex/WWWW /Herwig/Vertices/WWWWVertex
+set FRModel:Vertex/HGG /Herwig/Vertices/HGGVertex
+set FRModel:Vertex/HPP /Herwig/Vertices/HPPVertex
+
+library FRModel.so
+create Herwig::FRModelV_V_4 /Herwig/FRModel/V_V_4
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_4
+create Herwig::FRModelV_V_13 /Herwig/FRModel/V_V_13
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_13
+create Herwig::FRModelV_V_19 /Herwig/FRModel/V_V_19
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_19
+create Herwig::FRModelV_V_43 /Herwig/FRModel/V_V_43
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_43
+create Herwig::FRModelV_V_44 /Herwig/FRModel/V_V_44
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_44
+create Herwig::FRModelV_V_45 /Herwig/FRModel/V_V_45
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_45
+create Herwig::FRModelV_V_46 /Herwig/FRModel/V_V_46
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_46
+create Herwig::FRModelV_V_47 /Herwig/FRModel/V_V_47
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_47
+create Herwig::FRModelV_V_48 /Herwig/FRModel/V_V_48
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_48
+create Herwig::FRModelV_V_49 /Herwig/FRModel/V_V_49
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_49
+create Herwig::FRModelV_V_50 /Herwig/FRModel/V_V_50
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_50
+create Herwig::FRModelV_V_51 /Herwig/FRModel/V_V_51
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_51
+create Herwig::FRModelV_V_52 /Herwig/FRModel/V_V_52
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_52
+create Herwig::FRModelV_V_53 /Herwig/FRModel/V_V_53
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_53
+create Herwig::FRModelV_V_54 /Herwig/FRModel/V_V_54
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_54
+create Herwig::FRModelV_V_55 /Herwig/FRModel/V_V_55
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_55
+create Herwig::FRModelV_V_56 /Herwig/FRModel/V_V_56
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_56
+create Herwig::FRModelV_V_57 /Herwig/FRModel/V_V_57
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_57
+create Herwig::FRModelV_V_58 /Herwig/FRModel/V_V_58
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_58
+create Herwig::FRModelV_V_59 /Herwig/FRModel/V_V_59
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_59
+create Herwig::FRModelV_V_60 /Herwig/FRModel/V_V_60
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_60
+create Herwig::FRModelV_V_61 /Herwig/FRModel/V_V_61
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_61
+create Herwig::FRModelV_V_62 /Herwig/FRModel/V_V_62
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_62
+create Herwig::FRModelV_V_63 /Herwig/FRModel/V_V_63
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_63
+create Herwig::FRModelV_V_64 /Herwig/FRModel/V_V_64
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_64
+create Herwig::FRModelV_V_65 /Herwig/FRModel/V_V_65
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_65
+create Herwig::FRModelV_V_66 /Herwig/FRModel/V_V_66
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_66
+create Herwig::FRModelV_V_67 /Herwig/FRModel/V_V_67
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_67
+create Herwig::FRModelV_V_68 /Herwig/FRModel/V_V_68
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_68
+create Herwig::FRModelV_V_69 /Herwig/FRModel/V_V_69
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_69
+create Herwig::FRModelV_V_70 /Herwig/FRModel/V_V_70
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_70
+create Herwig::FRModelV_V_71 /Herwig/FRModel/V_V_71
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_71
+create Herwig::FRModelV_V_86 /Herwig/FRModel/V_V_86
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_86
+create Herwig::FRModelV_V_87 /Herwig/FRModel/V_V_87
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_87
+create Herwig::FRModelV_V_88 /Herwig/FRModel/V_V_88
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_88
+create Herwig::FRModelV_V_89 /Herwig/FRModel/V_V_89
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_89
+create Herwig::FRModelV_V_90 /Herwig/FRModel/V_V_90
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_90
+create Herwig::FRModelV_V_91 /Herwig/FRModel/V_V_91
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_91
+create Herwig::FRModelV_V_92 /Herwig/FRModel/V_V_92
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_92
+create Herwig::FRModelV_V_93 /Herwig/FRModel/V_V_93
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_93
+create Herwig::FRModelV_V_94 /Herwig/FRModel/V_V_94
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_94
+create Herwig::FRModelV_V_98 /Herwig/FRModel/V_V_98
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_98
+create Herwig::FRModelV_V_99 /Herwig/FRModel/V_V_99
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_99
+create Herwig::FRModelV_V_100 /Herwig/FRModel/V_V_100
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_100
+create Herwig::FRModelV_V_101 /Herwig/FRModel/V_V_101
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_101
+create Herwig::FRModelV_V_102 /Herwig/FRModel/V_V_102
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_102
+create Herwig::FRModelV_V_103 /Herwig/FRModel/V_V_103
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_103
+create Herwig::FRModelV_V_104 /Herwig/FRModel/V_V_104
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_104
+create Herwig::FRModelV_V_105 /Herwig/FRModel/V_V_105
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_105
+create Herwig::FRModelV_V_106 /Herwig/FRModel/V_V_106
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_106
+create Herwig::FRModelV_V_107 /Herwig/FRModel/V_V_107
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_107
+create Herwig::FRModelV_V_108 /Herwig/FRModel/V_V_108
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_108
+create Herwig::FRModelV_V_109 /Herwig/FRModel/V_V_109
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_109
+create Herwig::FRModelV_V_150 /Herwig/FRModel/V_V_150
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_150
+create Herwig::FRModelV_V_151 /Herwig/FRModel/V_V_151
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_151
+create Herwig::FRModelV_V_152 /Herwig/FRModel/V_V_152
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_152
+create Herwig::FRModelV_V_153 /Herwig/FRModel/V_V_153
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_153
+create Herwig::FRModelV_V_154 /Herwig/FRModel/V_V_154
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_154
+create Herwig::FRModelV_V_155 /Herwig/FRModel/V_V_155
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_155
+create Herwig::FRModelV_V_156 /Herwig/FRModel/V_V_156
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_156
+create Herwig::FRModelV_V_157 /Herwig/FRModel/V_V_157
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_157
+create Herwig::FRModelV_V_158 /Herwig/FRModel/V_V_158
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_158
+create Herwig::FRModelV_V_159 /Herwig/FRModel/V_V_159
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_159
+create Herwig::FRModelV_V_160 /Herwig/FRModel/V_V_160
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_160
+create Herwig::FRModelV_V_161 /Herwig/FRModel/V_V_161
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_161
+create Herwig::FRModelV_V_162 /Herwig/FRModel/V_V_162
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_162
+create Herwig::FRModelV_V_163 /Herwig/FRModel/V_V_163
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_163
+create Herwig::FRModelV_V_164 /Herwig/FRModel/V_V_164
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_164
+create Herwig::FRModelV_V_165 /Herwig/FRModel/V_V_165
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_165
+create Herwig::FRModelV_V_166 /Herwig/FRModel/V_V_166
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_166
+create Herwig::FRModelV_V_167 /Herwig/FRModel/V_V_167
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_167
+create Herwig::FRModelV_V_168 /Herwig/FRModel/V_V_168
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_168
+create Herwig::FRModelV_V_169 /Herwig/FRModel/V_V_169
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_169
+create Herwig::FRModelV_V_170 /Herwig/FRModel/V_V_170
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_170
+create Herwig::FRModelV_V_171 /Herwig/FRModel/V_V_171
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_171
+create Herwig::FRModelV_V_172 /Herwig/FRModel/V_V_172
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_172
+create Herwig::FRModelV_V_173 /Herwig/FRModel/V_V_173
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_173
+create Herwig::FRModelV_V_174 /Herwig/FRModel/V_V_174
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_174
+create Herwig::FRModelV_V_202 /Herwig/FRModel/V_V_202
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_202
+create Herwig::FRModelV_V_203 /Herwig/FRModel/V_V_203
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_203
+create Herwig::FRModelV_V_204 /Herwig/FRModel/V_V_204
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_204
+create Herwig::FRModelV_V_205 /Herwig/FRModel/V_V_205
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_205
+create Herwig::FRModelV_V_206 /Herwig/FRModel/V_V_206
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_206
+create Herwig::FRModelV_V_207 /Herwig/FRModel/V_V_207
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_207
+create Herwig::FRModelV_V_208 /Herwig/FRModel/V_V_208
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_208
+create Herwig::FRModelV_V_209 /Herwig/FRModel/V_V_209
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_209
+create Herwig::FRModelV_V_210 /Herwig/FRModel/V_V_210
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_210
+create Herwig::FRModelV_V_211 /Herwig/FRModel/V_V_211
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_211
+create Herwig::FRModelV_V_212 /Herwig/FRModel/V_V_212
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_212
+create Herwig::FRModelV_V_213 /Herwig/FRModel/V_V_213
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_213
+create Herwig::FRModelV_V_214 /Herwig/FRModel/V_V_214
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_214
+create Herwig::FRModelV_V_215 /Herwig/FRModel/V_V_215
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_215
+create Herwig::FRModelV_V_216 /Herwig/FRModel/V_V_216
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_216
+create Herwig::FRModelV_V_217 /Herwig/FRModel/V_V_217
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_217
+create Herwig::FRModelV_V_218 /Herwig/FRModel/V_V_218
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_218
+create Herwig::FRModelV_V_219 /Herwig/FRModel/V_V_219
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_219
+create Herwig::FRModelV_V_220 /Herwig/FRModel/V_V_220
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_220
+create Herwig::FRModelV_V_221 /Herwig/FRModel/V_V_221
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_221
+create Herwig::FRModelV_V_222 /Herwig/FRModel/V_V_222
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_222
+create Herwig::FRModelV_V_223 /Herwig/FRModel/V_V_223
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_223
+create Herwig::FRModelV_V_224 /Herwig/FRModel/V_V_224
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_224
+create Herwig::FRModelV_V_225 /Herwig/FRModel/V_V_225
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_225
+create Herwig::FRModelV_V_226 /Herwig/FRModel/V_V_226
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_226
+create Herwig::FRModelV_V_227 /Herwig/FRModel/V_V_227
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_227
+create Herwig::FRModelV_V_228 /Herwig/FRModel/V_V_228
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_228
+create Herwig::FRModelV_V_229 /Herwig/FRModel/V_V_229
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_229
+create Herwig::FRModelV_V_230 /Herwig/FRModel/V_V_230
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_230
+create Herwig::FRModelV_V_231 /Herwig/FRModel/V_V_231
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_231
+create Herwig::FRModelV_V_232 /Herwig/FRModel/V_V_232
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_232
+create Herwig::FRModelV_V_233 /Herwig/FRModel/V_V_233
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_233
+create Herwig::FRModelV_V_234 /Herwig/FRModel/V_V_234
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_234
+create Herwig::FRModelV_V_235 /Herwig/FRModel/V_V_235
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_235
+create Herwig::FRModelV_V_236 /Herwig/FRModel/V_V_236
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_236
+create Herwig::FRModelV_V_237 /Herwig/FRModel/V_V_237
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_237
+create Herwig::FRModelV_V_238 /Herwig/FRModel/V_V_238
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_238
+create Herwig::FRModelV_V_239 /Herwig/FRModel/V_V_239
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_239
+create Herwig::FRModelV_V_240 /Herwig/FRModel/V_V_240
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_240
+create Herwig::FRModelV_V_241 /Herwig/FRModel/V_V_241
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_241
+create Herwig::FRModelV_V_242 /Herwig/FRModel/V_V_242
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_242
+create Herwig::FRModelV_V_243 /Herwig/FRModel/V_V_243
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_243
+create Herwig::FRModelV_V_244 /Herwig/FRModel/V_V_244
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_244
+create Herwig::FRModelV_V_245 /Herwig/FRModel/V_V_245
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_245
+create Herwig::FRModelV_V_246 /Herwig/FRModel/V_V_246
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_246
+create Herwig::FRModelV_V_247 /Herwig/FRModel/V_V_247
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_247
+create Herwig::FRModelV_V_248 /Herwig/FRModel/V_V_248
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_248
+create Herwig::FRModelV_V_249 /Herwig/FRModel/V_V_249
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_249
+create Herwig::FRModelV_V_250 /Herwig/FRModel/V_V_250
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_250
+create Herwig::FRModelV_V_251 /Herwig/FRModel/V_V_251
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_251
+create Herwig::FRModelV_V_252 /Herwig/FRModel/V_V_252
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_252
+create Herwig::FRModelV_V_253 /Herwig/FRModel/V_V_253
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_253
+create Herwig::FRModelV_V_254 /Herwig/FRModel/V_V_254
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_254
+create Herwig::FRModelV_V_255 /Herwig/FRModel/V_V_255
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_255
+create Herwig::FRModelV_V_256 /Herwig/FRModel/V_V_256
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_256
+create Herwig::FRModelV_V_257 /Herwig/FRModel/V_V_257
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_257
+create Herwig::FRModelV_V_258 /Herwig/FRModel/V_V_258
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_258
+create Herwig::FRModelV_V_259 /Herwig/FRModel/V_V_259
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_259
+create Herwig::FRModelV_V_260 /Herwig/FRModel/V_V_260
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_260
+create Herwig::FRModelV_V_261 /Herwig/FRModel/V_V_261
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_261
+create Herwig::FRModelV_V_262 /Herwig/FRModel/V_V_262
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_262
+create Herwig::FRModelV_V_263 /Herwig/FRModel/V_V_263
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_263
+create Herwig::FRModelV_V_264 /Herwig/FRModel/V_V_264
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_264
+create Herwig::FRModelV_V_265 /Herwig/FRModel/V_V_265
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_265
+create Herwig::FRModelV_V_266 /Herwig/FRModel/V_V_266
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_266
+create Herwig::FRModelV_V_267 /Herwig/FRModel/V_V_267
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_267
+create Herwig::FRModelV_V_268 /Herwig/FRModel/V_V_268
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_268
+create Herwig::FRModelV_V_269 /Herwig/FRModel/V_V_269
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_269
+create Herwig::FRModelV_V_270 /Herwig/FRModel/V_V_270
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_270
+create Herwig::FRModelV_V_271 /Herwig/FRModel/V_V_271
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_271
+create Herwig::FRModelV_V_272 /Herwig/FRModel/V_V_272
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_272
+create Herwig::FRModelV_V_273 /Herwig/FRModel/V_V_273
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_273
+create Herwig::FRModelV_V_274 /Herwig/FRModel/V_V_274
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_274
+create Herwig::FRModelV_V_275 /Herwig/FRModel/V_V_275
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_275
+create Herwig::FRModelV_V_276 /Herwig/FRModel/V_V_276
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_276
+create Herwig::FRModelV_V_277 /Herwig/FRModel/V_V_277
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_277
+create Herwig::FRModelV_V_278 /Herwig/FRModel/V_V_278
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_278
+create Herwig::FRModelV_V_279 /Herwig/FRModel/V_V_279
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_279
+create Herwig::FRModelV_V_280 /Herwig/FRModel/V_V_280
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_280
+create Herwig::FRModelV_V_281 /Herwig/FRModel/V_V_281
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_281
+create Herwig::FRModelV_V_282 /Herwig/FRModel/V_V_282
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_282
+create Herwig::FRModelV_V_283 /Herwig/FRModel/V_V_283
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_283
+create Herwig::FRModelV_V_284 /Herwig/FRModel/V_V_284
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_284
+create Herwig::FRModelV_V_285 /Herwig/FRModel/V_V_285
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_285
+create Herwig::FRModelV_V_286 /Herwig/FRModel/V_V_286
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_286
+create Herwig::FRModelV_V_287 /Herwig/FRModel/V_V_287
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_287
+create Herwig::FRModelV_V_288 /Herwig/FRModel/V_V_288
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_288
+create Herwig::FRModelV_V_289 /Herwig/FRModel/V_V_289
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_289
+create Herwig::FRModelV_V_290 /Herwig/FRModel/V_V_290
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_290
+create Herwig::FRModelV_V_291 /Herwig/FRModel/V_V_291
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_291
+create Herwig::FRModelV_V_313 /Herwig/FRModel/V_V_313
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_313
+create Herwig::FRModelV_V_320 /Herwig/FRModel/V_V_320
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_320
+create Herwig::FRModelV_V_321 /Herwig/FRModel/V_V_321
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_321
+create Herwig::FRModelV_V_322 /Herwig/FRModel/V_V_322
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_322
+create Herwig::FRModelV_V_323 /Herwig/FRModel/V_V_323
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_323
+create Herwig::FRModelV_V_324 /Herwig/FRModel/V_V_324
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_324
+create Herwig::FRModelV_V_325 /Herwig/FRModel/V_V_325
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_325
+create Herwig::FRModelV_V_335 /Herwig/FRModel/V_V_335
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_335
+create Herwig::FRModelV_V_336 /Herwig/FRModel/V_V_336
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_336
+create Herwig::FRModelV_V_337 /Herwig/FRModel/V_V_337
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_337
+create Herwig::FRModelV_V_338 /Herwig/FRModel/V_V_338
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_338
+create Herwig::FRModelV_V_339 /Herwig/FRModel/V_V_339
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_339
+create Herwig::FRModelV_V_340 /Herwig/FRModel/V_V_340
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_340
+create Herwig::FRModelV_V_343 /Herwig/FRModel/V_V_343
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_343
+create Herwig::FRModelV_V_344 /Herwig/FRModel/V_V_344
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_344
+create Herwig::FRModelV_V_345 /Herwig/FRModel/V_V_345
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_345
+create Herwig::FRModelV_V_346 /Herwig/FRModel/V_V_346
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_346
+create Herwig::FRModelV_V_347 /Herwig/FRModel/V_V_347
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_347
+create Herwig::FRModelV_V_348 /Herwig/FRModel/V_V_348
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_348
+create Herwig::FRModelV_V_349 /Herwig/FRModel/V_V_349
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_349
+create Herwig::FRModelV_V_350 /Herwig/FRModel/V_V_350
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_350
+create Herwig::FRModelV_V_351 /Herwig/FRModel/V_V_351
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_351
+create Herwig::FRModelV_V_352 /Herwig/FRModel/V_V_352
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_352
+create Herwig::FRModelV_V_353 /Herwig/FRModel/V_V_353
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_353
+create Herwig::FRModelV_V_354 /Herwig/FRModel/V_V_354
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_354
+create Herwig::FRModelV_V_355 /Herwig/FRModel/V_V_355
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_355
+create Herwig::FRModelV_V_359 /Herwig/FRModel/V_V_359
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_359
+create Herwig::FRModelV_V_361 /Herwig/FRModel/V_V_361
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_361
+create Herwig::FRModelV_V_365 /Herwig/FRModel/V_V_365
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_365
+create Herwig::FRModelV_V_366 /Herwig/FRModel/V_V_366
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_366
+create Herwig::FRModelV_V_367 /Herwig/FRModel/V_V_367
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_367
+create Herwig::FRModelV_V_368 /Herwig/FRModel/V_V_368
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_368
+create Herwig::FRModelV_V_369 /Herwig/FRModel/V_V_369
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_369
+create Herwig::FRModelV_V_370 /Herwig/FRModel/V_V_370
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_370
+create Herwig::FRModelV_V_371 /Herwig/FRModel/V_V_371
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_371
+create Herwig::FRModelV_V_372 /Herwig/FRModel/V_V_372
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_372
+create Herwig::FRModelV_V_373 /Herwig/FRModel/V_V_373
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_373
+create Herwig::FRModelV_V_374 /Herwig/FRModel/V_V_374
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_374
+create Herwig::FRModelV_V_375 /Herwig/FRModel/V_V_375
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_375
+create Herwig::FRModelV_V_376 /Herwig/FRModel/V_V_376
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_376
+create Herwig::FRModelV_V_382 /Herwig/FRModel/V_V_382
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_382
+create Herwig::FRModelV_V_383 /Herwig/FRModel/V_V_383
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_383
+create Herwig::FRModelV_V_384 /Herwig/FRModel/V_V_384
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_384
+create Herwig::FRModelV_V_390 /Herwig/FRModel/V_V_390
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_390
+create Herwig::FRModelV_V_391 /Herwig/FRModel/V_V_391
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_391
+create Herwig::FRModelV_V_392 /Herwig/FRModel/V_V_392
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_392
+create Herwig::FRModelV_V_393 /Herwig/FRModel/V_V_393
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_393
+create Herwig::FRModelV_V_396 /Herwig/FRModel/V_V_396
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_396
+create Herwig::FRModelV_V_397 /Herwig/FRModel/V_V_397
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_397
+create Herwig::FRModelV_V_398 /Herwig/FRModel/V_V_398
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_398
+create Herwig::FRModelV_V_399 /Herwig/FRModel/V_V_399
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_399
+create Herwig::FRModelV_V_400 /Herwig/FRModel/V_V_400
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_400
+create Herwig::FRModelV_V_401 /Herwig/FRModel/V_V_401
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_401
+create Herwig::FRModelV_V_402 /Herwig/FRModel/V_V_402
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_402
+create Herwig::FRModelV_V_403 /Herwig/FRModel/V_V_403
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_403
+create Herwig::FRModelV_V_404 /Herwig/FRModel/V_V_404
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_404
+create Herwig::FRModelV_V_405 /Herwig/FRModel/V_V_405
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_405
+create Herwig::FRModelV_V_406 /Herwig/FRModel/V_V_406
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_406
+create Herwig::FRModelV_V_407 /Herwig/FRModel/V_V_407
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_407
+create Herwig::FRModelV_V_408 /Herwig/FRModel/V_V_408
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_408
+create Herwig::FRModelV_V_409 /Herwig/FRModel/V_V_409
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_409
+create Herwig::FRModelV_V_410 /Herwig/FRModel/V_V_410
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_410
+create Herwig::FRModelV_V_411 /Herwig/FRModel/V_V_411
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_411
+create Herwig::FRModelV_V_412 /Herwig/FRModel/V_V_412
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_412
+create Herwig::FRModelV_V_413 /Herwig/FRModel/V_V_413
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_413
+create Herwig::FRModelV_V_414 /Herwig/FRModel/V_V_414
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_414
+create Herwig::FRModelV_V_415 /Herwig/FRModel/V_V_415
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_415
+create Herwig::FRModelV_V_416 /Herwig/FRModel/V_V_416
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_416
+create Herwig::FRModelV_V_417 /Herwig/FRModel/V_V_417
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_417
+create Herwig::FRModelV_V_418 /Herwig/FRModel/V_V_418
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_418
+create Herwig::FRModelV_V_419 /Herwig/FRModel/V_V_419
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_419
+create Herwig::FRModelV_V_420 /Herwig/FRModel/V_V_420
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_420
+create Herwig::FRModelV_V_421 /Herwig/FRModel/V_V_421
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_421
+create Herwig::FRModelV_V_422 /Herwig/FRModel/V_V_422
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_422
+create Herwig::FRModelV_V_423 /Herwig/FRModel/V_V_423
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_423
+create Herwig::FRModelV_V_424 /Herwig/FRModel/V_V_424
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_424
+create Herwig::FRModelV_V_425 /Herwig/FRModel/V_V_425
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_425
+create Herwig::FRModelV_V_426 /Herwig/FRModel/V_V_426
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_426
+create Herwig::FRModelV_V_427 /Herwig/FRModel/V_V_427
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_427
+create Herwig::FRModelV_V_428 /Herwig/FRModel/V_V_428
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_428
+create Herwig::FRModelV_V_429 /Herwig/FRModel/V_V_429
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_429
+create Herwig::FRModelV_V_430 /Herwig/FRModel/V_V_430
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_430
+create Herwig::FRModelV_V_431 /Herwig/FRModel/V_V_431
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_431
+create Herwig::FRModelV_V_432 /Herwig/FRModel/V_V_432
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_432
+create Herwig::FRModelV_V_433 /Herwig/FRModel/V_V_433
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_433
+create Herwig::FRModelV_V_434 /Herwig/FRModel/V_V_434
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_434
+create Herwig::FRModelV_V_435 /Herwig/FRModel/V_V_435
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_435
+create Herwig::FRModelV_V_436 /Herwig/FRModel/V_V_436
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_436
+create Herwig::FRModelV_V_437 /Herwig/FRModel/V_V_437
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_437
+create Herwig::FRModelV_V_438 /Herwig/FRModel/V_V_438
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_438
+create Herwig::FRModelV_V_439 /Herwig/FRModel/V_V_439
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_439
+create Herwig::FRModelV_V_440 /Herwig/FRModel/V_V_440
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_440
+create Herwig::FRModelV_V_441 /Herwig/FRModel/V_V_441
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_441
+create Herwig::FRModelV_V_442 /Herwig/FRModel/V_V_442
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_442
+create Herwig::FRModelV_V_443 /Herwig/FRModel/V_V_443
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_443
+create Herwig::FRModelV_V_444 /Herwig/FRModel/V_V_444
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_444
+create Herwig::FRModelV_V_445 /Herwig/FRModel/V_V_445
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_445
+create Herwig::FRModelV_V_446 /Herwig/FRModel/V_V_446
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_446
+create Herwig::FRModelV_V_447 /Herwig/FRModel/V_V_447
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_447
+create Herwig::FRModelV_V_448 /Herwig/FRModel/V_V_448
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_448
+create Herwig::FRModelV_V_449 /Herwig/FRModel/V_V_449
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_449
+create Herwig::FRModelV_V_450 /Herwig/FRModel/V_V_450
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_450
+create Herwig::FRModelV_V_451 /Herwig/FRModel/V_V_451
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_451
+create Herwig::FRModelV_V_452 /Herwig/FRModel/V_V_452
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_452
+create Herwig::FRModelV_V_453 /Herwig/FRModel/V_V_453
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_453
+create Herwig::FRModelV_V_454 /Herwig/FRModel/V_V_454
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_454
+create Herwig::FRModelV_V_455 /Herwig/FRModel/V_V_455
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_455
+create Herwig::FRModelV_V_456 /Herwig/FRModel/V_V_456
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_456
+create Herwig::FRModelV_V_457 /Herwig/FRModel/V_V_457
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_457
+create Herwig::FRModelV_V_458 /Herwig/FRModel/V_V_458
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_458
+create Herwig::FRModelV_V_459 /Herwig/FRModel/V_V_459
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_459
+create Herwig::FRModelV_V_460 /Herwig/FRModel/V_V_460
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_V_460
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_GenericHPP
+insert FRModel:ExtraVertices 0 /Herwig/FRModel/V_GenericHGG
+
+
+
+
+###################################################
+#
+#  Set up spin correlation Decayers
+#
+###################################################
+cd /Herwig/NewPhysics
+
+set TwoBodyDC:CreateDecayModes Yes
+set ThreeBodyDC:CreateDecayModes Yes
+set WeakDecayConstructor:CreateDecayModes Yes
+
+###################################################
+# Set up the model framework
+###################################################
+set /Herwig/FRModel/FRModel:ModelGenerator NewModel
+###################################################
+#
+#  Choose FR over SM
+#
+###################################################
+cd /Herwig/Generators
+
+erase DefaultStrategy:DefaultParticlesDirs[0]
+insert DefaultStrategy:DefaultParticlesDirs[0] /Herwig/FRModel/Particles
+
+set EventGenerator:StandardModelParameters  /Herwig/FRModel/FRModel
