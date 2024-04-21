@@ -1,0 +1,145 @@
+# -*- ThePEG-repository -*-
+
+##################################################
+## Herwig/Matchbox example input file
+##################################################
+
+##################################################
+## Collider type
+##################################################
+
+read snippets/EECollider.in
+
+# Set emission to POWHEG for radiation in decays
+#set /Herwig/Shower/ShowerHandler:HardEmission POWHEG
+
+cd /Herwig/Shower
+
+##################################################
+## Process selection
+##################################################
+
+library LesHouches.so
+
+cd /Herwig/EventHandlers
+create ThePEG::LesHouchesFileReader myReader
+set myReader:FileName RS/Events/run_01/unweighted_events.lhe.gz
+create ThePEG::Cuts /Herwig/Cuts/NoCuts
+set myReader:Cuts /Herwig/Cuts/NoCuts
+set myReader:CacheFileName cache.tmp
+set myReader:MaxScan 1000000
+
+create ThePEG::LesHouchesEventHandler myLesHouchesHandler
+set myLesHouchesHandler:CascadeHandler /Herwig/Shower/ShowerHandler
+set myLesHouchesHandler:HadronizationHandler /Herwig/Hadronization/ClusterHadHandler
+set myLesHouchesHandler:DecayHandler /Herwig/Decays/DecayHandler
+
+insert myLesHouchesHandler:LesHouchesReaders 0 myReader
+set myLesHouchesHandler:PartonExtractor /Herwig/Partons/EEExtractor
+# set myLesHouchesHandler:WeightOption NegUnitWeight
+set myLesHouchesHandler:WeightOption VarNegWeight
+set myReader:WeightWarnings false
+##################################################
+# PDFs
+##################################################
+
+set myReader:InitPDFs 0
+set myReader:MomentumTreatment RescaleEnergy #momentum conservation
+
+set myReader:PDFA /Herwig/Partons/LeptonPDF
+set myReader:PDFB /Herwig/Partons/LeptonPDF
+
+set /Herwig/Particles/e-:PDF /Herwig/Partons/LeptonPDF
+set /Herwig/Particles/e+:PDF /Herwig/Partons/LeptonPDF
+
+##################################################
+# Technical parameters for this run
+##################################################
+
+cd /Herwig/Generators
+set EventGenerator:NumberOfEvents __NEVENTS__
+set EventGenerator:RandomNumberGenerator:Seed __SEED__
+set EventGenerator:PrintEvent 10000
+set EventGenerator:MaxErrors 10000000
+
+##################################################
+# physics parameters
+##################################################
+
+cd /Herwig/Generators
+set EventGenerator:EventHandler:LuminosityFunction:Energy 1000.*GeV
+set EventGenerator:EventHandler:CascadeHandler:MPIHandler NULL
+set /Herwig/Shower/ShowerHandler:HardEmission 0
+set /Herwig/Shower/PartnerFinder:QEDPartner IIandFF
+
+##################################################
+## Scale choice
+## See the documentation for more options
+##################################################
+
+cd /Herwig/MatrixElements/Matchbox
+set Factory:ScaleChoice Scales/SHatScale
+
+##################################################
+## Matching and shower selection
+##################################################
+
+read Matchbox/MCatLO-DefaultShower.in
+#read Matchbox/MCatNLO-DefaultShower.in
+
+##################################################
+## Handlers
+##################################################
+
+cd /Herwig/Generators
+set EventGenerator:EventHandler /Herwig/EventHandlers/myLesHouchesHandler
+#set EventGenerator:EventHandler:CascadeHandler NULL ###
+set EventGenerator:EventHandler:HadronizationHandler NULL
+set EventGenerator:EventHandler:DecayHandler NULL
+set /Herwig/Analysis/Basics:CheckQuark 0
+set /Herwig/Shower/ShowerHandler:Interactions EWOnly ###
+set /Herwig/Particles/W-:Stable Stable
+set /Herwig/Particles/W+:Stable Stable
+set /Herwig/Particles/Z0:Stable Stable
+set /Herwig/Particles/h0:Stable Stable
+set /Herwig/Particles/t:Stable Stable
+set /Herwig/Particles/tbar:Stable Stable
+set EventGenerator:EventHandler:StatLevel Full
+
+set /Herwig/Model:EW/Scheme 7
+set /Herwig/Particles/Z0:NominalMass 91.18800
+set /Herwig/Particles/h0:NominalMass 125.0000
+set /Herwig/Particles/t:NominalMass 173.0000
+set /Herwig/Model:EW/AlphaEMMZ 0.0075467711139788835
+set /Herwig/Model:EW/FermiConstant 1.166390e-05
+
+##################################################
+## Analyses
+##################################################
+
+cd /Herwig/Analysis
+insert Rivet:Analyses 0 RAnalysis
+insert /Herwig/Generators/EventGenerator:AnalysisHandlers 0 Rivet
+
+##################################################
+## prepare for Rivet analysis or HepMC output
+## when running with parton shower
+##################################################
+
+#read snippets/Rivet.in
+#insert /Herwig/Analysis/Rivet:Analyses 0 XXX_2015_ABC123
+#read snippets/HepMC.in # We cannot read this file because 'Matchbox/MCatLO-DefaultShower.in' file already creates /Herwig/Analysis/HepMC, which makes a duplication
+#set /Herwig/Analysis/HepMC:PrintEvent 10000
+#set /Herwig/Analysis/HepMC:Format GenEvent
+#set /Herwig/Analysis/HepMC:Units GeV_mm
+#insert /Herwig/Generators/EventGenerator:AnalysisHandlers 0 /Herwig/Analysis/HepMC
+
+##################################################
+## Save the generator
+##################################################
+
+set /Herwig/Shower/ShowerHandler:LimitEmissions OneFinalStateEmission ###
+do /Herwig/MatrixElements/Matchbox/Factory:ProductionMode
+
+cd /Herwig/Generators
+saverun RS-__RUN__ EventGenerator
