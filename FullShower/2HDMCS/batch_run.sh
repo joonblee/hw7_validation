@@ -12,7 +12,7 @@ CompileRivet=true
 makehtml=true
 
 NRUN=4
-EVTpRUN=10000
+EVTpRUN=1000
 
 this_dir=$PWD
 
@@ -60,7 +60,7 @@ if $CompileUFO; then
   sed -i "822s/340/347.76/g" ${UFOName}/parameters.py
   sed -i "830s/400/386.18/g" ${UFOName}/parameters.py
   sed -i "838s/500/529.16/g" ${UFOName}/parameters.py
-  sed -i "846s/30/500/g" ${UFOName}/parameters.py
+  sed -i "846s/35/107/g" ${UFOName}/parameters.py
 
   echo ""
   echo " ++ Run ufo2herwig ++"
