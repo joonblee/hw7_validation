@@ -1,4 +1,5 @@
 # 1. How to install Hw7
+
 Herwig works under Ubuntu 20.X with 
 ```
 $ sudo apt -y install gcc g++ gfortran automake autoconf libtool tar make emacs wget openssl mercurial git
@@ -6,22 +7,23 @@ $ sudo apt-get -y install libssl-dev # instead of openssl-devel
 $ sudo apt-get -y install python3-pip
 $ sudo pip3 install cython sympy scipy  six
 ```
+To install an official version, one can get `herwig-bootstrap` file from the herwig homepage and just do `./herwig-bootstrap -j 4 $PWD`.
 
-### Some errors
-[1] After re-installing Ubuntu, I've got a following errors: 
-```
-/usr/bin/env: %%% ‘python’: No such file or directory.
-```
-This can be solved by $ sudo apt install python-is-python3)
+If you want to utilize BSM PS before HW7.4 release, you need to have up-to-date `herwig-bootstrap` code. BSM PS is now merged into the trunk (i.e. HW central repo), but not released yet. Pleas `git clone` this repo and use `herwig-bootstrap` file in there.
 
-[2] In TH's desktop, there is no gengetopt so do `$ sudo apt-get install -y gengetopt`, then 
+With the up-to-date `herwig-bootstrap` code, one just need to do
 ```
-$ chmod +x herwig-bootstrap
-$ ./herwig-bootstrap -j 4 ./
+./herwig-bootstrap -j 4 $PWD --herwig-hg --thepeg-hg --thepeg-version="default" --herwig-version="default"
 ```
-should work.
+See the "Trouble shooting" section if you met any errors while installing HW7.
 
-Use `--without-PROGRAM` option when some programs are not installed due to the network error, e.g. `--without-vbfnlo`.
+Now everything is ready.
+One can run herwig referring `https://herwig.hepforge.org/tutorials/gettingstarted/firstrun.html`, while I recommend to use my validation code as described in the next section.
+
+
+
+## Old method (deprecated)
+
 Now remove the original herwig and install herwigbsm repo using mercurial.
 ```
 $ rm src/herwig_bootstrap_thepeg_2_2_3_done
@@ -52,7 +54,26 @@ Or equivalently, use as below:
 $ ./herwig-bootstrap $PWD --herwig-hg --thepeg-hg --herwig-repo=ssh://vcs@phab.hepforge.org/diffusion/547/herwigbsm/ --herwig-version=default
 ```
 
-### Special note
+
+## Trouble shooting
+
+1. After re-installing Ubuntu, I've got a following errors: 
+```
+/usr/bin/env: %%% ‘python’: No such file or directory.
+```
+This can be solved by $ sudo apt install python-is-python3)
+
+2. In TH's desktop, there is no gengetopt so do `$ sudo apt-get install -y gengetopt`, then 
+```
+$ chmod +x herwig-bootstrap
+$ ./herwig-bootstrap -j 4 ./
+```
+should work.
+
+3. Errors on subprograms
+Use `--without-PROGRAM` option when some programs are not installed due to the network error, e.g. `--without-vbfnlo`.
+
+4. Errors on building UFO model
 When testing Neda's model, I've faced an error during compiling the UFO file. What I did is as follow:
 
 ```
@@ -69,7 +90,7 @@ To solve this problem, I builded a local copy of the gcc compilers following:
 $ ./herwig-bootstrap -j 4 --build-gcc ./ 
 ```
 
-### [1] Error during 'make'
+[1] Error during 'make'
 ```
 g++ -std=c++11 -fPIC -I/home/joonblee/WD/Herwig/./include -I/home/joonblee/WD/Herwig/.//include -I/home/joonblee/WD/Herwig/.//include -Wall -Wextra -pedantic -O2 -DBOOST_UBLAS_NDEBUG -c FRModel.cc -o FRModel.o
 g++ -std=c++11 -fPIC -I/home/joonblee/WD/Herwig/./include -I/home/joonblee/WD/Herwig/.//include -I/home/joonblee/WD/Herwig/.//include -Wall -Wextra -pedantic -O2 -DBOOST_UBLAS_NDEBUG -c FRModel.cc -o FRModel.o
@@ -80,13 +101,90 @@ See <file:///usr/share/doc/gcc-9/README.Bugs> for instructions.
 make: *** [Makefile:37: FRModel.o] Error 4
 ```
 
+5. `aclocal` error
+
+Error log:
+```
+autoreconf -vi
+autoreconf: export WARNINGS=
+autoreconf: Entering directory '.'
+autoreconf: configure.ac: not using Gettext
+autoreconf: running: aclocal -I m4
+Can't exec "aclocal": No such file or directory at /usr/local/share/autoconf/Autom4te/FileUtils.pm line 299.
+autoreconf: error: aclocal failed with exit status: 2
+Traceback (most recent call last):
+  File "./herwig-bootstrap", line 1397, in <module>
+    checkout(src_dir,"TheP8I","",opts.thep8i_repo,branch,'git')
+  File "./herwig-bootstrap", line 541, in checkout
+    check_call(["autoreconf","-vi"])
+  File "./herwig-bootstrap", line 498, in check_call
+    subprocess.check_call(arglist)
+  File "/usr/lib/python3.8/subprocess.py", line 364, in check_call
+    raise CalledProcessError(retcode, cmd)
+subprocess.CalledProcessError: Command '['autoreconf', '-vi']' returned non-zero exit status 2.
+```
+Solution:
+```
+$ sudo apt-get install automake
+```
+
+6. `libgsl` error
+
+Error log:
+```
+checking if THEPEGPATH is set... yes (/home/joonblee/WD/herwig74pre)
+checking if the installed ThePEG works... yes 
+checking for gsl location... in system libraries
+checking for sqrt in -lm... yes 
+checking for cblas_srot in -lgslcblas... no
+checking for gsl_ran_poisson in -lgsl... no
+configure: error: Cannot find libgsl. Please install the GNU scientific library.
+Traceback (most recent call last):
+  File "./herwig-bootstrap", line 1712, in <module>
+    check_call(args)
+  File "./herwig-bootstrap", line 498, in check_call
+    subprocess.check_call(arglist)
+  File "/usr/lib/python3.8/subprocess.py", line 364, in check_call
+    raise CalledProcessError(retcode, cmd)
+subprocess.CalledProcessError: Command '['./configure', '--prefix=/home/joonblee/WD/herwig74pre', '--with-pythia8=/home/joonblee/WD/herwig74pre', 'THEPEGPATH=/home/joonblee/WD/herwig74pre']' returned non-zero exit status 1.
+```
+Solution:
+```
+$ sudo apt-get install libgsl-dev
+```
+
+
 
 # 2. How to run validation code
-How to run Aidin's validation code, in ssh://vcs@phab.hepforge.org/diffusion/548/herwig-bsm-notes/?
+
+After correctly installing herwig, you can direcly run herwig and rivet with this repo.
+
+- `OneFSR` directory: Generate all validation plots in the paper, JHEP08(2024)064, which compares fixed-order calculation from MG5 and a single FSR process from HW7 without additional shower, decay, and so on.
+- `FullShower` directory: Simulate full shower.
+
+For example, if you want to test dark photon shower from $pp\rightarrow jj$ process at $\sqrt{s} =$ 13 TeV with $m(Z') =$ 2 GeV, one can simply do
+```
+mv FullShower/HAHM/13TeV/Zp_2GeV/
+source batch_run.sh
+```
+This automatically installs the HAHM model file, build rivet analysis, run herwig, and draw plots.
+Note you should change the herwig location on L31 in `batch_run.sh` properly.
+This should be the location where you run the bootstrap.
+If all things go well, you should be able to see a `rivet-plots` directory.
+
+
+## Note
+
+- `LHC.in`: This file contains all necessary ingredients to run herwig, i.e. basic setups for pp collison, an hard process, parton shower, decay, event numbers, random seeds, and so on.
+- `RAnalysis.cc`: This file is responsible for rivet analysis. One can change plot definitions or event selections here.
+- `batch_run.sh`: This file actually activates and runs herwig, i.e. all things described in `https://herwig.hepforge.org/tutorials/gettingstarted/firstrun.html` were already written in this file.
+
+
+## Aidin's code (deprecated)
+How to run Aidin's validation code, in `ssh://vcs@phab.hepforge.org/diffusion/548/herwig-bsm-notes/`?
 (Up-to-date validation repo: https://github.com/joonblee/hw7_validation/tree/main)
 
-
-## Issue-1
+### Issue-1
 To run Aidin's validation code(ZH), I update MG5 version to 3.3.2 as follows:
 ```
 $ rm -rf opt/MG5_*
@@ -94,7 +192,7 @@ $ rm src/herwig_bootstrap_madgraph_done
 $ ./herwig-bootstrap -j 4 ./ --madgraph-version=3.3.2
 ```
 
-## Issue-2
+### Issue-2
 When I run the validation code and run MG5, I've got an error which cannot find NNPDF23_ls_as_0130_qed.
 
 ### method 1: I thus install it seperately.
@@ -158,6 +256,8 @@ Finally we can make some plots with Rivet using below commands:
 $ rivet-mkhtml FO.yoda
 ```
 
+## Useful notes
+One can merge two yoda files with `yodamerge -o [Output File].yoda [First Input].yoda [Second Input].yoda` which averages two yoda files. If you want to stack (add up) two files directly, do ``yodastack -o [Output File].yoda [First Input].yoda [Second Input].yoda`.
 
 
 # 5. How to push updates on my local repo to the remote repo?
@@ -194,20 +294,21 @@ $ hg push ssh://vcs@phab.hepforge.org/diffusion/547/herwigbsm/
 
 # 6. BSM model
 
-Install 2HDMtII_NLO file from https://feynrules.irmp.ucl.ac.be/raw-attachment/wiki/2HDM/2HDMtII_NLO.tar.gz
+Install 2HDMtII_NLO file from `https://feynrules.irmp.ucl.ac.be/raw-attachment/wiki/2HDM/2HDMtII_NLO.tar.gz`
 ```
 $ cd /go/to/test/directory
 $ tar xzf 2HDMtII_NLO.tar.gz
-$ ufo2herwig 2HDMII_NLO --convert
+$ ufo2herwig 2HDMII_NLO --enable-bsm-shower --convert
 $ make
 ```
 
 *** If there is any other `*.cc` files in current directory without `FRModel.cc` then the `make` (based on `Makefile`) compile all `*.cc` files and make some troubles. Troubleshouting: modify Makefile `*.cc` -> `FRModel*.cc`.
 *** When you successfully run `ufo2herwig` but get some errors after `make` such as `cannot find FRModel.so` (which is nominally due to another `*.cc` files in the directory), you should erase the model directory (i.e. 2HDMtII_NLO in this case) because it might already include some errors inside
 
-
-ufo2herwig /address/to/ufo --allow-fcnc
-
+Note FCNC modes are not allowed by default. One can allow this with
+```
+ufo2herwig /address/to/ufo --enable-bsm-shower --allow-fcnc
+```
 
 
 

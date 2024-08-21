@@ -1,0 +1,139 @@
+# -*- ThePEG-repository -*-
+
+### CMS commands ###
+
+##################################################
+# Example generator based on LHC parameters
+# usage: Herwig read LHC.in
+##################################################
+read snippets/PPCollider.in
+
+##################################################
+# Baseline settings
+##################################################
+#cd /Herwig/EventHandlers # Doesn't work. Use EventGenerators
+#set EventHandler:LuminosityFunction:Energy 13000*GeV # Doesn't work. Use EventGenerators
+
+cd /Herwig/Generators # Try this
+set EventGenerator:EventHandler:LuminosityFunction:Energy 13000.*GeV
+
+##################################################
+# Event weights
+##################################################
+mkdir /Herwig/Weights
+cd /Herwig/Weights
+create ThePEG::ReweightMinPT reweightMinPT ReweightMinPT.so
+set /Herwig/Weights/reweightMinPT:Power 4.5 # Make more events at high pt
+set /Herwig/Weights/reweightMinPT:Scale 15.*GeV
+
+##################################################
+# Matrix Elements for hadron-hadron collisions 
+# (by default only gamma/Z switched on)
+##################################################
+cd /Herwig/MatrixElements/
+insert SubProcess:MatrixElements[0] MEQCD2to2
+#insert SubProcess:MatrixElements[0] /Herwig/UnderlyingEvent/MEQCD2to2Fast
+# MEQCD2to2Fast, that uses hard-coded formulae for the QCD 2 -> 2 scattering matrix elements rather than the helicity libraries of ThePEG. This class is significantly faster than the default MEQCD2to2 class, although it does not implement spin correlations. It is intended to be used in the generation of the multiple parton-parton scatterings for the underlying event where the spin correlations are not important but due to the number of additional scatterings that must be generated the speed of the calculation can significantly affect the run time of the event generator.
+# https://herwig.hepforge.org/doxygen/MEQCD2to2FastInterfaces.html
+insert SubProcess:Preweights[0] /Herwig/Weights/reweightMinPT
+
+##################################################
+# Cuts (hard process level)
+##################################################
+cd /Herwig/Cuts
+set /Herwig/Cuts/JetKtCut:MinKT 15.*GeV
+set /Herwig/Cuts/JetKtCut:MaxKT 7000.*GeV
+set /Herwig/Cuts/JetKtCut:MaxEta  3.
+set /Herwig/Cuts/Cuts:MHatMin  0.0*GeV
+#set /Herwig/Cuts/Cuts:MHatMax  0.0*GeV
+set /Herwig/Cuts/Cuts:X1Min    1e-07
+set /Herwig/Cuts/Cuts:X2Min    1e-07
+set /Herwig/Cuts/MassCut:MinM  0.0*GeV
+#read Matchbox/DefaultPPJets.in
+#set /Herwig/Cuts/JetFinder:Variant AntiKt
+#set /Herwig/Cuts/JetFinder:ConeRadius 0.4
+#insert JetCuts:JetRegions 0 FirstJet
+#set /Herwig/Cuts/FirstJet:PtMin 1000.*GeV
+
+### BSM commands ###
+
+##################################################
+# Technical parameters for this run
+##################################################
+cd /Herwig/Generators
+
+##################################################
+# LHC physics parameters (override defaults here) 
+##################################################
+
+read FRModel.model
+
+cd /Herwig/NewPhysics
+
+#set TwoBodyDC:CreateDecayModes No
+#set ThreeBodyDC:CreateDecayModes No
+#set FourBodyDC:CreateDecayModes No
+#set WeakDecayConstructor:CreateDecayModes No
+
+insert /Herwig/NewPhysics/DecayConstructor:DisableModes 0 Zp->u,ubar;
+insert /Herwig/NewPhysics/DecayConstructor:DisableModes 0 Zp->d,dbar;
+insert /Herwig/NewPhysics/DecayConstructor:DisableModes 0 Zp->s,sbar;
+insert /Herwig/NewPhysics/DecayConstructor:DisableModes 0 Zp->e-,e+;
+insert /Herwig/NewPhysics/DecayConstructor:DisableModes 0 Zp->nu_e,nu_ebar;
+insert /Herwig/NewPhysics/DecayConstructor:DisableModes 0 Zp->nu_mu,nu_mubar;
+insert /Herwig/NewPhysics/DecayConstructor:DisableModes 0 Zp->nu_tau,nu_taubar;
+
+# Parent: Zp  Mass (GeV): 2  Total Width (GeV): 2.08553e-06
+#                                       Partial Width/GeV   BR                  Yes/No
+#Zp->u,ubar;                             6.95186e-07         0.333338            Yes
+#Zp->e-,e+;                              5.21309e-07         0.249965            Yes
+#Zp->mu-,mu+;                            5.21284e-07         0.249953            Yes
+#Zp->d,dbar;                             1.73878e-07         0.0833733           Yes
+#Zp->s,sbar;                             1.73873e-07         0.0833709           Yes
+#Zp->nu_tau,nu_taubar;                   0                   0                   No
+#Zp->nu_mu,nu_mubar;                     0                   0                   No
+#Zp->nu_e,nu_ebar;                       0                   0                   No
+
+
+# Particle property
+cd /Herwig/FRModel/Particles
+#set /Herwig/FRModel/Particles/Zp:Stable Stable
+
+set uuZpSplitFnEW:CouplingValue.Left.Im 0.2090459135992277 # x100
+set uuZpSplitFnEW:CouplingValue.Right.Im 0.20894857930845996
+set ddZpSplitFnEW:CouplingValue.Left.Im -0.10457162394499771
+set ddZpSplitFnEW:CouplingValue.Right.Im -0.10447428965422998
+set ssZpSplitFnEW:CouplingValue.Left.Im -0.10457162394499771
+set ssZpSplitFnEW:CouplingValue.Right.Im -0.10447428965422998
+set ccZpSplitFnEW:CouplingValue.Left.Im 0.2090459135992277
+set ccZpSplitFnEW:CouplingValue.Right.Im 0.20894857930845996
+set bbZpSplitFnEW:CouplingValue.Left.Im -0.10457162394499771
+set bbZpSplitFnEW:CouplingValue.Right.Im -0.10447428965422998
+set ttZpSplitFnEW:CouplingValue.Left.Im 0.2090459135992277
+set ttZpSplitFnEW:CouplingValue.Right.Im 0.20894857930845996
+
+### Private commands ###
+
+########################
+## sqrt(s) = 13000 GeV ##
+########################
+cd /Herwig/Generators
+set EventGenerator:NumberOfEvents __NEVENTS__
+set EventGenerator:RandomNumberGenerator:Seed __SEED__
+set EventGenerator:PrintEvent 10
+set EventGenerator:MaxErrors 10000
+
+##################################################
+## prepare for Rivet analysis or HepMC output
+## when running with parton shower
+##################################################
+read snippets/Rivet.in
+#insert /Herwig/Analysis/Rivet:Analyses 0 Find:ID=52
+insert /Herwig/Analysis/Rivet:Analyses 0 RAnalysis
+
+##################################################
+# Save run for later usage with 'Herwig run'
+##################################################
+cd /Herwig/Generators
+do /Herwig/MatrixElements/Matchbox/Factory:ProductionMode
+saverun LHC-__RUN__ EventGenerator
