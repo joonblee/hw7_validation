@@ -340,7 +340,8 @@ and create `~/bashrc.singularity`.
 Now the singularity is ready.
 We need to install some dependencies:
 ```
-ln -s $(which python3) $PWD/python
+ln -s $(which python3) $PWD/python ### for tamsa1
+# 'which python3' doesn't work in e.g. cms1, so replace it to 'command -v python3'
 export PATH=$PWD:$PATH
 
 pip install --user cython
@@ -394,6 +395,23 @@ pyenv install 3.8.10
 pyenv global 3.8.10 2.7.18
 pip3 install --user six
 ```
+To prepare you need to re-install Herwig7 again next time, it is handy to add the following lines to `~/.bashrc.singularity` in advance without repeating all these steps from the beginning:
+```
+# Herwig7 basic setups
+ln -s $(which python3) ~/.local/bin/python
+export PATH=$HOME/.local/bin:$PATH
+export LIBTOOL=/home/joonblee/.local/bin/libtool
+export LIBTOOLIZE=/home/joonblee/.local/bin/libtoolize
+export ACLOCAL_PATH=/home/joonblee/.local/share/aclocal:$ACLOCAL_PATH
+export PATH="$HOME/.pyenv/bin:$PATH"
+eval "$(pyenv init --path)"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+export LDFLAGS="-L$HOME/.local/lib"
+export CPPFLAGS="-I$HOME/.local/include"
+export PKG_CONFIG_PATH="$HOME/.local/lib/pkgconfig"
+```
+
 
 Finally, one can install herwig with 
 ```
