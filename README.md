@@ -326,10 +326,80 @@ ufo2herwig /address/to/ufo --enable-bsm-shower --allow-fcnc
 
 # 6. Install HW7 with singularity
 
-Run singularity
+Run singularity as follow:
 ```
 singularity shell --env LC_ALL=C /cvmfs/singularity.opensciencegrid.org/opensciencegrid/osgvo-ubuntu-20.04:latest
+bash # To use nominal bash script, i.e. ~/.bashrc
 ```
+To use bash commands only in this singularity, one should set `~/.singularity-env` as
+```
+export SINGULARITY_SHELLRCFILE="$HOME/.bashrc.singularity"
+```
+and create `~/bashrc.singularity`.
+
+Now the singularity is ready.
+We need to install some dependencies:
+```
+ln -s $(which python3) $PWD/python
+export PATH=$PWD:$PATH
+
+pip install --user cython
+export PATH=$HOME/.local/bin:$PATH
+
+pip install --user mercurial
+
+cd ~/.local/src/
+wget http://ftp.gnu.org/gnu/autoconf/autoconf-2.71.tar.gz
+tar -xzf autoconf-2.71.tar.gz
+cd autoconf-2.71
+./configure --prefix=$HOME/.local
+make
+make install
+
+cd ~/.local/src/
+wget http://ftpmirror.gnu.org/libtool/libtool-2.4.6.tar.gz
+tar -xzf libtool-2.4.6.tar.gz
+cd libtool-2.4.6
+./configure --prefix=$HOME/.local
+make
+make install
+
+export LIBTOOL=/home/joonblee/.local/bin/libtool
+export LIBTOOLIZE=/home/joonblee/.local/bin/libtoolize
+export ACLOCAL_PATH=/home/joonblee/.local/share/aclocal:$ACLOCAL_PATH
+
+cd ~/.local/src
+curl -L -o pyenv.tar.gz https://github.com/pyenv/pyenv/archive/refs/heads/master.tar.gz
+tar -xzf pyenv.tar.gz
+mkdir -p ~/.pyenv
+mv pyenv-master/* ~/.pyenv/
+git clone https://github.com/pyenv/pyenv-virtualenv.git ~/.pyenv/plugins/pyenv-virtualenv
+export PATH="$HOME/.pyenv/bin:$PATH"
+eval "$(pyenv init --path)"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+
+cd ~/.local/src
+wget https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz
+tar -xzf bzip2-1.0.8.tar.gz
+cd bzip2-1.0.8
+make -f Makefile-libbz2_so
+make install PREFIX=$HOME/.local
+export LDFLAGS="-L$HOME/.local/lib"
+export CPPFLAGS="-I$HOME/.local/include"
+export PKG_CONFIG_PATH="$HOME/.local/lib/pkgconfig"
+
+pyenv install 2.7.18
+pyenv install 3.8.10
+pyenv global 3.8.10 2.7.18
+pip3 install --user six
+```
+
+Finally, one can install herwig with 
+```
+$ ./herwig-bootstrap -j 16 $PWD --herwig-hg --thepeg-hg --thepeg-version="default" --herwig-version="default"
+```
+
 
 ## Trouble shooting
 
