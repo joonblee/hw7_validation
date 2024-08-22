@@ -119,7 +119,7 @@ Solution:
 $ sudo apt-get install libgsl-dev
 ```
 
-## Old method (deprecated)
+## [For developers] Old method
 
 Now remove the original herwig and install herwigbsm repo using mercurial.
 ```
@@ -192,7 +192,7 @@ If all things go well, you should be able to see a `rivet-plots` directory.
 - `batch_run.sh`: This file actually activates and runs herwig, i.e. all things described in `https://herwig.hepforge.org/tutorials/gettingstarted/firstrun.html` were already written in this file.
 
 
-## Aidin's code (deprecated)
+## [For developers] Aidin's code
 How to run Aidin's validation code, in `ssh://vcs@phab.hepforge.org/diffusion/548/herwig-bsm-notes/`?
 (Up-to-date validation repo: https://github.com/joonblee/hw7_validation/tree/main)
 
@@ -258,7 +258,26 @@ Note method 1 does not work in some cases.
 Use method 2 or 3.
 
 
-# 3. How to run rivet
+# 3. BSM model
+
+Install 2HDMtII_NLO file from `https://feynrules.irmp.ucl.ac.be/raw-attachment/wiki/2HDM/2HDMtII_NLO.tar.gz`
+```
+$ cd /go/to/test/directory
+$ tar xzf 2HDMtII_NLO.tar.gz
+$ ufo2herwig 2HDMII_NLO --enable-bsm-shower --convert
+$ make
+```
+
+*** If there is any other `*.cc` files in current directory without `FRModel.cc` then the `make` (based on `Makefile`) compile all `*.cc` files and make some troubles. Troubleshouting: modify Makefile `*.cc` -> `FRModel*.cc`.
+*** When you successfully run `ufo2herwig` but get some errors after `make` such as `cannot find FRModel.so` (which is nominally due to another `*.cc` files in the directory), you should erase the model directory (i.e. 2HDMtII_NLO in this case) because it might already include some errors inside
+
+Note FCNC modes are not allowed by default. One can allow this with
+```
+ufo2herwig /address/to/ufo --enable-bsm-shower --allow-fcnc
+```
+
+
+# 4. How to run rivet
 Before running rivet, we should install latex and image magic.
 ```
 $ sudo apt install -y texlive-full % I first install texlive-latex-base as '$ sudo apt install texlive-latex-base', which only installs a minimal latex. However it doesn't work properly. '$ make-plots test.dat' doesn't make any plot. (All types of image files such as ps, eps, pdf, png files are not generated.)
@@ -273,7 +292,7 @@ $ rivet-mkhtml FO.yoda
 One can merge two yoda files with `yodamerge -o [Output File].yoda [First Input].yoda [Second Input].yoda` which averages two yoda files. If you want to stack (add up) two files directly, do ``yodastack -o [Output File].yoda [First Input].yoda [Second Input].yoda`.
 
 
-# 4. How to push updates on my local repo to the remote repo?
+# 5. [For developers] How to push updates on my local repo to the remote repo?
 
 First pull the remote repository to sync my local repository.
 ```
@@ -302,25 +321,6 @@ abort: error: No address associated with hostname
 Probably due to https error. Do the following command:
 ```
 $ hg push ssh://vcs@phab.hepforge.org/diffusion/547/herwigbsm/
-```
-
-
-# 5. BSM model
-
-Install 2HDMtII_NLO file from `https://feynrules.irmp.ucl.ac.be/raw-attachment/wiki/2HDM/2HDMtII_NLO.tar.gz`
-```
-$ cd /go/to/test/directory
-$ tar xzf 2HDMtII_NLO.tar.gz
-$ ufo2herwig 2HDMII_NLO --enable-bsm-shower --convert
-$ make
-```
-
-*** If there is any other `*.cc` files in current directory without `FRModel.cc` then the `make` (based on `Makefile`) compile all `*.cc` files and make some troubles. Troubleshouting: modify Makefile `*.cc` -> `FRModel*.cc`.
-*** When you successfully run `ufo2herwig` but get some errors after `make` such as `cannot find FRModel.so` (which is nominally due to another `*.cc` files in the directory), you should erase the model directory (i.e. 2HDMtII_NLO in this case) because it might already include some errors inside
-
-Note FCNC modes are not allowed by default. One can allow this with
-```
-ufo2herwig /address/to/ufo --enable-bsm-shower --allow-fcnc
 ```
 
 
@@ -412,7 +412,6 @@ export CPPFLAGS="-I$HOME/.local/include"
 export PKG_CONFIG_PATH="$HOME/.local/lib/pkgconfig"
 ```
 
-
 Finally, one can install herwig with 
 ```
 $ ./herwig-bootstrap -j 16 $PWD --herwig-hg --thepeg-hg --thepeg-version="default" --herwig-version="default"
@@ -420,6 +419,8 @@ $ ./herwig-bootstrap -j 16 $PWD --herwig-hg --thepeg-hg --thepeg-version="defaul
 
 
 ## Trouble shooting
+
+This part is actually a repetation of the above section. If you had correctly followed the previous commands, you could have simply passed this part.
 
 Error log:
 ```
