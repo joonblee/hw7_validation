@@ -310,11 +310,9 @@ Note FCNC modes are not allowed by default. One can allow this with
 ufo2herwig /address/to/ufo --enable-bsm-shower --allow-fcnc
 ```
 
+# 7. Optionals
 
-
-# Optionals
-
-# 1. Mercurial
+## (1) Mercurial
 Below page gives a nice tutorial for the mercurial and hg
 http://btsweet.blogspot.com/2013/12/hg-1-mecurial-basics.html
 
@@ -324,7 +322,7 @@ $ hg status
 $ hg diff -b > patch.diff
 ```
 
-# 2. Crash between ThePEG and herwigbsm (after Jan 2023)
+## (2) Crash between ThePEG and herwigbsm (after Jan 2023)
 When I came back from the national military service, I fould a crash between the up-to-date ThePEG and herwigbsm versions. I bypassed this problem by recalling the old ThePEG version.
 ```
 $ cd src/ThePEG-2.2.3
@@ -337,26 +335,202 @@ $ cd ../..
 $ ./herwig-bootstrap ./ --without-openloops
 ```
 
+# 7. Install HW7 with singularity
 
-
-
-
-# 3. conda
+Run singularity
 ```
-cdwd
-bash Miniconda3-latest-Linux-x86_64.sh -b -p ~/WD/miniconda3/
-cd miniconda3/
-source ~/.bashrc
-conda info --evns
-conda create --name hw7-py2
-conda activate hw7-py2
-conda create -n hw-py2 python=2
-conda activate hw-py2
+singularity shell --env LC_ALL=C /cvmfs/singularity.opensciencegrid.org/opensciencegrid/osgvo-ubuntu-20.04:latest
 ```
 
+## Trouble shooting
+
+Error log:
+```
+$ ./herwig-bootstrap -j 4 $PWD --herwig-hg --thepeg-hg --thepeg-version="default" --herwig-version="default"
+/usr/bin/env: 'python': No such file or directory
+```
+Solution:
+```
+$ ln -s $(which python3) $PWD/python
+$ export PATH=$PWD:$PATH
+```
+
+Error log:
+```
+Python 3 install needs cython to rebuild lhapdf, yoda and
+   rivet python interfaces
+```
+Solution:
+```
+$ pip install --user cython
+$ export PATH=$HOME/.local/bin:$PATH
+```
+
+Error log:
+```
+hg clone https://phab.hepforge.org/source/thepeghg/ ThePEG-default
+Traceback (most recent call last):
+  File "./herwig-bootstrap", line 1001, in <module>
+    checkout(src_dir,"ThePEG",opts.thepeg_ver,opts.thepeg_repo,branch)
+  File "./herwig-bootstrap", line 508, in checkout
+    check_call(["hg","clone",repo,directory])
+  File "./herwig-bootstrap", line 498, in check_call
+    subprocess.check_call(arglist)
+  File "/usr/lib/python3.8/subprocess.py", line 359, in check_call
+    retcode = call(*popenargs, **kwargs)
+  File "/usr/lib/python3.8/subprocess.py", line 340, in call
+    with Popen(*popenargs, **kwargs) as p:
+  File "/usr/lib/python3.8/subprocess.py", line 858, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+  File "/usr/lib/python3.8/subprocess.py", line 1704, in _execute_child
+    raise child_exception_type(errno_num, err_msg, err_filename)
+FileNotFoundError: [Errno 2] No such file or directory: 'hg'
+```
+Solution:
+```
+pip install --user mercurial
+```
+
+Error log:
+```
+autoreconf -vi
+autoreconf: Entering directory `.'
+autoreconf: configure.ac: not using Gettext
+autoreconf: running: aclocal -I m4
+configure.ac:3: error: Autoconf version 2.71 or higher is required
+configure.ac:3: the top level
+autom4te: /usr/bin/m4 failed with exit status: 63
+aclocal: error: echo failed with exit status: 63
+autoreconf: aclocal failed with exit status: 63
+Traceback (most recent call last):
+  File "./herwig-bootstrap", line 1001, in <module>
+    checkout(src_dir,"ThePEG",opts.thepeg_ver,opts.thepeg_repo,branch)
+  File "./herwig-bootstrap", line 519, in checkout
+    check_call(["autoreconf","-vi"])
+  File "./herwig-bootstrap", line 498, in check_call
+    subprocess.check_call(arglist)
+  File "/usr/lib/python3.8/subprocess.py", line 364, in check_call
+    raise CalledProcessError(retcode, cmd)
+subprocess.CalledProcessError: Command '['autoreconf', '-vi']' returned non-zero exit status 63.
+
+```
+Solution:
+```
+cd ~/.local/src/
+wget http://ftp.gnu.org/gnu/autoconf/autoconf-2.71.tar.gz
+tar -xzf autoconf-2.71.tar.gz
+cd autoconf-2.71
+./configure --prefix=$HOME/.local
+make
+make install
+rm -rf ~/.local/src/autoreconf*
+```
+
+Error log:
+```
+autoreconf: running: libtoolize --copy
+Can't exec "libtoolize": No such file or directory at /home/joonblee/.local/share/autoconf/Autom4te/FileUtils.pm line 293.
+autoreconf: error: libtoolize failed with exit status: 2
+Traceback (most recent call last):
+  File "./herwig-bootstrap", line 1001, in <module>
+    checkout(src_dir,"ThePEG",opts.thepeg_ver,opts.thepeg_repo,branch)
+  File "./herwig-bootstrap", line 519, in checkout
+    check_call(["autoreconf","-vi"])
+  File "./herwig-bootstrap", line 498, in check_call
+    subprocess.check_call(arglist)
+  File "/usr/lib/python3.8/subprocess.py", line 364, in check_call
+    raise CalledProcessError(retcode, cmd)
+subprocess.CalledProcessError: Command '['autoreconf', '-vi']' returned non-zero exit status 2.
+```
+Solution:
+```
+cd ~/.local/src/
+wget http://ftpmirror.gnu.org/libtool/libtool-2.4.6.tar.gz
+tar -xzf libtool-2.4.6.tar.gz
+cd libtool-2.4.6
+./configure --prefix=$HOME/.local
+make
+make install
+```
+I'm not sure but you may need to manually set the `LIBTOOL` environment as ```
+$ export LIBTOOL=/home/joonblee/.local/bin/libtool
+$ export LIBTOOLIZE=/home/joonblee/.local/bin/libtoolize
+$ export ACLOCAL_PATH=/home/joonblee/.local/share/aclocal:$ACLOCAL_PATH
+```
+
+Error log:
+```
+Extract MG5_aMC_v3.5.1.tar.gz
+mv /data6/Users/joonblee/herwig74pre/src/MG5_aMC_v3_5_1/data6/Users/joonblee/herwig74pre/opt/MG5_aMC_v3_5_1
+/data6/Users/joonblee/herwig74pre/opt/MG5_aMC_v3_5_1/bin/mg5_aMC proc.dat
+madgraph requires the six module. The easiest way to install it is to run "python -m pip install six --user"
+in case of problem with pip, you can download the file at https://pypi.org/project/six/ . It has a single python file that you just need to put inside a directory of your $PYTHONPATH environment variable.
+python2 /data6/Users/joonblee/herwig74pre/opt/MG5_aMC_v3_5_1/bin/mg5_aMC proc.dat
+Traceback (most recent call last):
+  File "./herwig-bootstrap", line 1019, in runMadgraph
+    check_call([mg_exe,'proc.dat'])
+  File "./herwig-bootstrap", line 498, in check_call
+    subprocess.check_call(arglist)
+  File "/usr/lib/python3.8/subprocess.py", line 364, in check_call
+    raise CalledProcessError(retcode, cmd)
+subprocess.CalledProcessError: Command '['/data6/Users/joonblee/herwig74pre/opt/MG5_aMC_v3_5_1/bin/mg5_aMC', 'proc.dat']' returned non-zero exit status 1.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "./herwig-bootstrap", line 1078, in <module>
+    runMadgraph(mg_initial_run)
+  File "./herwig-bootstrap", line 1021, in runMadgraph
+    check_call(['python2',mg_exe,'proc.dat'])
+  File "./herwig-bootstrap", line 498, in check_call
+    subprocess.check_call(arglist)
+  File "/usr/lib/python3.8/subprocess.py", line 359, in check_call
+    retcode = call(*popenargs, **kwargs)
+  File "/usr/lib/python3.8/subprocess.py", line 340, in call
+    with Popen(*popenargs, **kwargs) as p:
+  File "/usr/lib/python3.8/subprocess.py", line 858, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+  File "/usr/lib/python3.8/subprocess.py", line 1704, in _execute_child
+    raise child_exception_type(errno_num, err_msg, err_filename)
+FileNotFoundError: [Errno 2] No such file or directory: 'python2'
+```
+Solution:
+One should install python2 with pyenv. First, install `pyenv` as follow:
+```
+cd ~/.local/src
+curl -L -o pyenv.tar.gz https://github.com/pyenv/pyenv/archive/refs/heads/master.tar.gz
+tar -xzf pyenv.tar.gz
+mkdir -p ~/.pyenv
+mv pyenv-master/* ~/.pyenv/
+git clone https://github.com/pyenv/pyenv-virtualenv.git ~/.pyenv/plugins/pyenv-virtualenv
+export PATH="$HOME/.pyenv/bin:$PATH"
+eval "$(pyenv init --path)"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+```
+After that install `bzip`.
+```
+cd ~/.local/src
+wget https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz
+tar -xzf bzip2-1.0.8.tar.gz
+cd bzip2-1.0.8
+make -f Makefile-libbz2_so
+make install PREFIX=$HOME/.local
+export LDFLAGS="-L$HOME/.local/lib"
+export CPPFLAGS="-I$HOME/.local/include"
+export PKG_CONFIG_PATH="$HOME/.local/lib/pkgconfig"
+```
+Finally one can install `python 2.7.18` with
+```
+# pyenv uninstall 2.7.18 # uninstall previous installed python 2.7.18.
+pyenv install 2.7.18
+pyenv install 3.8.10
+pyenv global 3.8.10 2.7.18
+pip3 install --user six
+```
 
 
-# 4. sigularity
+# sigularity (old, failed)
 ```
 $ singularity shell /cvmfs/singularity.opensciencegrid.org/opensciencegrid/osgvo-ubuntu-20.04:latest
 $ bash % to use nominal bash scripts
@@ -413,25 +587,6 @@ $ export PATH="$HOME/ubuntu20.04/local/mercurial/bin:$PATH"
 $ pip3 install --user cython sympy scipy six
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 wget --no-check-certificate https://boostorg.jfrog.io/artifactory/main/release/1.71.0/source/boost_1_71_0.tar.bz2
 wget --no-check-certificate https://ftpmirror.gnu.org/gnu/gsl/gsl-2.6.tar.gz
 wget --no-check-certificate https://fastjet.hepforge.org/contrib/downloads/fjcontrib-1.042.tar.gz
@@ -448,28 +603,6 @@ wget --no-check-certificate  https://evtgen.hepforge.org/downloads/EvtGen-01.07.
 wget --no-check-certificate  https://herwig.hepforge.org/downloads//Herwig-7.2.3.tar.bz2
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 736  export PATH="$HOME/ubuntu20.04/local/miniconda3/bin:$PATH"
 
   746  conda_activate 
@@ -479,6 +612,22 @@ wget --no-check-certificate  https://herwig.hepforge.org/downloads//Herwig-7.2.3
 
   754  conda install -c conda-forge lhapdf
 ```
+
+# conda
+```
+cdwd
+bash Miniconda3-latest-Linux-x86_64.sh -b -p ~/WD/miniconda3/
+cd miniconda3/
+source ~/.bashrc
+conda info --evns
+conda create --name hw7-py2
+conda activate hw7-py2
+conda create -n hw-py2 python=2
+conda activate hw-py2
+```
+
+
+
 
 
 
