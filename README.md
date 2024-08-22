@@ -21,40 +21,6 @@ Now everything is ready.
 One can run herwig referring `https://herwig.hepforge.org/tutorials/gettingstarted/firstrun.html`, while I recommend to use my validation code as described in the next section.
 
 
-
-## Old method (deprecated)
-
-Now remove the original herwig and install herwigbsm repo using mercurial.
-```
-$ rm src/herwig_bootstrap_thepeg_2_2_3_done
-$ rm -rf src/Herwig-7.2.3*
-$ ./herwig-bootstrap $PWD --herwig-hg --thepeg-hg --herwig-repo=ssh://vcs@phab.hepforge.org/diffusion/547/herwigbsm/
-```
-If `ThePEG/Herwig` doesn't install properly then use
-```
-$ cd src
-$ rm herwig_bootstrap_thepeg_2_2_3_done
-$ rm herwig_bootstrap_herwig_7_2_3_done
-$ rm -rf ThePEG-2.2.3*
-$ rm -rf Herwig-7.2.3*
-$ hg clone https://phab.hepforge.org/source/thepeghg/ ThePEG-2.2.3
-$ cd ThePEG-2.2.3
-$ autoreconf -vi
-$ cd ..
-$ hg clone https://phab.hepforge.org/diffusion/547/herwigbsm/ Herwig-7.2.3
-$ cd Herwig-7.2.3
-$ autoreconf -vi
-$ cd ../..
-$ ./herwig-bootstrap -j 4 ./
-```
-Note that the order of `autoreconf -vi` and `hg clone`.
-Inverting the order may cause an error.
-Or equivalently, use as below:
-```
-$ ./herwig-bootstrap $PWD --herwig-hg --thepeg-hg --herwig-repo=ssh://vcs@phab.hepforge.org/diffusion/547/herwigbsm/ --herwig-version=default
-```
-
-
 ## Trouble shooting
 
 1. After re-installing Ubuntu, I've got a following errors: 
@@ -153,7 +119,53 @@ Solution:
 $ sudo apt-get install libgsl-dev
 ```
 
+## Old method (deprecated)
 
+Now remove the original herwig and install herwigbsm repo using mercurial.
+```
+$ rm src/herwig_bootstrap_thepeg_2_2_3_done
+$ rm -rf src/Herwig-7.2.3*
+$ ./herwig-bootstrap $PWD --herwig-hg --thepeg-hg --herwig-repo=ssh://vcs@phab.hepforge.org/diffusion/547/herwigbsm/
+```
+If `ThePEG/Herwig` doesn't install properly then use
+```
+$ cd src
+$ rm herwig_bootstrap_thepeg_2_2_3_done
+$ rm herwig_bootstrap_herwig_7_2_3_done
+$ rm -rf ThePEG-2.2.3*
+$ rm -rf Herwig-7.2.3*
+$ hg clone https://phab.hepforge.org/source/thepeghg/ ThePEG-2.2.3
+$ cd ThePEG-2.2.3
+$ autoreconf -vi
+$ cd ..
+$ hg clone https://phab.hepforge.org/diffusion/547/herwigbsm/ Herwig-7.2.3
+$ cd Herwig-7.2.3
+$ autoreconf -vi
+$ cd ../..
+$ ./herwig-bootstrap -j 4 ./
+```
+Note that the order of `autoreconf -vi` and `hg clone`.
+Inverting the order may cause an error.
+Or equivalently, use as below:
+```
+$ ./herwig-bootstrap $PWD --herwig-hg --thepeg-hg --herwig-repo=ssh://vcs@phab.hepforge.org/diffusion/547/herwigbsm/ --herwig-version=default
+```
+
+### Trouble shooting
+
+* Crash between ThePEG and herwigbsm (after Jan 2023)
+
+When I came back from the national military service, I fould a crash between the up-to-date ThePEG and herwigbsm versions. I bypassed this problem by recalling the old ThePEG version.
+```
+$ cd src/ThePEG-2.2.3
+$ hg log               % Check update logs and parallely watch https://phab.hepforge.org/diffusion/pushlog/?repositories=PHID-REPO-opcwldc6csinoqfiunqi.
+$ hg update -r 2181    % Go back to the previous ThePEG version updated in OCT2022.
+$ autoreconf -vi
+$ cd ../Herwig-7.2.3/
+$ autoreconf -vi
+$ cd ../..
+$ ./herwig-bootstrap ./ --without-openloops
+```
 
 # 2. How to run validation code
 
@@ -184,33 +196,7 @@ If all things go well, you should be able to see a `rivet-plots` directory.
 How to run Aidin's validation code, in `ssh://vcs@phab.hepforge.org/diffusion/548/herwig-bsm-notes/`?
 (Up-to-date validation repo: https://github.com/joonblee/hw7_validation/tree/main)
 
-### Issue-1
-To run Aidin's validation code(ZH), I update MG5 version to 3.3.2 as follows:
-```
-$ rm -rf opt/MG5_*
-$ rm src/herwig_bootstrap_madgraph_done
-$ ./herwig-bootstrap -j 4 ./ --madgraph-version=3.3.2
-```
-
-### Issue-2
-When I run the validation code and run MG5, I've got an error which cannot find NNPDF23_ls_as_0130_qed.
-
-### method 1: I thus install it seperately.
-```
-$ source bin/activate 
-$ lhapdf install NNPDF23_lo_as_0130_qed
-```
-
-### method 2: install lhapdf6 in madgraph seperately. -> launch madgraph and do "install lhapdf6".
-
-### method 3: Use LHAPDF6 in herwig7, which is installed by the bootstrap code. 
-set lhapdf /PATH/TO/lhapdf-config
-in MG5 UI.
-
-Note method 1 does not work in some cases.
-Use method 2 or 3.
-
-## How to run?
+### How to run?
 First clone the code:
 ```
 $ cdhw
@@ -243,6 +229,33 @@ $ Herwig read FO.in
 $ Herwig run FO.run
 ```
 
+### Issue-1
+To run Aidin's validation code(ZH), I update MG5 version to 3.3.2 as follows:
+```
+$ rm -rf opt/MG5_*
+$ rm src/herwig_bootstrap_madgraph_done
+$ ./herwig-bootstrap -j 4 ./ --madgraph-version=3.3.2
+```
+
+### Issue-2
+When I run the validation code and run MG5, I've got an error which cannot find NNPDF23_ls_as_0130_qed.
+
+#### method 1: 
+I thus install it seperately.
+```
+$ source bin/activate 
+$ lhapdf install NNPDF23_lo_as_0130_qed
+```
+
+#### method 2: 
+Install lhapdf6 in madgraph seperately. -> launch madgraph and do "install lhapdf6".
+
+#### method 3: Use LHAPDF6 in herwig7, which is installed by the bootstrap code. 
+set lhapdf /PATH/TO/lhapdf-config
+in MG5 UI.
+
+Note method 1 does not work in some cases.
+Use method 2 or 3.
 
 
 # 3. How to run rivet
@@ -260,7 +273,7 @@ $ rivet-mkhtml FO.yoda
 One can merge two yoda files with `yodamerge -o [Output File].yoda [First Input].yoda [Second Input].yoda` which averages two yoda files. If you want to stack (add up) two files directly, do ``yodastack -o [Output File].yoda [First Input].yoda [Second Input].yoda`.
 
 
-# 5. How to push updates on my local repo to the remote repo?
+# 4. How to push updates on my local repo to the remote repo?
 
 First pull the remote repository to sync my local repository.
 ```
@@ -292,7 +305,7 @@ $ hg push ssh://vcs@phab.hepforge.org/diffusion/547/herwigbsm/
 ```
 
 
-# 6. BSM model
+# 5. BSM model
 
 Install 2HDMtII_NLO file from `https://feynrules.irmp.ucl.ac.be/raw-attachment/wiki/2HDM/2HDMtII_NLO.tar.gz`
 ```
@@ -310,32 +323,8 @@ Note FCNC modes are not allowed by default. One can allow this with
 ufo2herwig /address/to/ufo --enable-bsm-shower --allow-fcnc
 ```
 
-# 7. Optionals
 
-## (1) Mercurial
-Below page gives a nice tutorial for the mercurial and hg
-http://btsweet.blogspot.com/2013/12/hg-1-mecurial-basics.html
-
-Additional useful command lines:
-```
-$ hg status
-$ hg diff -b > patch.diff
-```
-
-## (2) Crash between ThePEG and herwigbsm (after Jan 2023)
-When I came back from the national military service, I fould a crash between the up-to-date ThePEG and herwigbsm versions. I bypassed this problem by recalling the old ThePEG version.
-```
-$ cd src/ThePEG-2.2.3
-$ hg log               % Check update logs and parallely watch https://phab.hepforge.org/diffusion/pushlog/?repositories=PHID-REPO-opcwldc6csinoqfiunqi.
-$ hg update -r 2181    % Go back to the previous ThePEG version updated in OCT2022.
-$ autoreconf -vi
-$ cd ../Herwig-7.2.3/
-$ autoreconf -vi
-$ cd ../..
-$ ./herwig-bootstrap ./ --without-openloops
-```
-
-# 7. Install HW7 with singularity
+# 6. Install HW7 with singularity
 
 Run singularity
 ```
@@ -452,7 +441,8 @@ cd libtool-2.4.6
 make
 make install
 ```
-I'm not sure but you may need to manually set the `LIBTOOL` environment as ```
+I'm not sure but you may need to manually set the `LIBTOOL` environment as 
+```
 $ export LIBTOOL=/home/joonblee/.local/bin/libtool
 $ export LIBTOOLIZE=/home/joonblee/.local/bin/libtoolize
 $ export ACLOCAL_PATH=/home/joonblee/.local/share/aclocal:$ACLOCAL_PATH
@@ -530,7 +520,7 @@ pip3 install --user six
 ```
 
 
-# sigularity (old, failed)
+## Notes: Sigularity (old, failed)
 ```
 $ singularity shell /cvmfs/singularity.opensciencegrid.org/opensciencegrid/osgvo-ubuntu-20.04:latest
 $ bash % to use nominal bash scripts
@@ -613,7 +603,7 @@ wget --no-check-certificate  https://herwig.hepforge.org/downloads//Herwig-7.2.3
   754  conda install -c conda-forge lhapdf
 ```
 
-# conda
+## conda
 ```
 cdwd
 bash Miniconda3-latest-Linux-x86_64.sh -b -p ~/WD/miniconda3/
@@ -626,20 +616,14 @@ conda create -n hw-py2 python=2
 conda activate hw-py2
 ```
 
+# 7. About Mercurial
 
+Below page gives a nice tutorial for the mercurial and hg
+http://btsweet.blogspot.com/2013/12/hg-1-mecurial-basics.html
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Additional useful command lines:
+```
+$ hg status
+$ hg diff -b > patch.diff
+```
 
