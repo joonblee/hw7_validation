@@ -6,8 +6,14 @@ $ sudo apt -y install gcc g++ gfortran automake autoconf libtool tar make emacs 
 $ sudo apt-get -y install libssl-dev # instead of openssl-devel
 $ sudo apt-get -y install python3-pip
 $ sudo pip3 install cython sympy scipy  six
+$ sudo apt-get cmake
 ```
 To install an official version, one can get `herwig-bootstrap` file from the herwig homepage and just do `./herwig-bootstrap -j 4 $PWD`.
+```
+$ wget https://herwig.hepforge.org/downloads/herwig-bootstrap
+$ chmod +x herwig-bootstrap
+$ ./herwig-bootstrap -j 4 $PWD
+```
 
 If you want to utilize BSM PS before HW7.4 release, you need to have up-to-date `herwig-bootstrap` code. BSM PS is now merged into the trunk (i.e. HW central repo), but not released yet. Pleas `git clone` this repo and use `herwig-bootstrap` file in there.
 
@@ -103,7 +109,42 @@ make: *** [Makefile:37: FRModel.o] Error 4
 
 5. `aclocal` error
 
-Error log:
+Error log (exit status 63):
+```
+autoreconf -vi
+autoreconf: Entering directory `.'
+autoreconf: configure.ac: not using Gettext
+autoreconf: running: aclocal -I m4
+configure.ac:3: error: Autoconf version 2.71 or higher is required
+configure.ac:3: the top level
+autom4te: /usr/bin/m4 failed with exit status: 63
+aclocal: error: echo failed with exit status: 63
+autoreconf: aclocal failed with exit status: 63
+Traceback (most recent call last):
+  File "./herwig-bootstrap", line 991, in <module>
+    checkout(src_dir,"ThePEG",opts.thepeg_ver,opts.thepeg_repo,branch)
+  File "./herwig-bootstrap", line 509, in checkout
+    check_call(["autoreconf","-vi"])
+  File "./herwig-bootstrap", line 488, in check_call
+    subprocess.check_call(arglist)
+  File "/usr/lib/python3.8/subprocess.py", line 364, in check_call
+    raise CalledProcessError(retcode, cmd)
+subprocess.CalledProcessError: Command '['autoreconf', '-vi']' returned non-zero exit status 63.
+```
+You can check your autoconf version by `/usr/local/bin/autoconf --version`. If the version is lower than 2.71, please reinstall newer autoconf by using following commands.
+```
+$ sudo apt-get update
+$ sudo apt-get remove autoconf
+$ sudo apt-get install build-essential m4
+$ wget https://ftp.gnu.org/gnu/autoconf/autoconf-2.71.tar.gz
+$ tar -xzf autoconf-2.71.tar.gz
+$ cd autoconf-2.71
+$ ./configure
+$ make
+$ sudo make install
+```
+
+Error log (exit status 2):
 ```
 autoreconf -vi
 autoreconf: export WARNINGS=
@@ -123,6 +164,7 @@ Traceback (most recent call last):
     raise CalledProcessError(retcode, cmd)
 subprocess.CalledProcessError: Command '['autoreconf', '-vi']' returned non-zero exit status 2.
 ```
+
 Solution:
 ```
 $ sudo apt-get install automake
@@ -164,7 +206,7 @@ After correctly installing herwig, you can direcly run herwig and rivet with thi
 
 For example, if you want to test dark photon shower from $pp\rightarrow jj$ process at $\sqrt{s} =$ 13 TeV with $m(Z') =$ 2 GeV, one can simply do
 ```
-mv FullShower/HAHM/13TeV/Zp_2GeV/
+cd FullShower/HAHM/13TeV/Zp_2GeV/
 source batch_run.sh
 ```
 This automatically installs the HAHM model file, build rivet analysis, run herwig, and draw plots.
