@@ -9,10 +9,13 @@ $ sudo pip3 install cython sympy scipy  six
 ```
 To install an official version, one can get `herwig-bootstrap` file from the herwig homepage and just do `./herwig-bootstrap -j 4 $PWD`.
 
-If you want to utilize BSM PS before HW7.4 release, you need to have up-to-date `herwig-bootstrap` code. BSM PS is now merged into the trunk (i.e. HW central repo), but not released yet. Pleas `git clone` this repo and use `herwig-bootstrap` file in there.
-
-With the up-to-date `herwig-bootstrap` code, one just need to do
+If you want to utilize BSM PS before HW7.4 release, you need to have up-to-date `herwig-bootstrap` code. BSM PS has been merged into the trunk (i.e. HW central repo), but not released yet. Please `git clone` this repo and use `herwig-bootstrap` file in there. In other words, one can do
 ```
+mkdir herwig
+cd herwig
+git clone https://github.com/joonblee/hw7_validation.git
+cp hw7_validation/herwig-bootstrap ./
+chmod +x herwig-bootstrap
 ./herwig-bootstrap -j 4 $PWD --herwig-hg --thepeg-hg --thepeg-version="default" --herwig-version="default"
 ```
 See the "Trouble shooting" section if you met any errors while installing HW7.
@@ -331,22 +334,28 @@ Run singularity as follow:
 singularity shell --env LC_ALL=C /cvmfs/singularity.opensciencegrid.org/opensciencegrid/osgvo-ubuntu-20.04:latest
 bash # To use nominal bash script, i.e. ~/.bashrc
 ```
-To use bash commands only in this singularity, one should set `~/.singularity-env` as
+To use bash commands only in this singularity, one should make `vi ~/.bashrc.singularity` (You can edit this file however you want. I'll explain later what actually needs to add inside.) and add following lines in the `~/.bashrc` file:
 ```
-export SINGULARITY_SHELLRCFILE="$HOME/.bashrc.singularity"
+# Source .bashrc.singularity if inside a Singularity container
+if [ -n "$SINGULARITY_NAME" ]; then
+    source ~/.bashrc.singularity
+fi
 ```
-and create `~/bashrc.singularity`.
+This will automatically execute `~/.bashrc.singularity` when you start a new singularity.
 
 Now the singularity is ready.
 We need to install some dependencies:
 ```
-ln -s $(which python3) $PWD/python ### for tamsa1
-# 'which python3' doesn't work in e.g. cms1, so replace it to 'command -v python3'
-export PATH=$PWD:$PATH
+WD=$PWD
 
-pip install --user cython
+mkdir -p ~/.local/bin
+mkdir -p ~/.local/src
+
+ln -s $(which python3) ~/.local/bin/python ### for tamsa1
+# 'which python3' doesn't work in e.g. cms1, so replace it to 'command -v python3'
 export PATH=$HOME/.local/bin:$PATH
 
+pip install --user cython
 pip install --user mercurial
 
 cd ~/.local/src/
@@ -365,9 +374,9 @@ cd libtool-2.4.6
 make
 make install
 
-export LIBTOOL=/home/joonblee/.local/bin/libtool
-export LIBTOOLIZE=/home/joonblee/.local/bin/libtoolize
-export ACLOCAL_PATH=/home/joonblee/.local/share/aclocal:$ACLOCAL_PATH
+export LIBTOOL=${HOME}/.local/bin/libtool
+export LIBTOOLIZE=${HOME}/.local/bin/libtoolize
+export ACLOCAL_PATH=${HOME}/.local/share/aclocal:$ACLOCAL_PATH
 
 cd ~/.local/src
 curl -L -o pyenv.tar.gz https://github.com/pyenv/pyenv/archive/refs/heads/master.tar.gz
@@ -394,15 +403,17 @@ pyenv install 2.7.18
 pyenv install 3.8.10
 pyenv global 3.8.10 2.7.18
 pip3 install --user six
+
+cd $WD
 ```
 To prepare you need to re-install Herwig7 again next time, it is handy to add the following lines to `~/.bashrc.singularity` in advance without repeating all these steps from the beginning:
 ```
 # Herwig7 basic setups
 ln -s $(which python3) ~/.local/bin/python
 export PATH=$HOME/.local/bin:$PATH
-export LIBTOOL=/home/joonblee/.local/bin/libtool
-export LIBTOOLIZE=/home/joonblee/.local/bin/libtoolize
-export ACLOCAL_PATH=/home/joonblee/.local/share/aclocal:$ACLOCAL_PATH
+export LIBTOOL=$HOME/.local/bin/libtool
+export LIBTOOLIZE=$HOME/.local/bin/libtoolize
+export ACLOCAL_PATH=$HOME/.local/share/aclocal:$ACLOCAL_PATH
 export PATH="$HOME/.pyenv/bin:$PATH"
 eval "$(pyenv init --path)"
 eval "$(pyenv init -)"
@@ -414,7 +425,21 @@ export PKG_CONFIG_PATH="$HOME/.local/lib/pkgconfig"
 
 Finally, one can install herwig with 
 ```
+mkdir herwig
+cd herwig
+git clone https://github.com/joonblee/hw7_validation.git
+cp hw7_validation/herwig-bootstrap ./
+chmod +x herwig-bootstrap
 $ ./herwig-bootstrap -j 16 $PWD --herwig-hg --thepeg-hg --thepeg-version="default" --herwig-version="default"
+```
+
+
+## Submit condor jobs
+
+```
+chmod +x run_herwig.sh
+condor_submit job.submit
+condor_q
 ```
 
 
@@ -715,4 +740,13 @@ Additional useful command lines:
 $ hg status
 $ hg diff -b > patch.diff
 ```
+
+
+
+
+
+
+
+
+
 
