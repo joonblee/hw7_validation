@@ -12,11 +12,11 @@ echo ""
 
 CompileUFO=true
 UFOName=HAHM_variableMW_v3_UFO
-EVTpRUN=1000
+EVTpRUN=100000
 
 Singularity_Loc=/data6/Users/joonblee/hw_singularity
 Hw_Loc=/data6/Users/joonblee/hw_singularity/
-WD=$Hw_Loc/hw7_validation/FullShower/HAHM/13TeV/Zp_2GeV/
+WD=$Hw_Loc/hw7_validation/FullShower/HAHM/13TeV/Zp_2GeV
 
 # Herwig7 basic setups
 #ln -s $(which python3) $Singularity_Loc/.local/bin/python
@@ -43,13 +43,16 @@ export PKG_CONFIG_PATH="$Singularity_Loc/.local/lib/pkgconfig"
 current_dir=$PWD
 cd $WD
 
+rnum=$(shuf -i 1-99999999 -n 1)
+mkdir tmp_$rnum
+cp RAnalysis.cc tmp_$rnum/
+cd tmp_$rnum
+
 RB="$Hw_Loc/bin/rivet-build"
 source "$Hw_Loc/bin/activate"
 
 # compiling ufo file
-if [ "$CompileUFO" = true ] && [ ! -f ${WD}/FRModel.model ]; then
-  #rm -rf *FR* Makefile __pycache__
-  #rm -rf ${UFOName}
+if [ "$CompileUFO" = true ] && [ ! -f FRModel.model ]; then
   if [[ ! -d ${UFOName} ]]; then
     echo "${UFOName} folder does not exist."
     echo "Check if ${UFOName} exists..."
@@ -69,21 +72,21 @@ if [ "$CompileUFO" = true ] && [ ! -f ${WD}/FRModel.model ]; then
   make
 fi
 
-# compiling rivet analysis
+# compile rivet analysis
 echo "Compile the rivet analysis, RAnalysis.cc"
 $RB Rivet.so RAnalysis.cc
-export RIVET_ANALYSIS_PATH=$WD
+export RIVET_ANALYSIS_PATH=$WD/tmp_$rnum
 echo ""
 
+# run hw7
 echo "Start runnning LHC-${i}"
-rnum=$(shuf -i 1-99999999 -n 1)
-
-sed -e "s/__NEVENTS__/${EVTpRUN}/g" ${WD}/LHC.in > ${WD}/LHC-${rnum}.in
-sed -i "s/__SEED__/${rnum}/g"                          ${WD}/LHC-${rnum}.in
-sed -i "s/__RUN__/${rnum}/g"                           ${WD}/LHC-${rnum}.in
+sed -e "s/__NEVENTS__/${EVTpRUN}/g" ${WD}/LHC.in > ${WD}/tmp_$rnum/LHC-${rnum}.in
+sed -i "s/__SEED__/${rnum}/g"                      ${WD}/tmp_$rnum/LHC-${rnum}.in
+sed -i "s/__RUN__/${rnum}/g"                       ${WD}/tmp_$rnum/LHC-${rnum}.in
 Herwig read LHC-${rnum}.in
 Herwig run LHC-${rnum}.run
 
+rm -rf *FR* ${UFOName}* __pycache__ Makefile param_card.dat RAnalysis.* *tex *out
 cd $current_dir
 
 echo ""
