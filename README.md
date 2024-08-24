@@ -560,7 +560,8 @@ $ ./herwig-bootstrap -j 16 $PWD --herwig-hg --thepeg-hg --thepeg-version="defaul
 
 ### Optionals
 
-# Latex - rivet-mkhtml necessitates latex. Latex is quite large so I recommend to make plots outside the singularity. However, if you need to run it under singularity, follow below instructions
+#### Latex
+`rivet-mkhtml` necessitates latex. Latex is quite large so I recommend to make plots outside the singularity. However, if you need to run it under singularity, follow below instructions
 
 ```
 cd $WD/.local/src
