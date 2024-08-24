@@ -329,11 +329,32 @@ $ hg push ssh://vcs@phab.hepforge.org/diffusion/547/herwigbsm/
 
 # 6. Install HW7 with singularity
 
-Run singularity as follow:
+## (1) Prepare singularity
+### For tamsa1
+
+If one considers to run HW7 in tamsa1, singularity is neccesary to install HW7.
+Here is a short instruction.
+```
+singularity pull docker://opensciencegrid/osgvo-ubuntu-20.04
+singularity build --sandbox herwig_sandbox osgvo-ubuntu-20.04_latest.sif
+singularity shell --writable herwig_sandbox
+mkdir -p /data6/Users/[user_name]/[wroking_directory] 
+exit
+singularity shell --writable --bind /data6/Users/joonblee herwig_sandbox/
+bash
+```
+Note it necessitates making a `/data6` working directory in the sandbox before binding, if you want to work under `/data6`, because there is no `/data6` directory in the sandbox, which makes binding fail.
+
+### For cms1
+
+In cms1, one can run singularity directly as follow:
 ```
 singularity shell --env LC_ALL=C /cvmfs/singularity.opensciencegrid.org/opensciencegrid/osgvo-ubuntu-20.04:latest
 bash # To use nominal bash script, i.e. ~/.bashrc
 ```
+
+### Common
+
 To use bash commands only in this singularity, one should make `vi ~/.bashrc.singularity` (You can edit this file however you want. I'll explain later what actually needs to add inside.) and add following lines in the `~/.bashrc` file:
 ```
 # Source .bashrc.singularity if inside a Singularity container
@@ -344,7 +365,105 @@ fi
 This will automatically execute `~/.bashrc.singularity` when you start a new singularity.
 
 Now the singularity is ready.
-We need to install some dependencies:
+We need to install some dependencies.
+
+
+## (2) Prepare dependencies
+### For tamsa1
+
+There is a missing point in this script. Carefully check all things are set properly.
+
+```
+WD=$PWD
+
+mkdir -p $PWD/.local/bin
+mkdir -p $PWD/.local/src
+
+cd $WD/.local/src
+curl -L -o pyenv.tar.gz https://github.com/pyenv/pyenv/archive/refs/heads/master.tar.gz
+tar -xzf pyenv.tar.gz
+mkdir -p $WD/.pyenv
+mv pyenv-master/* $WD/.pyenv/
+git clone https://github.com/pyenv/pyenv-virtualenv.git $WD/.pyenv/plugins/pyenv-virtualenv
+export PATH="$WD/.pyenv/bin:$PATH"
+export PYENV_ROOT=$WD/.pyenv
+export PATH=$PYENV_ROOT/bin:$PATH
+eval "$(pyenv init --path)"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+
+pyenv install 2.7.18
+pyenv install 3.8.10
+pyenv global 3.8.10 2.7.18
+pip3 install --user six 
+
+export PYTHONUSERBASE=$WD/.pyenv
+export PATH=$PYTHONUSERBASE/bin:$PATH
+pip install --user cython
+pip install --user mercurial
+
+ln -s $(which python3) $WD/.local/bin/python ### for tamsa1 # not sure it really necessitates
+# 'which python3' doesn't work in e.g. cms1, so replace it to 'command -v python3'
+export PATH=$WD/.local/bin:$PATH
+
+cd $WD/.local/src/
+wget http://ftp.gnu.org/gnu/autoconf/autoconf-2.71.tar.gz
+tar -xzf autoconf-2.71.tar.gz
+cd autoconf-2.71
+./configure --prefix=$WD/.local
+make
+make install
+
+cd $WD/.local/src/
+wget http://ftpmirror.gnu.org/libtool/libtool-2.4.6.tar.gz
+tar -xzf libtool-2.4.6.tar.gz
+cd libtool-2.4.6
+./configure --prefix=$WD/.local
+make
+make install
+
+export LIBTOOL=${WD}/.local/bin/libtool
+export LIBTOOLIZE=${WD}/.local/bin/libtoolize
+export ACLOCAL_PATH=${WD}/.local/share/aclocal:$ACLOCAL_PATH
+
+cd $WD/.local/src
+wget https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz
+tar -xzf bzip2-1.0.8.tar.gz
+cd bzip2-1.0.8
+make -f Makefile-libbz2_so
+make install PREFIX=$WD/.local
+export LDFLAGS="-L$WD/.local/lib"
+export CPPFLAGS="-I$WD/.local/include"
+export PKG_CONFIG_PATH="$WD/.local/lib/pkgconfig"
+
+pip install numpy
+
+cd $WD
+```
+To prepare you need to re-install Herwig7 again next time, it is handy to add the following lines to `~/.bashrc.singularity` in advance without repeating all these steps from the beginning:
+```
+# Herwig7 basic setups
+ln -s $(which python3) $WD/.local/bin/python
+export PATH=$WD/.local/bin:$PATH
+export LIBTOOL=$WD/.local/bin/libtool
+export LIBTOOLIZE=$WD/.local/bin/libtoolize
+export ACLOCAL_PATH=$WD/.local/share/aclocal:$ACLOCAL_PATH
+export PATH="$WD/.pyenv/bin:$PATH"
+export PYENV_ROOT=$WD/.pyenv
+export PATH=$PYENV_ROOT/bin:$PATH
+eval "$(pyenv init --path)"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+export PYTHONUSERBASE=$WD/.pyenv
+export PATH=$PYTHONUSERBASE/bin:$PATH
+export LDFLAGS="-L$WD/.local/lib"
+export CPPFLAGS="-I$WD/.local/include"
+export PKG_CONFIG_PATH="$WD/.local/lib/pkgconfig"
+```
+
+
+### For cms1
+
 ```
 WD=$PWD
 
@@ -404,6 +523,8 @@ pyenv install 3.8.10
 pyenv global 3.8.10 2.7.18
 pip3 install --user six
 
+pip install numpy
+
 cd $WD
 ```
 To prepare you need to re-install Herwig7 again next time, it is handy to add the following lines to `~/.bashrc.singularity` in advance without repeating all these steps from the beginning:
@@ -423,6 +544,9 @@ export CPPFLAGS="-I$HOME/.local/include"
 export PKG_CONFIG_PATH="$HOME/.local/lib/pkgconfig"
 ```
 
+
+## (3) Install HW7
+
 Finally, one can install herwig with 
 ```
 mkdir herwig
@@ -432,6 +556,35 @@ cp hw7_validation/herwig-bootstrap ./
 chmod +x herwig-bootstrap
 $ ./herwig-bootstrap -j 16 $PWD --herwig-hg --thepeg-hg --thepeg-version="default" --herwig-version="default"
 ```
+
+
+
+### Optionals
+
+# Latex - rivet-mkhtml necessitates latex. Latex is quite large so I recommend to make plots outside the singularity. However, if you need to run it under singularity, follow below instructions
+
+```
+cd $WD/.local/src
+wget http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz
+tar -xzf install-tl-unx.tar.gz
+cd install-tl-[NUMBER] # Note you should set [NUNBER] properly
+./install-tl --profile=$WD/custom.profile
+# Because we didn't use sudo, it executes an interactive mode.
+# Follow below instructions carefully to configure.
+#
+# 1. Choose <D> (D+enter) to set directories and set:
+# TEXDIR: /data6/Users/joonblee/hw_singularity/.local/texlive/2024
+# TEXMFLOCAL: /data6/Users/joonblee/hw_singularity/.local/texlive/texmf-local
+# TEXMFSYSVAR: /data6/Users/joonblee/hw_singularity/.local/texlive/2024/texmf-var
+# TEXMFSYSCONFIG: /data6/Users/joonblee/hw_singularity/.local/texlive/2024/texmf-config
+# TEXMFVAR: /data6/Users/joonblee/hw_singularity/.local/texlive/2024/texmf-var
+# TEXMFCONFIG: /data6/Users/joonblee/hw_singularity/.local/texlive/2024/texmf-config
+# TEXMFHOME: /data6/Users/joonblee/hw_singularity/.local/texlive/texmf-home
+# 2. Select <I> to proceed installation
+export PATH=$WD/.local/texlive/2024/bin/x86_64-linux:$PATH
+```
+
+
 
 
 ## Submit condor jobs
