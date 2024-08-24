@@ -470,8 +470,7 @@ WD=$PWD
 mkdir -p ~/.local/bin
 mkdir -p ~/.local/src
 
-ln -s $(which python3) ~/.local/bin/python ### for tamsa1
-# 'which python3' doesn't work in e.g. cms1, so replace it to 'command -v python3'
+ln -s $(command -v python3) ~/.local/bin/python
 export PATH=$HOME/.local/bin:$PATH
 
 pip install --user cython
@@ -530,7 +529,7 @@ cd $WD
 To prepare you need to re-install Herwig7 again next time, it is handy to add the following lines to `~/.bashrc.singularity` in advance without repeating all these steps from the beginning:
 ```
 # Herwig7 basic setups
-ln -s $(which python3) ~/.local/bin/python
+ln -s $(command -v python3) ~/.local/bin/python
 export PATH=$HOME/.local/bin:$PATH
 export LIBTOOL=$HOME/.local/bin/libtool
 export LIBTOOLIZE=$HOME/.local/bin/libtoolize
