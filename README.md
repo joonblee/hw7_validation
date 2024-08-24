@@ -585,14 +585,15 @@ export PATH=$WD/.local/texlive/2024/bin/x86_64-linux:$PATH
 ```
 
 
-
-
 ## Submit condor jobs
 
+Example codes to submit condor jobs in tamsa1 can be found in `FullShower/HAHM/13TeV/Zp_2GeV`.
+- `job.submit`: Actually submit condor jobs. One can change the singularity sandbox location and the number of jobs here.
+- `run_herwig.sh`: All the others are included in this shell script.
+To submit jobs, do
 ```
 chmod +x run_herwig.sh
 condor_submit job.submit
-condor_q
 ```
 
 
