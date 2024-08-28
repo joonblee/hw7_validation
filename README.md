@@ -585,7 +585,7 @@ export PATH=$WD/.local/texlive/2024/bin/x86_64-linux:$PATH
 ```
 
 
-## Submit condor jobs
+## (4) Submit condor jobs
 
 Example codes to submit condor jobs in tamsa1 can be found in `FullShower/HAHM/13TeV/Zp_2GeV`.
 - `job.submit`: Actually submit condor jobs. One can change the singularity sandbox location and the number of jobs here.
@@ -597,7 +597,32 @@ condor_submit job.submit
 ```
 
 
-## Trouble shooting
+## (5) Run HW7 without condor
+
+### For tamsa1
+```
+singularity shell --writable --bind /data6/Users/joonblee herwig_sandbox/
+bash
+# Herwig7 basic setups
+ln -s $(which python3) $WD/.local/bin/python
+export PATH=$WD/.local/bin:$PATH
+export LIBTOOL=$WD/.local/bin/libtool
+export LIBTOOLIZE=$WD/.local/bin/libtoolize
+export ACLOCAL_PATH=$WD/.local/share/aclocal:$ACLOCAL_PATH
+export PATH="$WD/.pyenv/bin:$PATH"
+export PYENV_ROOT=$WD/.pyenv
+export PATH=$PYENV_ROOT/bin:$PATH
+eval "$(pyenv init --path)"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+export PYTHONUSERBASE=$WD/.pyenv
+export PATH=$PYTHONUSERBASE/bin:$PATH
+export LDFLAGS="-L$WD/.local/lib"
+export CPPFLAGS="-I$WD/.local/include"
+export PKG_CONFIG_PATH="$WD/.local/lib/pkgconfig"
+```
+
+## (6) Trouble shooting
 
 This part is actually a repetation of the above section. If you had correctly followed the previous commands, you could have simply passed this part.
 
