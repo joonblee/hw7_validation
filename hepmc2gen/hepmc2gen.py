@@ -1,3 +1,6 @@
+# ref: https://github.com/cms-sw/cmssw/blob/master/IOMC/Input/test/hepmc2gen.py
+# cmsRun hepmc2gen.py
+
 from __future__ import print_function
 
 import FWCore.ParameterSet.Config as cms
