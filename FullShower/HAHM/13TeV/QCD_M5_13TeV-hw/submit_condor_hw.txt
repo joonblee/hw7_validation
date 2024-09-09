@@ -1,5 +1,5 @@
 universe        = vanilla
-executable      = run_herwig.sh
+executable      = hw_condor.sh
 arguments       = $(Cluster) $(Process)
 output          = job.$(Cluster).$(Process).out
 error           = job.$(Cluster).$(Process).err
@@ -7,4 +7,4 @@ log             = job.$(Cluster).$(Process).log
 +SingularityImage = "/data6/Users/joonblee/hw_singularity/herwig_sandbox"
 +SingularityBind = "/data6/Users/joonblee:/data6/Users/joonblee"
 
-queue 1000
+queue 10

@@ -587,14 +587,108 @@ export PATH=$WD/.local/texlive/2024/bin/x86_64-linux:$PATH
 
 ## (4) Submit condor jobs
 
-Example codes to submit condor jobs in tamsa1 can be found in `FullShower/HAHM/13TeV/Zp_2GeV`.
-- `job.submit`: Actually submit condor jobs. One can change the singularity sandbox location and the number of jobs here.
-- `run_herwig.sh`: All the others are included in this shell script.
+Example codes to submit condor jobs in tamsa1 can be found in 
+
+### a. QCD sample with Herwig7: `FullShower/HAHM/13TeV/QCD_M5_13TeV-hw/`.
+
 To submit jobs, do
 ```
-chmod +x run_herwig.sh
-condor_submit job.submit
+chmod +x hw_condor.sh
+condor_submit submit_condor_hw.txt
 ```
+
+#### Brief introduction of each file
+
+- `submit_condor_hw.txt`: Actually submit condor jobs. One can change the singularity sandbox location and the number of jobs here.
+
+For example, `queue` is the total number of samples:
+```
+queue [Number of jobs]
+```
+
+- `hw_condor.sh`: All the other general things are included in this shell script.
+
+For example, the number of event and Z' mass can be set as follow:
+```
+EVTpRUN=[Number of event per job]
+sed -i "39s/20/[Mass of Z' boson]/" ${UFOName}/parameters.py
+```
+At last, you will get [Number of jobs] \* [Number of event per job] events.
+
+- `LHC.in`: Details to run Heriwg7.
+
+For example, one should set proper centre-of-mass energy, coupling values, and decay channels here.
+```
+set EventGenerator:EventHandler:LuminosityFunction:Energy [Energy]\*GeV
+set uuZpSplitFnEW:CouplingValue.Left.Im [Coupling value]
+insert /Herwig/NewPhysics/DecayConstructor:DisableModes 0 Zp->c,cbar;
+```
+
+- `RAnalysis.cc`: Rivet analyzer.
+
+- `hw_standalone.sh`: Run herwig individually without condor.
+
+- `activate_herwig.sh`: Activate herwig7. Use this command when you want to test herwig commands one by one.
+
+
+### b. QCD sample with MG5+HW7: `FullShower/HAHM/13TeV/QCD_M5_13TeV-mg-hw/`.
+
+To submit jobs, do
+```
+chmod +x mg_condor.sh
+condor_submit submit_condor_mg.txt
+```
+You will get a `mg/` directory which contains all MG5 outputs.
+Herwig7 utilizes this output.
+```
+chmod +x hw_condor.sh
+condor_submit submit_condor_hw.txt
+```
+
+#### Brief introduction of each file
+
+- `submit_condor_mg.txt`: Submit condor jobs to generate MG (hard process) events. One can change the singularity sandbox location and the number of jobs here.
+
+For example, `queue` is the total number of samples:
+```
+queue [Number of jobs]
+```
+
+- `mg_condor.sh`: All MG5 setups are included in this shell script.
+
+For example, event numbers and beam energies are set in this file:
+```
+nevents=[Number of events per job]
+ebeam=[Beam energy]
+echo "set mzdinput [Z' mass]" >> $RS_File
+```
+
+- `submit_condor_hw.txt`: Submit condor jobs to simulate parton shower, decays, and so on. One can change the singularity sandbox location and the number of jobs here.
+
+For example, `queue` is the total number of samples:
+```
+queue [Number of jobs]
+```
+
+- `hw_condor.sh`: All the other general things for HW7 are included in this shell script.
+
+For example, the number of event and Z' mass can be set as follow:
+```
+EVTpRUN=[Number of event per job]
+sed -i "39s/20/[Mass of Z' boson]/" ${UFOName}/parameters.py
+```
+At last, you will get [Number of jobs] \* [Number of event per job] events.
+
+- `LHC.in`: Details to run Heriwg7.
+
+For example, one should set proper centre-of-mass energy, coupling values, and decay channels here.
+```
+set EventGenerator:EventHandler:LuminosityFunction:Energy [Energy]\*GeV
+set uuZpSplitFnEW:CouplingValue.Left.Im [Coupling value]
+insert /Herwig/NewPhysics/DecayConstructor:DisableModes 0 Zp->c,cbar;
+```
+
+- `RAnalysis.cc`: Rivet analyzer.
 
 
 ## (5) Run HW7 without condor

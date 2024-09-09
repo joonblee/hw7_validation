@@ -12,7 +12,7 @@ echo ""
 
 CompileUFO=true
 UFOName=HAHM_variableMW_v3_UFO
-EVTpRUN=100000
+EVTpRUN=1000
 
 Singularity_Loc=/data6/Users/joonblee/hw_singularity
 Hw_Loc=/data6/Users/joonblee/hw_singularity/
@@ -63,7 +63,7 @@ if [ "$CompileUFO" = true ] && [ ! -f FRModel.model ]; then
     fi
     echo "Untar the tar ball."
     tar -zxvf HAHM_variableMW_v3_UFO.tar.gz
-    sed -i "39s/20/2./" ${UFOName}/parameters.py
+    sed -i "39s/20/5./" ${UFOName}/parameters.py
   fi
   ufo2herwig ${UFOName} --enable-bsm-shower --convert
   sed -i "s/echo \*.cc/echo FRModel*.cc/g" Makefile
