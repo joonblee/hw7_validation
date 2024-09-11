@@ -12,7 +12,7 @@ CompileRivet=true
 makehtml=true
 
 runLHC=true
-NRUN_LHC=4
+NRUN_LHC=1
 EVTpRUN_LHC=1000
 
 this_dir=$PWD
@@ -27,7 +27,7 @@ echo "Starting time : $now"
 echo ""
 echo ""
 
-Hw_Loc=/home/joonblee/WD/herwig74test
+Hw_Loc=/data6/Users/joonblee/hw_singularity
 RB="$Hw_Loc/bin/rivet-build"
 source "$Hw_Loc/bin/activate"
 
@@ -45,7 +45,7 @@ if $CompileUFO; then
     fi
     echo "Untar the tar ball."
     tar -zxvf HAHM_variableMW_v3_UFO.tar.gz
-    sed -i "39s/20/2./" ${UFOName}/parameters.py
+    sed -i "39s/20/5./" ${UFOName}/parameters.py
   fi
   ufo2herwig ${UFOName} --enable-bsm-shower --convert
   sed -i "s/echo \*.cc/echo FRModel*.cc/g" Makefile

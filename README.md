@@ -15,50 +15,19 @@ $ chmod +x herwig-bootstrap
 $ ./herwig-bootstrap -j 4 $PWD
 ```
 
-If you want to utilize BSM PS before HW7.4 release, you need to have up-to-date `herwig-bootstrap` code. BSM PS is now merged into the trunk (i.e. HW central repo), but not released yet. Pleas `git clone` this repo and use `herwig-bootstrap` file in there.
-
-With the up-to-date `herwig-bootstrap` code, one just need to do
+If you want to utilize BSM PS before HW7.4 release, you need to have up-to-date `herwig-bootstrap` code. BSM PS has been merged into the trunk (i.e. HW central repo), but not released yet. Please `git clone` this repo and use `herwig-bootstrap` file in there. In other words, one can do
 ```
+mkdir herwig
+cd herwig
+git clone https://github.com/joonblee/hw7_validation.git
+cp hw7_validation/herwig-bootstrap ./
+chmod +x herwig-bootstrap
 ./herwig-bootstrap -j 4 $PWD --herwig-hg --thepeg-hg --thepeg-version="default" --herwig-version="default"
 ```
 See the "Trouble shooting" section if you met any errors while installing HW7.
 
 Now everything is ready.
 One can run herwig referring `https://herwig.hepforge.org/tutorials/gettingstarted/firstrun.html`, while I recommend to use my validation code as described in the next section.
-
-
-
-## Old method (deprecated)
-
-Now remove the original herwig and install herwigbsm repo using mercurial.
-```
-$ rm src/herwig_bootstrap_thepeg_2_2_3_done
-$ rm -rf src/Herwig-7.2.3*
-$ ./herwig-bootstrap $PWD --herwig-hg --thepeg-hg --herwig-repo=ssh://vcs@phab.hepforge.org/diffusion/547/herwigbsm/
-```
-If `ThePEG/Herwig` doesn't install properly then use
-```
-$ cd src
-$ rm herwig_bootstrap_thepeg_2_2_3_done
-$ rm herwig_bootstrap_herwig_7_2_3_done
-$ rm -rf ThePEG-2.2.3*
-$ rm -rf Herwig-7.2.3*
-$ hg clone https://phab.hepforge.org/source/thepeghg/ ThePEG-2.2.3
-$ cd ThePEG-2.2.3
-$ autoreconf -vi
-$ cd ..
-$ hg clone https://phab.hepforge.org/diffusion/547/herwigbsm/ Herwig-7.2.3
-$ cd Herwig-7.2.3
-$ autoreconf -vi
-$ cd ../..
-$ ./herwig-bootstrap -j 4 ./
-```
-Note that the order of `autoreconf -vi` and `hg clone`.
-Inverting the order may cause an error.
-Or equivalently, use as below:
-```
-$ ./herwig-bootstrap $PWD --herwig-hg --thepeg-hg --herwig-repo=ssh://vcs@phab.hepforge.org/diffusion/547/herwigbsm/ --herwig-version=default
-```
 
 
 ## Trouble shooting
@@ -195,7 +164,53 @@ Solution:
 $ sudo apt-get install libgsl-dev
 ```
 
+## [For developers] Old method
 
+Now remove the original herwig and install herwigbsm repo using mercurial.
+```
+$ rm src/herwig_bootstrap_thepeg_2_2_3_done
+$ rm -rf src/Herwig-7.2.3*
+$ ./herwig-bootstrap $PWD --herwig-hg --thepeg-hg --herwig-repo=ssh://vcs@phab.hepforge.org/diffusion/547/herwigbsm/
+```
+If `ThePEG/Herwig` doesn't install properly then use
+```
+$ cd src
+$ rm herwig_bootstrap_thepeg_2_2_3_done
+$ rm herwig_bootstrap_herwig_7_2_3_done
+$ rm -rf ThePEG-2.2.3*
+$ rm -rf Herwig-7.2.3*
+$ hg clone https://phab.hepforge.org/source/thepeghg/ ThePEG-2.2.3
+$ cd ThePEG-2.2.3
+$ autoreconf -vi
+$ cd ..
+$ hg clone https://phab.hepforge.org/diffusion/547/herwigbsm/ Herwig-7.2.3
+$ cd Herwig-7.2.3
+$ autoreconf -vi
+$ cd ../..
+$ ./herwig-bootstrap -j 4 ./
+```
+Note that the order of `autoreconf -vi` and `hg clone`.
+Inverting the order may cause an error.
+Or equivalently, use as below:
+```
+$ ./herwig-bootstrap $PWD --herwig-hg --thepeg-hg --herwig-repo=ssh://vcs@phab.hepforge.org/diffusion/547/herwigbsm/ --herwig-version=default
+```
+
+### Trouble shooting
+
+* Crash between ThePEG and herwigbsm (after Jan 2023)
+
+When I came back from the national military service, I fould a crash between the up-to-date ThePEG and herwigbsm versions. I bypassed this problem by recalling the old ThePEG version.
+```
+$ cd src/ThePEG-2.2.3
+$ hg log               % Check update logs and parallely watch https://phab.hepforge.org/diffusion/pushlog/?repositories=PHID-REPO-opcwldc6csinoqfiunqi.
+$ hg update -r 2181    % Go back to the previous ThePEG version updated in OCT2022.
+$ autoreconf -vi
+$ cd ../Herwig-7.2.3/
+$ autoreconf -vi
+$ cd ../..
+$ ./herwig-bootstrap ./ --without-openloops
+```
 
 # 2. How to run validation code
 
@@ -222,37 +237,11 @@ If all things go well, you should be able to see a `rivet-plots` directory.
 - `batch_run.sh`: This file actually activates and runs herwig, i.e. all things described in `https://herwig.hepforge.org/tutorials/gettingstarted/firstrun.html` were already written in this file.
 
 
-## Aidin's code (deprecated)
+## [For developers] Aidin's code
 How to run Aidin's validation code, in `ssh://vcs@phab.hepforge.org/diffusion/548/herwig-bsm-notes/`?
 (Up-to-date validation repo: https://github.com/joonblee/hw7_validation/tree/main)
 
-### Issue-1
-To run Aidin's validation code(ZH), I update MG5 version to 3.3.2 as follows:
-```
-$ rm -rf opt/MG5_*
-$ rm src/herwig_bootstrap_madgraph_done
-$ ./herwig-bootstrap -j 4 ./ --madgraph-version=3.3.2
-```
-
-### Issue-2
-When I run the validation code and run MG5, I've got an error which cannot find NNPDF23_ls_as_0130_qed.
-
-### method 1: I thus install it seperately.
-```
-$ source bin/activate 
-$ lhapdf install NNPDF23_lo_as_0130_qed
-```
-
-### method 2: install lhapdf6 in madgraph seperately. -> launch madgraph and do "install lhapdf6".
-
-### method 3: Use LHAPDF6 in herwig7, which is installed by the bootstrap code. 
-set lhapdf /PATH/TO/lhapdf-config
-in MG5 UI.
-
-Note method 1 does not work in some cases.
-Use method 2 or 3.
-
-## How to run?
+### How to run?
 First clone the code:
 ```
 $ cdhw
@@ -285,9 +274,55 @@ $ Herwig read FO.in
 $ Herwig run FO.run
 ```
 
+### Issue-1
+To run Aidin's validation code(ZH), I update MG5 version to 3.3.2 as follows:
+```
+$ rm -rf opt/MG5_*
+$ rm src/herwig_bootstrap_madgraph_done
+$ ./herwig-bootstrap -j 4 ./ --madgraph-version=3.3.2
+```
+
+### Issue-2
+When I run the validation code and run MG5, I've got an error which cannot find NNPDF23_ls_as_0130_qed.
+
+#### method 1: 
+I thus install it seperately.
+```
+$ source bin/activate 
+$ lhapdf install NNPDF23_lo_as_0130_qed
+```
+
+#### method 2: 
+Install lhapdf6 in madgraph seperately. -> launch madgraph and do "install lhapdf6".
+
+#### method 3: Use LHAPDF6 in herwig7, which is installed by the bootstrap code. 
+set lhapdf /PATH/TO/lhapdf-config
+in MG5 UI.
+
+Note method 1 does not work in some cases.
+Use method 2 or 3.
 
 
-# 3. How to run rivet
+# 3. BSM model
+
+Install 2HDMtII_NLO file from `https://feynrules.irmp.ucl.ac.be/raw-attachment/wiki/2HDM/2HDMtII_NLO.tar.gz`
+```
+$ cd /go/to/test/directory
+$ tar xzf 2HDMtII_NLO.tar.gz
+$ ufo2herwig 2HDMII_NLO --enable-bsm-shower --convert
+$ make
+```
+
+*** If there is any other `*.cc` files in current directory without `FRModel.cc` then the `make` (based on `Makefile`) compile all `*.cc` files and make some troubles. Troubleshouting: modify Makefile `*.cc` -> `FRModel*.cc`.
+*** When you successfully run `ufo2herwig` but get some errors after `make` such as `cannot find FRModel.so` (which is nominally due to another `*.cc` files in the directory), you should erase the model directory (i.e. 2HDMtII_NLO in this case) because it might already include some errors inside
+
+Note FCNC modes are not allowed by default. One can allow this with
+```
+ufo2herwig /address/to/ufo --enable-bsm-shower --allow-fcnc
+```
+
+
+# 4. How to run rivet
 Before running rivet, we should install latex and image magic.
 ```
 $ sudo apt install -y texlive-full % I first install texlive-latex-base as '$ sudo apt install texlive-latex-base', which only installs a minimal latex. However it doesn't work properly. '$ make-plots test.dat' doesn't make any plot. (All types of image files such as ps, eps, pdf, png files are not generated.)
@@ -302,7 +337,7 @@ $ rivet-mkhtml FO.yoda
 One can merge two yoda files with `yodamerge -o [Output File].yoda [First Input].yoda [Second Input].yoda` which averages two yoda files. If you want to stack (add up) two files directly, do ``yodastack -o [Output File].yoda [First Input].yoda [Second Input].yoda`.
 
 
-# 5. How to push updates on my local repo to the remote repo?
+# 5. [For developers] How to push updates on my local repo to the remote repo?
 
 First pull the remote repository to sync my local repository.
 ```
@@ -334,71 +369,587 @@ $ hg push ssh://vcs@phab.hepforge.org/diffusion/547/herwigbsm/
 ```
 
 
-# 6. BSM model
+# 6. Install HW7 with singularity
 
-Install 2HDMtII_NLO file from `https://feynrules.irmp.ucl.ac.be/raw-attachment/wiki/2HDM/2HDMtII_NLO.tar.gz`
+## (1) Prepare singularity
+### For tamsa1
+
+If one considers to run HW7 in tamsa1, singularity is neccesary to install HW7.
+Here is a short instruction.
 ```
-$ cd /go/to/test/directory
-$ tar xzf 2HDMtII_NLO.tar.gz
-$ ufo2herwig 2HDMII_NLO --enable-bsm-shower --convert
-$ make
+singularity pull docker://opensciencegrid/osgvo-ubuntu-20.04
+singularity build --sandbox herwig_sandbox osgvo-ubuntu-20.04_latest.sif
+singularity shell --writable herwig_sandbox
+mkdir -p /data6/Users/[user_name]/[wroking_directory] 
+exit
+singularity shell --writable --bind /data6/Users/joonblee herwig_sandbox/
+bash
 ```
+Note it necessitates making a `/data6` working directory in the sandbox before binding, if you want to work under `/data6`, because there is no `/data6` directory in the sandbox, which makes binding fail.
 
-*** If there is any other `*.cc` files in current directory without `FRModel.cc` then the `make` (based on `Makefile`) compile all `*.cc` files and make some troubles. Troubleshouting: modify Makefile `*.cc` -> `FRModel*.cc`.
-*** When you successfully run `ufo2herwig` but get some errors after `make` such as `cannot find FRModel.so` (which is nominally due to another `*.cc` files in the directory), you should erase the model directory (i.e. 2HDMtII_NLO in this case) because it might already include some errors inside
+### For cms1
 
-Note FCNC modes are not allowed by default. One can allow this with
+In cms1, one can run singularity directly as follow:
 ```
-ufo2herwig /address/to/ufo --enable-bsm-shower --allow-fcnc
-```
-
-
-
-# Optionals
-
-# 1. Mercurial
-Below page gives a nice tutorial for the mercurial and hg
-http://btsweet.blogspot.com/2013/12/hg-1-mecurial-basics.html
-
-Additional useful command lines:
-```
-$ hg status
-$ hg diff -b > patch.diff
+singularity shell --env LC_ALL=C /cvmfs/singularity.opensciencegrid.org/opensciencegrid/osgvo-ubuntu-20.04:latest
+bash # To use nominal bash script, i.e. ~/.bashrc
 ```
 
-# 2. Crash between ThePEG and herwigbsm (after Jan 2023)
-When I came back from the national military service, I fould a crash between the up-to-date ThePEG and herwigbsm versions. I bypassed this problem by recalling the old ThePEG version.
+### Common
+
+To use bash commands only in this singularity, one should make `vi ~/.bashrc.singularity` (You can edit this file however you want. I'll explain later what actually needs to add inside.) and add following lines in the `~/.bashrc` file:
 ```
-$ cd src/ThePEG-2.2.3
-$ hg log               % Check update logs and parallely watch https://phab.hepforge.org/diffusion/pushlog/?repositories=PHID-REPO-opcwldc6csinoqfiunqi.
-$ hg update -r 2181    % Go back to the previous ThePEG version updated in OCT2022.
-$ autoreconf -vi
-$ cd ../Herwig-7.2.3/
-$ autoreconf -vi
-$ cd ../..
-$ ./herwig-bootstrap ./ --without-openloops
+# Source .bashrc.singularity if inside a Singularity container
+if [ -n "$SINGULARITY_NAME" ]; then
+    source ~/.bashrc.singularity
+fi
+```
+This will automatically execute `~/.bashrc.singularity` when you start a new singularity.
+
+Now the singularity is ready.
+We need to install some dependencies.
+
+
+## (2) Prepare dependencies
+### For tamsa1
+
+There is a missing point in this script. Carefully check all things are set properly.
+
+```
+WD=$PWD
+
+mkdir -p $PWD/.local/bin
+mkdir -p $PWD/.local/src
+
+cd $WD/.local/src
+curl -L -o pyenv.tar.gz https://github.com/pyenv/pyenv/archive/refs/heads/master.tar.gz
+tar -xzf pyenv.tar.gz
+mkdir -p $WD/.pyenv
+mv pyenv-master/* $WD/.pyenv/
+git clone https://github.com/pyenv/pyenv-virtualenv.git $WD/.pyenv/plugins/pyenv-virtualenv
+export PATH="$WD/.pyenv/bin:$PATH"
+export PYENV_ROOT=$WD/.pyenv
+export PATH=$PYENV_ROOT/bin:$PATH
+eval "$(pyenv init --path)"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+
+pyenv install 2.7.18
+pyenv install 3.8.10
+pyenv global 3.8.10 2.7.18
+pip3 install --user six 
+
+export PYTHONUSERBASE=$WD/.pyenv
+export PATH=$PYTHONUSERBASE/bin:$PATH
+pip install --user cython
+pip install --user mercurial
+
+ln -s $(which python3) $WD/.local/bin/python ### for tamsa1 # not sure it really necessitates
+# 'which python3' doesn't work in e.g. cms1, so replace it to 'command -v python3'
+export PATH=$WD/.local/bin:$PATH
+
+cd $WD/.local/src/
+wget http://ftp.gnu.org/gnu/autoconf/autoconf-2.71.tar.gz
+tar -xzf autoconf-2.71.tar.gz
+cd autoconf-2.71
+./configure --prefix=$WD/.local
+make
+make install
+
+cd $WD/.local/src/
+wget http://ftpmirror.gnu.org/libtool/libtool-2.4.6.tar.gz
+tar -xzf libtool-2.4.6.tar.gz
+cd libtool-2.4.6
+./configure --prefix=$WD/.local
+make
+make install
+
+export LIBTOOL=${WD}/.local/bin/libtool
+export LIBTOOLIZE=${WD}/.local/bin/libtoolize
+export ACLOCAL_PATH=${WD}/.local/share/aclocal:$ACLOCAL_PATH
+
+cd $WD/.local/src
+wget https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz
+tar -xzf bzip2-1.0.8.tar.gz
+cd bzip2-1.0.8
+make -f Makefile-libbz2_so
+make install PREFIX=$WD/.local
+export LDFLAGS="-L$WD/.local/lib"
+export CPPFLAGS="-I$WD/.local/include"
+export PKG_CONFIG_PATH="$WD/.local/lib/pkgconfig"
+
+pip install numpy
+
+cd $WD
+```
+To prepare you need to re-install Herwig7 again next time, it is handy to add the following lines to `~/.bashrc.singularity` in advance without repeating all these steps from the beginning:
+```
+# Herwig7 basic setups
+ln -s $(which python3) $WD/.local/bin/python
+export PATH=$WD/.local/bin:$PATH
+export LIBTOOL=$WD/.local/bin/libtool
+export LIBTOOLIZE=$WD/.local/bin/libtoolize
+export ACLOCAL_PATH=$WD/.local/share/aclocal:$ACLOCAL_PATH
+export PATH="$WD/.pyenv/bin:$PATH"
+export PYENV_ROOT=$WD/.pyenv
+export PATH=$PYENV_ROOT/bin:$PATH
+eval "$(pyenv init --path)"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+export PYTHONUSERBASE=$WD/.pyenv
+export PATH=$PYTHONUSERBASE/bin:$PATH
+export LDFLAGS="-L$WD/.local/lib"
+export CPPFLAGS="-I$WD/.local/include"
+export PKG_CONFIG_PATH="$WD/.local/lib/pkgconfig"
+```
+
+
+### For cms1
+
+```
+WD=$PWD
+
+mkdir -p ~/.local/bin
+mkdir -p ~/.local/src
+
+ln -s $(command -v python3) ~/.local/bin/python
+export PATH=$HOME/.local/bin:$PATH
+
+pip install --user cython
+pip install --user mercurial
+
+cd ~/.local/src/
+wget http://ftp.gnu.org/gnu/autoconf/autoconf-2.71.tar.gz
+tar -xzf autoconf-2.71.tar.gz
+cd autoconf-2.71
+./configure --prefix=$HOME/.local
+make
+make install
+
+cd ~/.local/src/
+wget http://ftpmirror.gnu.org/libtool/libtool-2.4.6.tar.gz
+tar -xzf libtool-2.4.6.tar.gz
+cd libtool-2.4.6
+./configure --prefix=$HOME/.local
+make
+make install
+
+export LIBTOOL=${HOME}/.local/bin/libtool
+export LIBTOOLIZE=${HOME}/.local/bin/libtoolize
+export ACLOCAL_PATH=${HOME}/.local/share/aclocal:$ACLOCAL_PATH
+
+cd ~/.local/src
+curl -L -o pyenv.tar.gz https://github.com/pyenv/pyenv/archive/refs/heads/master.tar.gz
+tar -xzf pyenv.tar.gz
+mkdir -p ~/.pyenv
+mv pyenv-master/* ~/.pyenv/
+git clone https://github.com/pyenv/pyenv-virtualenv.git ~/.pyenv/plugins/pyenv-virtualenv
+export PATH="$HOME/.pyenv/bin:$PATH"
+eval "$(pyenv init --path)"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+
+cd ~/.local/src
+wget https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz
+tar -xzf bzip2-1.0.8.tar.gz
+cd bzip2-1.0.8
+make -f Makefile-libbz2_so
+make install PREFIX=$HOME/.local
+export LDFLAGS="-L$HOME/.local/lib"
+export CPPFLAGS="-I$HOME/.local/include"
+export PKG_CONFIG_PATH="$HOME/.local/lib/pkgconfig"
+
+pyenv install 2.7.18
+pyenv install 3.8.10
+pyenv global 3.8.10 2.7.18
+pip3 install --user six
+
+pip install numpy
+
+cd $WD
+```
+To prepare you need to re-install Herwig7 again next time, it is handy to add the following lines to `~/.bashrc.singularity` in advance without repeating all these steps from the beginning:
+```
+# Herwig7 basic setups
+ln -s $(command -v python3) ~/.local/bin/python
+export PATH=$HOME/.local/bin:$PATH
+export LIBTOOL=$HOME/.local/bin/libtool
+export LIBTOOLIZE=$HOME/.local/bin/libtoolize
+export ACLOCAL_PATH=$HOME/.local/share/aclocal:$ACLOCAL_PATH
+export PATH="$HOME/.pyenv/bin:$PATH"
+eval "$(pyenv init --path)"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+export LDFLAGS="-L$HOME/.local/lib"
+export CPPFLAGS="-I$HOME/.local/include"
+export PKG_CONFIG_PATH="$HOME/.local/lib/pkgconfig"
+```
+
+
+## (3) Install HW7
+
+Finally, one can install herwig with 
+```
+mkdir herwig
+cd herwig
+git clone https://github.com/joonblee/hw7_validation.git
+cp hw7_validation/herwig-bootstrap ./
+chmod +x herwig-bootstrap
+$ ./herwig-bootstrap -j 16 $PWD --herwig-hg --thepeg-hg --thepeg-version="default" --herwig-version="default"
 ```
 
 
 
+### Optionals
 
+#### Latex
+`rivet-mkhtml` necessitates latex. Latex is quite large so I recommend to make plots outside the singularity. However, if you need to run it under singularity, follow below instructions
 
-# 3. conda
 ```
-cdwd
-bash Miniconda3-latest-Linux-x86_64.sh -b -p ~/WD/miniconda3/
-cd miniconda3/
-source ~/.bashrc
-conda info --evns
-conda create --name hw7-py2
-conda activate hw7-py2
-conda create -n hw-py2 python=2
-conda activate hw-py2
+cd $WD/.local/src
+wget http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz
+tar -xzf install-tl-unx.tar.gz
+cd install-tl-[NUMBER] # Note you should set [NUNBER] properly
+./install-tl --profile=$WD/custom.profile
+# Because we didn't use sudo, it executes an interactive mode.
+# Follow below instructions carefully to configure.
+#
+# 1. Choose <D> (D+enter) to set directories and set:
+# TEXDIR: /data6/Users/joonblee/hw_singularity/.local/texlive/2024
+# TEXMFLOCAL: /data6/Users/joonblee/hw_singularity/.local/texlive/texmf-local
+# TEXMFSYSVAR: /data6/Users/joonblee/hw_singularity/.local/texlive/2024/texmf-var
+# TEXMFSYSCONFIG: /data6/Users/joonblee/hw_singularity/.local/texlive/2024/texmf-config
+# TEXMFVAR: /data6/Users/joonblee/hw_singularity/.local/texlive/2024/texmf-var
+# TEXMFCONFIG: /data6/Users/joonblee/hw_singularity/.local/texlive/2024/texmf-config
+# TEXMFHOME: /data6/Users/joonblee/hw_singularity/.local/texlive/texmf-home
+# 2. Select <I> to proceed installation
+export PATH=$WD/.local/texlive/2024/bin/x86_64-linux:$PATH
 ```
 
 
+## (4) Submit condor jobs
 
-# 4. sigularity
+Example codes to submit condor jobs in tamsa1 can be found in 
+
+### a. QCD sample with Herwig7: `FullShower/HAHM/13TeV/QCD_M5_13TeV-hw/`.
+
+To submit jobs, do
+```
+chmod +x hw_condor.sh
+condor_submit submit_condor_hw.txt
+```
+
+#### Brief introduction of each file
+
+- `submit_condor_hw.txt`: Actually submit condor jobs. One can change the singularity sandbox location and the number of jobs here.
+
+For example, `queue` is the total number of samples:
+```
+queue [Number of jobs]
+```
+
+- `hw_condor.sh`: All the other general things are included in this shell script.
+
+For example, the number of event and Z' mass can be set as follow:
+```
+EVTpRUN=[Number of event per job]
+sed -i "39s/20/[Mass of Z' boson]/" ${UFOName}/parameters.py
+```
+At last, you will get [Number of jobs] \* [Number of event per job] events.
+
+- `LHC.in`: Details to run Heriwg7.
+
+For example, one should set proper centre-of-mass energy, coupling values, and decay channels here.
+```
+set EventGenerator:EventHandler:LuminosityFunction:Energy [Energy]\*GeV
+set uuZpSplitFnEW:CouplingValue.Left.Im [Coupling value]
+insert /Herwig/NewPhysics/DecayConstructor:DisableModes 0 Zp->c,cbar;
+```
+
+- `RAnalysis.cc`: Rivet analyzer.
+
+- `hw_standalone.sh`: Run herwig individually without condor.
+
+- `activate_herwig.sh`: Activate herwig7. Use this command when you want to test herwig commands one by one.
+
+
+### b. QCD sample with MG5+HW7: `FullShower/HAHM/13TeV/QCD_M5_13TeV-mg-hw/`.
+
+To submit jobs, do
+```
+chmod +x mg_condor.sh
+condor_submit submit_condor_mg.txt
+```
+You will get a `mg/` directory which contains all MG5 outputs.
+Herwig7 utilizes this output.
+```
+chmod +x hw_condor.sh
+condor_submit submit_condor_hw.txt
+```
+
+#### Brief introduction of each file
+
+- `submit_condor_mg.txt`: Submit condor jobs to generate MG (hard process) events. One can change the singularity sandbox location and the number of jobs here.
+
+For example, `queue` is the total number of samples:
+```
+queue [Number of jobs]
+```
+
+- `mg_condor.sh`: All MG5 setups are included in this shell script.
+
+For example, event numbers and beam energies are set in this file:
+```
+nevents=[Number of events per job]
+ebeam=[Beam energy]
+echo "set mzdinput [Z' mass]" >> $RS_File
+```
+
+- `submit_condor_hw.txt`: Submit condor jobs to simulate parton shower, decays, and so on. One can change the singularity sandbox location and the number of jobs here.
+
+For example, `queue` is the total number of samples:
+```
+queue [Number of jobs]
+```
+
+- `hw_condor.sh`: All the other general things for HW7 are included in this shell script.
+
+For example, the number of event and Z' mass can be set as follow:
+```
+EVTpRUN=[Number of event per job]
+sed -i "39s/20/[Mass of Z' boson]/" ${UFOName}/parameters.py
+```
+At last, you will get [Number of jobs] \* [Number of event per job] events.
+
+- `LHC.in`: Details to run Heriwg7.
+
+For example, one should set proper centre-of-mass energy, coupling values, and decay channels here.
+```
+set EventGenerator:EventHandler:LuminosityFunction:Energy [Energy]\*GeV
+set uuZpSplitFnEW:CouplingValue.Left.Im [Coupling value]
+insert /Herwig/NewPhysics/DecayConstructor:DisableModes 0 Zp->c,cbar;
+```
+
+- `RAnalysis.cc`: Rivet analyzer.
+
+
+## (5) Run HW7 without condor
+
+### For tamsa1
+```
+singularity shell --writable --bind /data6/Users/joonblee herwig_sandbox/
+bash
+# Herwig7 basic setups
+ln -s $(which python3) $WD/.local/bin/python
+export PATH=$WD/.local/bin:$PATH
+export LIBTOOL=$WD/.local/bin/libtool
+export LIBTOOLIZE=$WD/.local/bin/libtoolize
+export ACLOCAL_PATH=$WD/.local/share/aclocal:$ACLOCAL_PATH
+export PATH="$WD/.pyenv/bin:$PATH"
+export PYENV_ROOT=$WD/.pyenv
+export PATH=$PYENV_ROOT/bin:$PATH
+eval "$(pyenv init --path)"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+export PYTHONUSERBASE=$WD/.pyenv
+export PATH=$PYTHONUSERBASE/bin:$PATH
+export LDFLAGS="-L$WD/.local/lib"
+export CPPFLAGS="-I$WD/.local/include"
+export PKG_CONFIG_PATH="$WD/.local/lib/pkgconfig"
+```
+
+## (6) Trouble shooting
+
+This part is actually a repetation of the above section. If you had correctly followed the previous commands, you could have simply passed this part.
+
+Error log:
+```
+$ ./herwig-bootstrap -j 4 $PWD --herwig-hg --thepeg-hg --thepeg-version="default" --herwig-version="default"
+/usr/bin/env: 'python': No such file or directory
+```
+Solution:
+```
+$ ln -s $(which python3) $PWD/python
+$ export PATH=$PWD:$PATH
+```
+
+Error log:
+```
+Python 3 install needs cython to rebuild lhapdf, yoda and
+   rivet python interfaces
+```
+Solution:
+```
+$ pip install --user cython
+$ export PATH=$HOME/.local/bin:$PATH
+```
+
+Error log:
+```
+hg clone https://phab.hepforge.org/source/thepeghg/ ThePEG-default
+Traceback (most recent call last):
+  File "./herwig-bootstrap", line 1001, in <module>
+    checkout(src_dir,"ThePEG",opts.thepeg_ver,opts.thepeg_repo,branch)
+  File "./herwig-bootstrap", line 508, in checkout
+    check_call(["hg","clone",repo,directory])
+  File "./herwig-bootstrap", line 498, in check_call
+    subprocess.check_call(arglist)
+  File "/usr/lib/python3.8/subprocess.py", line 359, in check_call
+    retcode = call(*popenargs, **kwargs)
+  File "/usr/lib/python3.8/subprocess.py", line 340, in call
+    with Popen(*popenargs, **kwargs) as p:
+  File "/usr/lib/python3.8/subprocess.py", line 858, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+  File "/usr/lib/python3.8/subprocess.py", line 1704, in _execute_child
+    raise child_exception_type(errno_num, err_msg, err_filename)
+FileNotFoundError: [Errno 2] No such file or directory: 'hg'
+```
+Solution:
+```
+pip install --user mercurial
+```
+
+Error log:
+```
+autoreconf -vi
+autoreconf: Entering directory `.'
+autoreconf: configure.ac: not using Gettext
+autoreconf: running: aclocal -I m4
+configure.ac:3: error: Autoconf version 2.71 or higher is required
+configure.ac:3: the top level
+autom4te: /usr/bin/m4 failed with exit status: 63
+aclocal: error: echo failed with exit status: 63
+autoreconf: aclocal failed with exit status: 63
+Traceback (most recent call last):
+  File "./herwig-bootstrap", line 1001, in <module>
+    checkout(src_dir,"ThePEG",opts.thepeg_ver,opts.thepeg_repo,branch)
+  File "./herwig-bootstrap", line 519, in checkout
+    check_call(["autoreconf","-vi"])
+  File "./herwig-bootstrap", line 498, in check_call
+    subprocess.check_call(arglist)
+  File "/usr/lib/python3.8/subprocess.py", line 364, in check_call
+    raise CalledProcessError(retcode, cmd)
+subprocess.CalledProcessError: Command '['autoreconf', '-vi']' returned non-zero exit status 63.
+
+```
+Solution:
+```
+cd ~/.local/src/
+wget http://ftp.gnu.org/gnu/autoconf/autoconf-2.71.tar.gz
+tar -xzf autoconf-2.71.tar.gz
+cd autoconf-2.71
+./configure --prefix=$HOME/.local
+make
+make install
+rm -rf ~/.local/src/autoreconf*
+```
+
+Error log:
+```
+autoreconf: running: libtoolize --copy
+Can't exec "libtoolize": No such file or directory at /home/joonblee/.local/share/autoconf/Autom4te/FileUtils.pm line 293.
+autoreconf: error: libtoolize failed with exit status: 2
+Traceback (most recent call last):
+  File "./herwig-bootstrap", line 1001, in <module>
+    checkout(src_dir,"ThePEG",opts.thepeg_ver,opts.thepeg_repo,branch)
+  File "./herwig-bootstrap", line 519, in checkout
+    check_call(["autoreconf","-vi"])
+  File "./herwig-bootstrap", line 498, in check_call
+    subprocess.check_call(arglist)
+  File "/usr/lib/python3.8/subprocess.py", line 364, in check_call
+    raise CalledProcessError(retcode, cmd)
+subprocess.CalledProcessError: Command '['autoreconf', '-vi']' returned non-zero exit status 2.
+```
+Solution:
+```
+cd ~/.local/src/
+wget http://ftpmirror.gnu.org/libtool/libtool-2.4.6.tar.gz
+tar -xzf libtool-2.4.6.tar.gz
+cd libtool-2.4.6
+./configure --prefix=$HOME/.local
+make
+make install
+```
+I'm not sure but you may need to manually set the `LIBTOOL` environment as 
+```
+$ export LIBTOOL=/home/joonblee/.local/bin/libtool
+$ export LIBTOOLIZE=/home/joonblee/.local/bin/libtoolize
+$ export ACLOCAL_PATH=/home/joonblee/.local/share/aclocal:$ACLOCAL_PATH
+```
+
+Error log:
+```
+Extract MG5_aMC_v3.5.1.tar.gz
+mv /data6/Users/joonblee/herwig74pre/src/MG5_aMC_v3_5_1/data6/Users/joonblee/herwig74pre/opt/MG5_aMC_v3_5_1
+/data6/Users/joonblee/herwig74pre/opt/MG5_aMC_v3_5_1/bin/mg5_aMC proc.dat
+madgraph requires the six module. The easiest way to install it is to run "python -m pip install six --user"
+in case of problem with pip, you can download the file at https://pypi.org/project/six/ . It has a single python file that you just need to put inside a directory of your $PYTHONPATH environment variable.
+python2 /data6/Users/joonblee/herwig74pre/opt/MG5_aMC_v3_5_1/bin/mg5_aMC proc.dat
+Traceback (most recent call last):
+  File "./herwig-bootstrap", line 1019, in runMadgraph
+    check_call([mg_exe,'proc.dat'])
+  File "./herwig-bootstrap", line 498, in check_call
+    subprocess.check_call(arglist)
+  File "/usr/lib/python3.8/subprocess.py", line 364, in check_call
+    raise CalledProcessError(retcode, cmd)
+subprocess.CalledProcessError: Command '['/data6/Users/joonblee/herwig74pre/opt/MG5_aMC_v3_5_1/bin/mg5_aMC', 'proc.dat']' returned non-zero exit status 1.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "./herwig-bootstrap", line 1078, in <module>
+    runMadgraph(mg_initial_run)
+  File "./herwig-bootstrap", line 1021, in runMadgraph
+    check_call(['python2',mg_exe,'proc.dat'])
+  File "./herwig-bootstrap", line 498, in check_call
+    subprocess.check_call(arglist)
+  File "/usr/lib/python3.8/subprocess.py", line 359, in check_call
+    retcode = call(*popenargs, **kwargs)
+  File "/usr/lib/python3.8/subprocess.py", line 340, in call
+    with Popen(*popenargs, **kwargs) as p:
+  File "/usr/lib/python3.8/subprocess.py", line 858, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+  File "/usr/lib/python3.8/subprocess.py", line 1704, in _execute_child
+    raise child_exception_type(errno_num, err_msg, err_filename)
+FileNotFoundError: [Errno 2] No such file or directory: 'python2'
+```
+Solution:
+One should install python2 with pyenv. First, install `pyenv` as follow:
+```
+cd ~/.local/src
+curl -L -o pyenv.tar.gz https://github.com/pyenv/pyenv/archive/refs/heads/master.tar.gz
+tar -xzf pyenv.tar.gz
+mkdir -p ~/.pyenv
+mv pyenv-master/* ~/.pyenv/
+git clone https://github.com/pyenv/pyenv-virtualenv.git ~/.pyenv/plugins/pyenv-virtualenv
+export PATH="$HOME/.pyenv/bin:$PATH"
+eval "$(pyenv init --path)"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+```
+After that install `bzip`.
+```
+cd ~/.local/src
+wget https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz
+tar -xzf bzip2-1.0.8.tar.gz
+cd bzip2-1.0.8
+make -f Makefile-libbz2_so
+make install PREFIX=$HOME/.local
+export LDFLAGS="-L$HOME/.local/lib"
+export CPPFLAGS="-I$HOME/.local/include"
+export PKG_CONFIG_PATH="$HOME/.local/lib/pkgconfig"
+```
+Finally one can install `python 2.7.18` with
+```
+# pyenv uninstall 2.7.18 # uninstall previous installed python 2.7.18.
+pyenv install 2.7.18
+pyenv install 3.8.10
+pyenv global 3.8.10 2.7.18
+pip3 install --user six
+```
+
+
+## Notes: Sigularity (old, failed)
 ```
 $ singularity shell /cvmfs/singularity.opensciencegrid.org/opensciencegrid/osgvo-ubuntu-20.04:latest
 $ bash % to use nominal bash scripts
@@ -455,25 +1006,6 @@ $ export PATH="$HOME/ubuntu20.04/local/mercurial/bin:$PATH"
 $ pip3 install --user cython sympy scipy six
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 wget --no-check-certificate https://boostorg.jfrog.io/artifactory/main/release/1.71.0/source/boost_1_71_0.tar.bz2
 wget --no-check-certificate https://ftpmirror.gnu.org/gnu/gsl/gsl-2.6.tar.gz
 wget --no-check-certificate https://fastjet.hepforge.org/contrib/downloads/fjcontrib-1.042.tar.gz
@@ -490,28 +1022,6 @@ wget --no-check-certificate  https://evtgen.hepforge.org/downloads/EvtGen-01.07.
 wget --no-check-certificate  https://herwig.hepforge.org/downloads//Herwig-7.2.3.tar.bz2
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 736  export PATH="$HOME/ubuntu20.04/local/miniconda3/bin:$PATH"
 
   746  conda_activate 
@@ -522,10 +1032,29 @@ wget --no-check-certificate  https://herwig.hepforge.org/downloads//Herwig-7.2.3
   754  conda install -c conda-forge lhapdf
 ```
 
+## conda
+```
+cdwd
+bash Miniconda3-latest-Linux-x86_64.sh -b -p ~/WD/miniconda3/
+cd miniconda3/
+source ~/.bashrc
+conda info --evns
+conda create --name hw7-py2
+conda activate hw7-py2
+conda create -n hw-py2 python=2
+conda activate hw-py2
+```
 
+# 7. About Mercurial
 
+Below page gives a nice tutorial for the mercurial and hg
+http://btsweet.blogspot.com/2013/12/hg-1-mecurial-basics.html
 
-
+Additional useful command lines:
+```
+$ hg status
+$ hg diff -b > patch.diff
+```
 
 
 

@@ -11,10 +11,7 @@ read snippets/PPCollider.in
 ##################################################
 # Baseline settings
 ##################################################
-#cd /Herwig/EventHandlers # Doesn't work. Use EventGenerators
-#set EventHandler:LuminosityFunction:Energy 13000*GeV # Doesn't work. Use EventGenerators
-
-cd /Herwig/Generators # Try this
+cd /Herwig/Generators
 set EventGenerator:EventHandler:LuminosityFunction:Energy 13000.*GeV
 
 ##################################################
@@ -32,9 +29,6 @@ set /Herwig/Weights/reweightMinPT:Scale 15.*GeV
 ##################################################
 cd /Herwig/MatrixElements/
 insert SubProcess:MatrixElements[0] MEQCD2to2
-#insert SubProcess:MatrixElements[0] /Herwig/UnderlyingEvent/MEQCD2to2Fast
-# MEQCD2to2Fast, that uses hard-coded formulae for the QCD 2 -> 2 scattering matrix elements rather than the helicity libraries of ThePEG. This class is significantly faster than the default MEQCD2to2 class, although it does not implement spin correlations. It is intended to be used in the generation of the multiple parton-parton scatterings for the underlying event where the spin correlations are not important but due to the number of additional scatterings that must be generated the speed of the calculation can significantly affect the run time of the event generator.
-# https://herwig.hepforge.org/doxygen/MEQCD2to2FastInterfaces.html
 insert SubProcess:Preweights[0] /Herwig/Weights/reweightMinPT
 
 ##################################################
@@ -78,6 +72,7 @@ cd /Herwig/NewPhysics
 insert /Herwig/NewPhysics/DecayConstructor:DisableModes 0 Zp->u,ubar;
 insert /Herwig/NewPhysics/DecayConstructor:DisableModes 0 Zp->d,dbar;
 insert /Herwig/NewPhysics/DecayConstructor:DisableModes 0 Zp->s,sbar;
+insert /Herwig/NewPhysics/DecayConstructor:DisableModes 0 Zp->c,cbar;
 insert /Herwig/NewPhysics/DecayConstructor:DisableModes 0 Zp->e-,e+;
 insert /Herwig/NewPhysics/DecayConstructor:DisableModes 0 Zp->nu_e,nu_ebar;
 insert /Herwig/NewPhysics/DecayConstructor:DisableModes 0 Zp->nu_mu,nu_mubar;
@@ -99,18 +94,18 @@ insert /Herwig/NewPhysics/DecayConstructor:DisableModes 0 Zp->nu_tau,nu_taubar;
 cd /Herwig/FRModel/Particles
 #set /Herwig/FRModel/Particles/Zp:Stable Stable
 
-set uuZpSplitFnEW:CouplingValue.Left.Im 0.2090459135992277 # x100
-set uuZpSplitFnEW:CouplingValue.Right.Im 0.20894857930845996
-set ddZpSplitFnEW:CouplingValue.Left.Im -0.10457162394499771
-set ddZpSplitFnEW:CouplingValue.Right.Im -0.10447428965422998
-set ssZpSplitFnEW:CouplingValue.Left.Im -0.10457162394499771
-set ssZpSplitFnEW:CouplingValue.Right.Im -0.10447428965422998
-set ccZpSplitFnEW:CouplingValue.Left.Im 0.2090459135992277
-set ccZpSplitFnEW:CouplingValue.Right.Im 0.20894857930845996
-set bbZpSplitFnEW:CouplingValue.Left.Im -0.10457162394499771
-set bbZpSplitFnEW:CouplingValue.Right.Im -0.10447428965422998
-set ttZpSplitFnEW:CouplingValue.Left.Im 0.2090459135992277
-set ttZpSplitFnEW:CouplingValue.Right.Im 0.20894857930845996
+set uuZpSplitFnEW:CouplingValue.Left.Im 0.02090459135992277 # x10
+set uuZpSplitFnEW:CouplingValue.Right.Im 0.020894857930845996
+set ddZpSplitFnEW:CouplingValue.Left.Im -0.010457162394499771
+set ddZpSplitFnEW:CouplingValue.Right.Im -0.010447428965422998
+set ssZpSplitFnEW:CouplingValue.Left.Im -0.010457162394499771
+set ssZpSplitFnEW:CouplingValue.Right.Im -0.010447428965422998
+set ccZpSplitFnEW:CouplingValue.Left.Im 0.02090459135992277
+set ccZpSplitFnEW:CouplingValue.Right.Im 0.020894857930845996
+set bbZpSplitFnEW:CouplingValue.Left.Im -0.010457162394499771
+set bbZpSplitFnEW:CouplingValue.Right.Im -0.010447428965422998
+set ttZpSplitFnEW:CouplingValue.Left.Im 0.02090459135992277
+set ttZpSplitFnEW:CouplingValue.Right.Im 0.020894857930845996
 
 ### Private commands ###
 
@@ -120,16 +115,20 @@ set ttZpSplitFnEW:CouplingValue.Right.Im 0.20894857930845996
 cd /Herwig/Generators
 set EventGenerator:NumberOfEvents __NEVENTS__
 set EventGenerator:RandomNumberGenerator:Seed __SEED__
-set EventGenerator:PrintEvent 10
+set EventGenerator:PrintEvent 1
 set EventGenerator:MaxErrors 10000
 
 ##################################################
 ## prepare for Rivet analysis or HepMC output
 ## when running with parton shower
 ##################################################
+# Rivet analysis
 read snippets/Rivet.in
-#insert /Herwig/Analysis/Rivet:Analyses 0 Find:ID=52
 insert /Herwig/Analysis/Rivet:Analyses 0 RAnalysis
+
+# HepMC output 
+read snippets/HepMC.in
+set /Herwig/Analysis/HepMC:PrintEvent __NEVENT__
 
 ##################################################
 # Save run for later usage with 'Herwig run'
