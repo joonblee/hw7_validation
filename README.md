@@ -434,8 +434,34 @@ eval "$(pyenv init --path)"
 eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
 
+# install bzip2 to avoid the error during python 2.7.18 installation
+cd $WD/.local/src
+wget https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz
+tar -xzf bzip2-1.0.8.tar.gz
+cd bzip2-1.0.8
+make -f Makefile-libbz2_so
+make install PREFIX=$WD/.local
+export LDFLAGS="-L$WD/.local/lib"
+export CPPFLAGS="-I$WD/.local/include"
+export PKG_CONFIG_PATH="$WD/.local/lib/pkgconfig"
+
+# install Tk toolkit to avoid the error during python 3.8.10 installation
+cd $WD/.local/src
+wget https://prdownloads.sourceforge.net/tcl/tcl8.6.10-src.tar.gz
+wget https://prdownloads.sourceforge.net/tcl/tk8.6.10-src.tar.gz
+tar -xzf tcl8.6.10-src.tar.gz
+tar -xzf tk8.6.10-src.tar.gz
+cd tcl8.6.10/unix
+./configure --prefix=$WD/.local
+make
+make installcd $WD/.local/src/tk8.6.10/unix
+./configure --prefix=$WD/.local --with-tcl=$WD/.local/lib
+make
+make install
+
 pyenv install 2.7.18
 pyenv install 3.8.10
+#LDFLAGS="-L$WD/.local/lib" CPPFLAGS="-I$WD/.local/include" PKG_CONFIG_PATH="$WD/.local/lib/pkgconfig" pyenv install 3.8.10
 pyenv global 3.8.10 2.7.18
 pip3 install --user six 
 
@@ -467,16 +493,6 @@ make install
 export LIBTOOL=${WD}/.local/bin/libtool
 export LIBTOOLIZE=${WD}/.local/bin/libtoolize
 export ACLOCAL_PATH=${WD}/.local/share/aclocal:$ACLOCAL_PATH
-
-cd $WD/.local/src
-wget https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz
-tar -xzf bzip2-1.0.8.tar.gz
-cd bzip2-1.0.8
-make -f Makefile-libbz2_so
-make install PREFIX=$WD/.local
-export LDFLAGS="-L$WD/.local/lib"
-export CPPFLAGS="-I$WD/.local/include"
-export PKG_CONFIG_PATH="$WD/.local/lib/pkgconfig"
 
 pip install numpy
 
