@@ -460,8 +460,7 @@ make
 make install
 
 pyenv install 2.7.18
-pyenv install 3.8.10
-#LDFLAGS="-L$WD/.local/lib" CPPFLAGS="-I$WD/.local/include" PKG_CONFIG_PATH="$WD/.local/lib/pkgconfig" pyenv install 3.8.10
+LDFLAGS="-L$WD/.local/lib" CPPFLAGS="-I$WD/.local/include" PKG_CONFIG_PATH="$WD/.local/lib/pkgconfig" pyenv install 3.8.10
 pyenv global 3.8.10 2.7.18
 pip3 install --user six 
 
@@ -495,6 +494,11 @@ export LIBTOOLIZE=${WD}/.local/bin/libtoolize
 export ACLOCAL_PATH=${WD}/.local/share/aclocal:$ACLOCAL_PATH
 
 pip install numpy
+
+# install HAHM_variableMW_v3_UFO
+cd $WD/opt/MG5_aMC_v3_5_1/models/
+wget https://cms-project-generators.web.cern.ch/cms-project-generators/HAHM_variableMW_v3_UFO.tar.gz
+tar zxf HAHM_variableMW_v3_UFO.tar.gz
 
 cd $WD
 ```
