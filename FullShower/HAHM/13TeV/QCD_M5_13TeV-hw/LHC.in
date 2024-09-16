@@ -128,7 +128,7 @@ insert /Herwig/Analysis/Rivet:Analyses 0 RAnalysis
 
 # HepMC output 
 read snippets/HepMC.in
-set /Herwig/Analysis/HepMC:PrintEvent __NEVENT__
+set /Herwig/Analysis/HepMC:PrintEvent __NEVENTS__
 
 ##################################################
 # Save run for later usage with 'Herwig run'
