@@ -155,8 +155,9 @@ insert Rivet:Analyses 0 RAnalysis
 insert /Herwig/Generators/EventGenerator:AnalysisHandlers 0 Rivet
 
 # HepMC output 
-# read snippets/HepMC.in
-set /Herwig/Analysis/HepMC:PrintEvent __NEVENT__
+#read snippets/HepMC.in
+set /Herwig/Analysis/HepMC:PrintEvent __NEVENTS__
+insert /Herwig/Generators/EventGenerator:AnalysisHandlers 0 HepMC
 
 ##################################################
 # Save run for later usage with 'Herwig run'
