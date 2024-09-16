@@ -8,7 +8,8 @@ cmsRun hepmc2gen.py
 ```
 `hepmc2gen.py` is based on [hepmc2gen.py](https://github.com/cms-sw/cmssw/blob/master/IOMC/Input/test/hepmc2gen.py). Starting from there, it includes all the necessary components for sample generation. The conditions for the configuration file follow [SUS-RunIISummer20UL16GEN-00006](https://cms-pdmv-prod.web.cern.ch/mcm/public/restapi/requests/get_test/SUS-RunIISummer20UL16GEN-00006), which is the official QCD muon-enriched sample. After the GEN file is produced, the rest of steps will utilize the configuration file referring to [SUS-RunIISummer20UL16MiniAODv2-00061](https://cms-pdmv-prod.web.cern.ch/mcm/chained_requests?prepid=SUS-chain_RunIISummer20UL16GEN_flowRunIISummer20UL16SIM_flowRunIISummer20UL16DIGIPremix_flowRunIISummer20UL16HLT_flowRunIISummer20UL16RECO_flowRunIISummer20UL16MiniAODv2_flowRunIISummer20UL16NanoAODv9-00003&shown=15)
 
-#### 1. Input hepmc file as a generator source
+
+## 1. Input hepmc file as a generator source
 We directly puts the hepmc file as an input instead of using the `EDProducer` module. Here, `firstLuminosityBlockForEachRun` gives the events the luminosity block number. For simplicity, We set them to be all 1. (Do we need to modify this part so that each event has a unique set of {run:lumi:event}?)
 ```
 process.source = cms.Source("MCFileSource",
@@ -20,7 +21,8 @@ process.source = cms.Source("MCFileSource",
 process.genParticles.src= cms.InputTag("source","generator")
 ```
 
-#### 2. Vertex Smearing
+
+## 2. Vertex Smearing
 By default, the nominal vertex of a generated event is (0,0,0). However, the interaction region (IR) is not point-like in real life. You can implement the vertex smearing part as shown below referring to [Twiki](https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideVertexSmearing#Algorithms_and_Modules). The parameter set can be found on [cms-sw github](https://github.com/cms-sw/cmssw/tree/eb2285a1aa1c79922fc9ec02d1e750fc8872a04e/IOMC/EventVertexGenerators/python). For the 2016preVFP, `VtxSmearedRealistic25ns13TeV2016Collision_cfi.py` is used.
 ```
 from IOMC.EventVertexGenerators.VtxSmearedParameters_cfi import *
@@ -50,7 +52,8 @@ Looking for module label: generatorSmeared
 Looking for productInstanceName: 
 ```
 
-#### 3. Global Tag (GT)
+
+## 3. Global Tag (GT)
 The information about the geometry and the magnetic field are stored in database. The GT is needed to fetch these information that is matching with the era.
 ```
 from Configuration.AlCa.GlobalTag import GlobalTag
@@ -61,11 +64,17 @@ You can find the GT for official MC producitons on [Twiki](https://twiki.cern.ch
 Unable to find plugin 'EcalSimPulseShapeRcd@NewProxy' in category 'CondProxyFactory'
 ```
 
-#### 4. Gen Filter
+
+## 4. Gen Filter
 We cannot use EDFilter modules like `MCSmartSingleParticleFilter` as we did with Pythia8. Instead, we will use modules named
+
 `GenParticleSelector`: EDFilter module selecting gen particles that satisfy the 'cut'
+
 `CandViewCountFilter`: EDFilter module filtering events if the input collection has at least the specified number of entries
+
 `CandViewShallowCloneCombiner`: EDProduer module combining particle candidates to form composite objects
+
+
 Here, we are trying to select events with at least one Z prime boson and opposite-sign muon pair originating from the Z prime. For selecting the muon pair, there are two options. The first option is combining muon pair and then applying the mass cut to it. The second option is selecting two final state muons.
 ```
 # Z prime
