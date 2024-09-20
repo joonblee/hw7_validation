@@ -27,7 +27,7 @@ echo "Starting time : $now"
 echo ""
 echo ""
 
-Hw_Loc=/data6/Users/joonblee/hw_singularity
+Hw_Loc=/data6/Users/taehee/HerwigWD
 RB="$Hw_Loc/bin/rivet-build"
 source "$Hw_Loc/bin/activate"
 
@@ -77,20 +77,20 @@ if $runLHC; then
     Herwig read LHC-${i}.in
     Herwig run LHC-${i}.run &> LHC-${i}run.log &
 
-    nJobs=`ps aux | grep -v "grep" | grep "joonblee" | grep "run" | grep -c "Herwig"`
+    nJobs=`ps aux | grep -v "grep" | grep "taehee" | grep "run" | grep -c "Herwig"`
     while (( $nJobs >= $Ncore ))
     do
       sleep 100
-      nJobs=`ps aux | grep -v "grep" | grep "joonblee" | grep "run" | grep -c "Herwig"`
+      nJobs=`ps aux | grep -v "grep" | grep "taehee" | grep "run" | grep -c "Herwig"`
     done
   done
 fi
 
-nJobs=`ps aux | grep -v "grep" | grep "joonblee" | grep "run" | grep -c "Herwig"`
+nJobs=`ps aux | grep -v "grep" | grep "taehee" | grep "run" | grep -c "Herwig"`
 while [[ $nJobs != 0 ]]
 do
   sleep 60
-  nJobs=`ps aux | grep -v "grep" | grep "joonblee" | grep "run" | grep -c "Herwig"`
+  nJobs=`ps aux | grep -v "grep" | grep "taehee" | grep "run" | grep -c "Herwig"`
 done
 
 # run rivet

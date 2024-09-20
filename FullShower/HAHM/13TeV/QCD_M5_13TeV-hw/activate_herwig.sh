@@ -1,7 +1,7 @@
 #!/bin/bash
 
-Singularity_Loc=/data6/Users/joonblee/hw_singularity
-Hw_Loc=/data6/Users/joonblee/hw_singularity/
+Singularity_Loc=/data6/Users/taehee/HerwigWD
+Hw_Loc=/data6/Users/taehee/HerwigWD
 
 # Herwig7 basic setups
 #ln -s $(which python3) $Singularity_Loc/.local/bin/python
@@ -22,4 +22,3 @@ export CPPFLAGS="-I$Singularity_Loc/.local/include"
 export PKG_CONFIG_PATH="$Singularity_Loc/.local/lib/pkgconfig"
 
 source "$Hw_Loc/bin/activate"
-

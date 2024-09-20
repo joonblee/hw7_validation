@@ -55,18 +55,18 @@ insert /Herwig/NewPhysics/DecayConstructor:DisableModes 0 Zp->nu_tau,nu_taubar;
 cd /Herwig/FRModel/Particles
 #set /Herwig/FRModel/Particles/Zp:Stable Stable
 
-#set uuZpSplitFnEW:CouplingValue.Left.Im 0.02090459135992277 # x10
-#set uuZpSplitFnEW:CouplingValue.Right.Im 0.020894857930845996
-#set ddZpSplitFnEW:CouplingValue.Left.Im -0.010457162394499771
-#set ddZpSplitFnEW:CouplingValue.Right.Im -0.010447428965422998
-#set ssZpSplitFnEW:CouplingValue.Left.Im -0.010457162394499771
-#set ssZpSplitFnEW:CouplingValue.Right.Im -0.010447428965422998
-#set ccZpSplitFnEW:CouplingValue.Left.Im 0.02090459135992277
-#set ccZpSplitFnEW:CouplingValue.Right.Im 0.020894857930845996
-#set bbZpSplitFnEW:CouplingValue.Left.Im -0.010457162394499771
-#set bbZpSplitFnEW:CouplingValue.Right.Im -0.010447428965422998
-#set ttZpSplitFnEW:CouplingValue.Left.Im 0.02090459135992277
-#set ttZpSplitFnEW:CouplingValue.Right.Im 0.020894857930845996
+set uuZpSplitFnEW:CouplingValue.Left.Im 0.2090459135992277 # x100
+set uuZpSplitFnEW:CouplingValue.Right.Im 0.20894857930845996
+set ddZpSplitFnEW:CouplingValue.Left.Im -0.10457162394499771
+set ddZpSplitFnEW:CouplingValue.Right.Im -0.10447428965422998
+set ssZpSplitFnEW:CouplingValue.Left.Im -0.10457162394499771
+set ssZpSplitFnEW:CouplingValue.Right.Im -0.10447428965422998
+set ccZpSplitFnEW:CouplingValue.Left.Im 0.2090459135992277
+set ccZpSplitFnEW:CouplingValue.Right.Im 0.20894857930845996
+set bbZpSplitFnEW:CouplingValue.Left.Im -0.10457162394499771
+set bbZpSplitFnEW:CouplingValue.Right.Im -0.10447428965422998
+set ttZpSplitFnEW:CouplingValue.Left.Im 0.2090459135992277
+set ttZpSplitFnEW:CouplingValue.Right.Im 0.20894857930845996
 
 ### Private commands ###
 
@@ -78,7 +78,7 @@ library LesHouches.so
 
 cd /Herwig/EventHandlers
 create ThePEG::LesHouchesFileReader myReader
-set myReader:FileName __DIR__/Events/run_01/unweighted_events.lhe.gz
+set myReader:FileName __DIR__/unweighted_events.lhe.gz
 create ThePEG::Cuts /Herwig/Cuts/NoCuts
 set myReader:Cuts /Herwig/Cuts/NoCuts
 set myReader:CacheFileName cache.tmp

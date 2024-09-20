@@ -12,12 +12,12 @@ echo ""
 
 CompileUFO=true
 UFOName=HAHM_variableMW_v3_UFO
-EVTpRUN=1000
+EVTpRUN=100000
 
-Hw_Loc=/data6/Users/joonblee/hw_singularity/
+Hw_Loc=/data6/Users/taehee/HerwigWD
 Singularity_Loc=$Hw_Loc
-WD=/data6/Users/joonblee/hw_singularity/hw7_validation/FullShower/HAHM/13TeV/mg
-mg_job_number=2476285
+WD=$Hw_Loc/hw7_validation/FullShower/HAHM/13TeV/mg
+mg_job_number=${3}
 
 # Herwig7 basic setups
 #ln -s $(which python3) $Singularity_Loc/.local/bin/python
@@ -42,12 +42,13 @@ export PKG_CONFIG_PATH="$Singularity_Loc/.local/lib/pkgconfig"
 ###########
 
 cd $WD
+outputdir=/gv0/Users/taehee/HerwigSample/hw/${mg_job_number}/${2}
 echo "Working Directory: $WD"
-echo "Make a run directory, hw/$2"
+echo "Make a run directory, $outputdir"
 
-mkdir -p hw/$2
-cp RAnalysis.cc hw/$2/
-cd hw/$2/
+mkdir -p ${outputdir}
+cp ../QCD_M5_13TeV-mg-hw/RAnalysis.cc ${outputdir}
+cd ${outputdir}
 
 RB="$Hw_Loc/bin/rivet-build"
 source "$Hw_Loc/bin/activate"
@@ -75,16 +76,17 @@ fi
 
 # compile rivet analysis
 echo "Compile the rivet analysis, RAnalysis.cc"
+chmod +x $RB
 $RB Rivet.so RAnalysis.cc
-export RIVET_ANALYSIS_PATH=$WD/hw/$2
+export RIVET_ANALYSIS_PATH=$outputdir
 echo ""
 
 # run hw7
 echo "Start runnning LHC.${1}.${2} (mg job # = ${mg_job_number})"
 rnum=$(shuf -i 1-99999999 -n 1)
-sed -e "s/__NEVENTS__/${EVTpRUN}/g" ${WD}/LHC.in > ${WD}/hw/$2/LHC.in
-sed -i "s/__SEED__/${rnum}/g"                      ${WD}/hw/$2/LHC.in
-sed -i "s/__DIR__/\/data6\/Users\/joonblee\/hw_singularity\/hw7_validation\/FullShower\/HAHM\/13TeV\/mg\/mg\/${mg_job_number}\/${2}\/mg/g"                          ${WD}/hw/$2/LHC.in
+sed -e "s/__NEVENTS__/${EVTpRUN}/g" ${WD}/../QCD_M5_13TeV-mg-hw/LHC.in > ${outputdir}/LHC.in
+sed -i "s/__SEED__/${rnum}/g" "${outputdir}/LHC.in"
+sed -i "s/__DIR__/\/gv0\/Users\/taehee\/HerwigSample\/mg\/${mg_job_number}\/${2}/g" "${outputdir}/LHC.in"
 Herwig read LHC.in 
 Herwig run LHC.run 
 
@@ -96,4 +98,3 @@ now=$(date +"%T")
 echo "End time : $now"
 echo ""
 echo ""
-

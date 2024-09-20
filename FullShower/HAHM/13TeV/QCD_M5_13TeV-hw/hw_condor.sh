@@ -14,9 +14,9 @@ CompileUFO=true
 UFOName=HAHM_variableMW_v3_UFO
 EVTpRUN=1000
 
-Singularity_Loc=/data6/Users/joonblee/hw_singularity
-Hw_Loc=/data6/Users/joonblee/hw_singularity/
-WD=$Hw_Loc/hw7_validation/FullShower/HAHM/13TeV/Zp_2GeV
+Singularity_Loc=/data6/Users/taehee/HerwigWD/
+Hw_Loc=/data6/Users/taehee/HerwigWD/
+WD=$Hw_Loc/hw7_validation/FullShower/HAHM/13TeV/QCD_M5_13TeV-hw/
 
 # Herwig7 basic setups
 #ln -s $(which python3) $Singularity_Loc/.local/bin/python

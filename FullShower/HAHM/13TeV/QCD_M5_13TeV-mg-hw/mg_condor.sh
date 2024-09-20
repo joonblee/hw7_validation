@@ -9,24 +9,24 @@ runFO1j=false
 runFO2j=false
 runFO12j=false
 
-Hw_Loc=/data6/Users/joonblee/hw_singularity
+Hw_Loc=/data6/Users/taehee/HerwigWD
 Singularity_Loc=$Hw_Loc
-WD=/data6/Users/joonblee/hw_singularity/hw7_validation/FullShower/HAHM/13TeV/mg
+WD=$Hw_Loc/hw7_validation/FullShower/HAHM/13TeV/mg
 MG_version="MG5_aMC_v3_5_1"
 
-nevents=1000
+nevents=100000
 ebeam=6500
 
 MG="$Hw_Loc/opt/$MG_version/bin/mg5_aMC"
-tmp=$WD/mg/${1}/${2}
+outputdir=/gv0/Users/taehee/HerwigSample/mg/${1}_${3}_${4}/${2}
 
-if [[ ! -d "$tmp" ]]; then
-  echo "Make $tmp directory."
-  mkdir -p $tmp
+if [[ ! -d "$outputdir" ]]; then
+  echo "Make $outputdir directory."
+  mkdir -p $outputdir
 else
-  echo "$tmp exists."
+  echo "$outputdir exists."
 fi
-cd $tmp/
+cd $outputdir/
 
 # Herwig7 basic setups
 #ln -s $(which python3) $Singularity_Loc/.local/bin/python
@@ -51,7 +51,7 @@ if $runRS; then
   echo "Run RS.${1}.${2}"
   RS_File="MG_setup.dat"
   RS_DIR=mg
-  if [[ -d "$tmp/$RS_DIR" ]]; then
+  if [[ -d "$outputdir/$RS_DIR" ]]; then
     echo "$RS_DIR exists, quit."
     exit 1
   else
@@ -65,7 +65,8 @@ if $runRS; then
   echo "set nevents $nevents"                  >> $RS_File
   echo "set ebeam1 $ebeam"                     >> $RS_File
   echo "set ebeam2 $ebeam"                     >> $RS_File
-  echo "set ptj 50."                           >> $RS_File
+  echo "set ptj ${3}"                          >> $RS_File
+  echo "set maxptj ${4}"                       >> $RS_File
   echo "set etaj 4."                           >> $RS_File
   echo "set mzdinput 5."                       >> $RS_File
   echo "set use_syst False"                    >> $RS_File
@@ -163,6 +164,10 @@ if $runFO12j;then
   $MG $FO12j_File &> MG_${FO12j_DIR}.log 
 fi
 
+cd $outputdir
+cp mg/Events/run_01/unweighted_events.lhe.gz $outputdir
+rm -rf mg
+rm MG_setup.dat  py.py
 cd $WD
 
 #rm py.py MG_setup_FO.dat MG_setup_RS.dat MG5_debug 
