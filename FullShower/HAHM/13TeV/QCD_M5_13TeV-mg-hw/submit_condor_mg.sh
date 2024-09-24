@@ -1,12 +1,12 @@
 #!/bin/bash
 
 #ptbin=(50 80 120 170 300 470 600 800 1000 9999)
-#ptbin=(50 60 70 80 100 120 150 190 240 300 9999)
+ptbin=(50 60 70 80 90 100 120 150 190 240 300 400 500 9999)
 
 cat <<EOT > submit_condor_mg.txt
 universe        = vanilla
 executable      = mg_condor.sh
-arguments       = \$(Cluster) \$(Process) \$(ptj) \$(maxptj)
+arguments       = \$(Cluster) \$(Process) \$(ptj) \$(ptjmax)
 output          = job.\$(Cluster).\$(Process).out
 error           = job.\$(Cluster).\$(Process).err
 log             = job.\$(Cluster).\$(Process).log
@@ -18,8 +18,8 @@ EOT
 
 for ((i=0; i<${#ptbin[@]}-1; i++)); do
     ptj=${ptbin[i]}
-    maxptj=${ptbin[i+1]}
-    echo "Submitting job for MG ptbinned [$ptj, $maxptj]"
-    condor_submit submit_condor_mg.txt -append "arguments = \$(Cluster) \$(Process) $ptj $maxptj"
+    ptjmax=${ptbin[i+1]}
+    echo "Submitting job for MG ptbinned [$ptj, $ptjmax]"
+    condor_submit submit_condor_mg.txt -append "arguments = \$(Cluster) \$(Process) $ptj $ptjmax"
     sleep 60
 done
