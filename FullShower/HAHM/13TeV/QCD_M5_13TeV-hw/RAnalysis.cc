@@ -46,10 +46,10 @@ namespace Rivet {
 
       book(_h_etamu,  "h_eta(mu)",   60, -3.,    3.);
 
-      book(_h_ptj,   "h_pt(j)",   100,  0., 500.0);
-      book(_h_ptj1,  "h_pt(j1)",   100,  0., 500.0);
-      book(_h_ptj2,  "h_pt(j2)",   100,  0., 500.0);
-      book(_h_ptj3,  "h_pt(j3)",   100,  0., 500.0);
+      book(_h_ptj,   "h_pt(j)",   400,  0., 2000.0);
+      book(_h_ptj1,  "h_pt(j1)",  400,  0., 2000.0);
+      book(_h_ptj2,  "h_pt(j2)",  400,  0., 2000.0);
+      book(_h_ptj3,  "h_pt(j3)",  400,  0., 2000.0);
 
       book(_h_etaj,  "h_eta(j)",   60, -3.,    3.);
 
@@ -126,21 +126,31 @@ namespace Rivet {
         _h_mhat->fill((ptjets[0].momentum()+ptjets[1].momentum()+ptjets[2].momentum()+ptjets[3].momentum()).mass(),wgt);
         _h_ht->fill(ptjets[0].pt()+ptjets[1].pt()+ptjets[2].pt()+ptjets[3].pt(),wgt);
       }
-
+      
+      //Event selection
+      bool passEvent = false;
       Jets jets;
       for(const Jet& jet_:ptjets) {
         if( !(jet_.pt() > 30. && jet_.abseta() < 2.4) ) continue;
-        bool MuonJet = false;
+        Particle lmu, smu;
+        double lpt = -999; double spt = -999;
         for(const Particle& mu : muons) {
+          if( !(mu.pt()>13.) ) continue;
           if( !(deltaR(mu.momentum(),jet_.momentum())<0.3) ) continue;
-          if( !(mu.pt()>jet_.pt()*0.95) ) continue;
-          MuonJet = true;
-          break;
+          if( mu.pt()>lpt ){
+              spt = lpt; lpt = mu.pt();
+              smu = lmu; lmu = mu;
+          }
+          else if( mu.pt()>spt ){
+              spt = mu.pt(); smu = mu;
+          }
         }
-        if( MuonJet ) continue;
-        jets.push_back(jet_);
+        if( lpt<0 || spt<0 ) continue;
+        if( !(lpt>32.) ) continue;
+        if( !( (lpt+spt)/jet_.pt() <0.7 ) ) continue;
+        passEvent = true;
       }
-      if( jets.size() == 0 ) vetoEvent;
+      if( !passEvent ) vetoEvent;
 
       Jet jet; double dr=numeric_limits<double>::max(); unsigned int njet=0;
       for(const Jet& jet_:jets) {
