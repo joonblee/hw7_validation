@@ -66,7 +66,7 @@ if $runRS; then
   echo "set ebeam1 $ebeam"                     >> $RS_File
   echo "set ebeam2 $ebeam"                     >> $RS_File
   echo "set ptj ${3}"                          >> $RS_File
-  echo "set maxptj ${4}"                       >> $RS_File
+  echo "set ptjmax ${4}"                       >> $RS_File
   echo "set etaj 4."                           >> $RS_File
   echo "set mzdinput 5."                       >> $RS_File
   echo "set use_syst False"                    >> $RS_File
