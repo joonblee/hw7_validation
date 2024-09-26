@@ -148,6 +148,7 @@ namespace Rivet {
         if( lpt<0 || spt<0 ) continue;
         if( !(lpt>32.) ) continue;
         if( !( (lpt+spt)/jet_.pt() <0.7 ) ) continue;
+        jets.push_back(jet_);
         passEvent = true;
       }
       if( !passEvent ) vetoEvent;
