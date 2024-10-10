@@ -25,7 +25,6 @@ process.maxEvents = cms.untracked.PSet(
 # Input source
 process.source = cms.Source("MCFileSource",
             fileNames = cms.untracked.vstring('file:__INPUT__.hepmc'),
-            #fileNames = cms.untracked.vstring('file:/data9/Users/taehee/CMSSW_10_6_19_patch3/src/LHC-1.hepmc'),
             firstLuminosityBlockForEachRun = cms.untracked.VLuminosityBlockID([]),
             )
 
