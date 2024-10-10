@@ -1,8 +1,8 @@
 # HepMC to GEN
 Herwig generator produces an event file in hepmc format, which cannot be used as an input for `cmsDriver.py` command. Therefore, we need to generate our own configuration file for the GEN step. You can run the configuration file with the following commands:
 ```
-cmsrel CMSSW_10_6_19_patch1
-cd CMSSW_10_6_19_patch1/src
+cmsrel CMSSW_10_6_19_patch3
+cd CMSSW_10_6_19_patch3/src
 cmsenv
 cmsRun hepmc2gen.py
 ```
