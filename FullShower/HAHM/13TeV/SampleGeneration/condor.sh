@@ -4,8 +4,20 @@ process=${1}
 sample=${2}
 campaign=${3}
 
+if [ "$campaign" == "RunIISummer20UL16" ]; then
+    CMSSW=("CMSSW_10_6_19_patch3" "CMSSW_10_6_17_patch1" "CMSSW_10_6_17_patch1" "CMSSW_8_0_36_UL_patch1" "CMSSW_10_6_17_patch1" "CMSSW_10_6_25")
+elif [ "$campaign" == "RunIISummer20UL16APV" ]; then
+    CMSSW=("CMSSW_10_6_19_patch3" "CMSSW_10_6_17_patch1" "CMSSW_10_6_17_patch1" "CMSSW_8_0_36_UL_patch1" "CMSSW_10_6_17_patch1" "CMSSW_10_6_25")
+elif [ "$campaign" == "RunIISummer20UL17" ]; then
+    CMSSW=("CMSSW_10_6_19_patch3" "CMSSW_10_6_17_patch1" "CMSSW_10_6_17_patch1" "CMSSW_9_4_14_UL_patch1" "CMSSW_10_6_17_patch1" "CMSSW_10_6_20")
+elif [ "$campaign" == "RunIISummer20UL18" ]; then
+    CMSSW=("CMSSW_10_6_19_patch3" "CMSSW_10_6_17_patch1" "CMSSW_10_6_17_patch1" "CMSSW_10_2_16_UL" "CMSSW_10_6_17_patch1" "CMSSW_10_6_20")
+else
+    echo "Wrong Campaign: $campaign"
+    echo "You should select among RunIISummer20UL16 RunIISummer20UL16APV RunIISummer20UL17 RunIISummer20UL18"
+    exit 1
+fi
 RUNS=("GEN" "SIM" "DIGIPremix" "HLT" "RECO" "MiniAODv2")
-CMSSW=("CMSSW_10_6_30_patch1" "CMSSW_10_6_17_patch1" "CMSSW_10_6_17_patch1" "CMSSW_8_0_33_UL" "CMSSW_10_6_17_patch1" "CMSSW_10_6_25")
 
 source /cvmfs/cms.cern.ch/cmsset_default.sh
 export SCRAM_ARCH=slc7_amd64_gcc700
