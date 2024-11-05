@@ -34,41 +34,53 @@ insert /Herwig/NewPhysics/DecayConstructor:DisableModes 0 Zp->u,ubar;
 insert /Herwig/NewPhysics/DecayConstructor:DisableModes 0 Zp->d,dbar;
 insert /Herwig/NewPhysics/DecayConstructor:DisableModes 0 Zp->s,sbar;
 insert /Herwig/NewPhysics/DecayConstructor:DisableModes 0 Zp->c,cbar;
+insert /Herwig/NewPhysics/DecayConstructor:DisableModes 0 Zp->b,bbar;
 insert /Herwig/NewPhysics/DecayConstructor:DisableModes 0 Zp->e-,e+;
+insert /Herwig/NewPhysics/DecayConstructor:DisableModes 0 Zp->tau-,tau+;
 insert /Herwig/NewPhysics/DecayConstructor:DisableModes 0 Zp->nu_e,nu_ebar;
 insert /Herwig/NewPhysics/DecayConstructor:DisableModes 0 Zp->nu_mu,nu_mubar;
 insert /Herwig/NewPhysics/DecayConstructor:DisableModes 0 Zp->nu_tau,nu_taubar;
-
-# Parent: Zp  Mass (GeV): 2  Total Width (GeV): 2.08553e-06
-#                                       Partial Width/GeV   BR                  Yes/No
-#Zp->u,ubar;                             6.95186e-07         0.333338            Yes
-#Zp->e-,e+;                              5.21309e-07         0.249965            Yes
-#Zp->mu-,mu+;                            5.21284e-07         0.249953            Yes
-#Zp->d,dbar;                             1.73878e-07         0.0833733           Yes
-#Zp->s,sbar;                             1.73873e-07         0.0833709           Yes
-#Zp->nu_tau,nu_taubar;                   0                   0                   No
-#Zp->nu_mu,nu_mubar;                     0                   0                   No
-#Zp->nu_e,nu_ebar;                       0                   0                   No
-
+insert /Herwig/NewPhysics/DecayConstructor:DisableModes 0 Zp->bbar,s;
+insert /Herwig/NewPhysics/DecayConstructor:DisableModes 0 Zp->b,sbar;
 
 # Particle property
 cd /Herwig/FRModel/Particles
 #set /Herwig/FRModel/Particles/Zp:Stable Stable
 
-set uuZpSplitFnEW:CouplingValue.Left.Im 0.2090459135992277 # x100
-set uuZpSplitFnEW:CouplingValue.Right.Im 0.20894857930845996
-set ddZpSplitFnEW:CouplingValue.Left.Im -0.10457162394499771
-set ddZpSplitFnEW:CouplingValue.Right.Im -0.10447428965422998
-set ssZpSplitFnEW:CouplingValue.Left.Im -0.10457162394499771
-set ssZpSplitFnEW:CouplingValue.Right.Im -0.10447428965422998
-set ccZpSplitFnEW:CouplingValue.Left.Im 0.2090459135992277
-set ccZpSplitFnEW:CouplingValue.Right.Im 0.20894857930845996
-set bbZpSplitFnEW:CouplingValue.Left.Im -0.10457162394499771
-set bbZpSplitFnEW:CouplingValue.Right.Im -0.10447428965422998
-set ttZpSplitFnEW:CouplingValue.Left.Im 0.2090459135992277
-set ttZpSplitFnEW:CouplingValue.Right.Im 0.20894857930845996
-
 ### Private commands ###
+##################################################
+## CH3 Tune
+##################################################
+#https://github.com/cms-sw/cmssw/blob/515a95035270919063dc9a36356b03b4ee097ec2/Configuration/Generator/python/Herwig7Settings/Herwig7CH3TuneSettings_cfi.py
+# CH3 AlphaS
+cd /Herwig/Shower
+set AlphaQCDISR:AlphaIn 0.118
+set AlphaQCDFSR:AlphaIn 0.118
+cd /
+# CH3 MPI settings
+set /Herwig/Hadronization/ColourReconnector:ReconnectionProbability 0.4712
+set /Herwig/UnderlyingEvent/MPIHandler:pTmin0 3.04
+set /Herwig/UnderlyingEvent/MPIHandler:InvRadius 1.284
+set /Herwig/UnderlyingEvent/MPIHandler:Power 0.1362
+# CH3 PDF
+cd /Herwig/Partons
+create ThePEG::LHAPDF PDFSet_nnlo ThePEGLHAPDF.so
+set PDFSet_nnlo:PDFName NNPDF31_nnlo_as_0118.LHgrid
+set PDFSet_nnlo:RemnantHandler HadronRemnants
+set /Herwig/Particles/p+:PDF PDFSet_nnlo
+set /Herwig/Particles/pbar-:PDF PDFSet_nnlo
+set /Herwig/Partons/PPExtractor:FirstPDF  PDFSet_nnlo
+set /Herwig/Partons/PPExtractor:SecondPDF PDFSet_nnlo
+set /Herwig/Shower/ShowerHandler:PDFA PDFSet_nnlo
+set /Herwig/Shower/ShowerHandler:PDFB PDFSet_nnlo
+create ThePEG::LHAPDF PDFSet_lo ThePEGLHAPDF.so
+set PDFSet_lo:PDFName NNPDF31_lo_as_0130.LHgrid
+set PDFSet_lo:RemnantHandler HadronRemnants
+set /Herwig/Shower/ShowerHandler:PDFARemnant PDFSet_lo
+set /Herwig/Shower/ShowerHandler:PDFBRemnant PDFSet_lo
+set /Herwig/Partons/MPIExtractor:FirstPDF PDFSet_lo
+set /Herwig/Partons/MPIExtractor:SecondPDF PDFSet_lo
+cd /
 
 ##################################################
 ## Process selection
@@ -103,14 +115,17 @@ set myReader:InitPDFs 0
 set myReader:MomentumTreatment RescaleEnergy #momentum conservation
 
 cd /Herwig/Partons
-create ThePEG::LHAPDF myPDFset ThePEGLHAPDF.so
-set myPDFset:PDFName MMHT2014lo68cl
-set myPDFset:RemnantHandler HadronRemnants
-set /Herwig/Particles/p+:PDF myPDFset
-set /Herwig/Partons/PPExtractor:FirstPDF myPDFset
-set /Herwig/Partons/PPExtractor:SecondPDF myPDFset
-set /Herwig/EventHandlers/myReader:PDFA myPDFset
-set /Herwig/EventHandlers/myReader:PDFB myPDFset
+#create ThePEG::LHAPDF myPDFset ThePEGLHAPDF.so
+#set myPDFset:PDFName MMHT2014lo68cl
+#set myPDFset:RemnantHandler HadronRemnants
+#set /Herwig/Particles/p+:PDF myPDFset
+#set /Herwig/Partons/PPExtractor:FirstPDF myPDFset
+#set /Herwig/Partons/PPExtractor:SecondPDF myPDFset
+#set /Herwig/EventHandlers/myReader:PDFA myPDFset
+#set /Herwig/EventHandlers/myReader:PDFB myPDFset
+set /Herwig/EventHandlers/myReader:PDFA PDFSet_nnlo
+set /Herwig/EventHandlers/myReader:PDFB PDFSet_nnlo
+
 
 ##################################################
 # Technical parameters for this run
