@@ -11,14 +11,13 @@ runFO12j=false
 
 Hw_Loc=/data6/Users/taehee/HerwigWD
 Singularity_Loc=$Hw_Loc
-WD=$Hw_Loc/hw7_validation/FullShower/HAHM/13TeV/mg
 MG_version="MG5_aMC_v3_5_1"
 
 nevents=100000
 ebeam=6500
 
 MG="$Hw_Loc/opt/$MG_version/bin/mg5_aMC"
-outputdir=/gv0/Users/taehee/HerwigSample/mg/${1}_${3}_${4}/${2}
+outputdir=/gv0/Users/taehee/HerwigSample/mg/M-${5}_Pt-${3}To${4}_${1}/${2}
 
 if [[ ! -d "$outputdir" ]]; then
   echo "Make $outputdir directory."
@@ -59,16 +58,16 @@ if $runRS; then
   fi
   echo "set auto_update 0"                     >> $RS_File
   echo "import model HAHM_variableMW_v3_UFO"   >> $RS_File
-  echo "generate p p > j j HIG=0 HIW=0 QED=0"  >> $RS_File
+  echo "generate p p > b b~ HIG=0 HIW=0 QED=0"  >> $RS_File
   echo "output madevent $RS_DIR"               >> $RS_File
   echo "launch"                                >> $RS_File
   echo "set nevents $nevents"                  >> $RS_File
   echo "set ebeam1 $ebeam"                     >> $RS_File
   echo "set ebeam2 $ebeam"                     >> $RS_File
-  echo "set ptj ${3}"                          >> $RS_File
-  echo "set ptjmax ${4}"                       >> $RS_File
-  echo "set etaj 4."                           >> $RS_File
-  echo "set mzdinput 5."                       >> $RS_File
+  echo "set ptb ${3}"                          >> $RS_File
+  echo "set ptbmax ${4}"                       >> $RS_File
+  echo "set etab 4."                           >> $RS_File
+  echo "set mzdinput ${5}"                     >> $RS_File
   echo "set use_syst False"                    >> $RS_File
   $MG $RS_File
 fi
@@ -168,7 +167,6 @@ cd $outputdir
 cp mg/Events/run_01/unweighted_events.lhe.gz $outputdir
 rm -rf mg
 rm MG_setup.dat  py.py
-cd $WD
 
 #rm py.py MG_setup_FO.dat MG_setup_RS.dat MG5_debug 
 
