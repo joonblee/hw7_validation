@@ -42,9 +42,10 @@ export PKG_CONFIG_PATH="$Singularity_Loc/.local/lib/pkgconfig"
 ### run ###
 ###########
 
-outputdir=/gv0/Users/taehee/HerwigSample/hw/${sample}/${2}
+outputdir=/gv0/Users/taehee/HerwigSample/hw/MZp-${ZprimeMass}/${sample}/${2}
 echo "Make a run directory, $outputdir"
 
+rm -rf ${outputdir}
 mkdir -p ${outputdir}
 cp $Hw_Loc/hw7_validation/FullShower/HAHM/13TeV/QCD_M5_13TeV-mg-hw/RAnalysis.cc ${outputdir}
 cd ${outputdir}
@@ -62,6 +63,7 @@ if [ "$CompileUFO" = true ] && [ ! -f FRModel.model ]; then
   ufo2herwig ${UFOName} --enable-bsm-shower
   sed -i "s/echo \*.cc/echo FRModel*.cc/g" Makefile
   sed -i "35,87s/^/#/" FRModel.model
+  sed -i "101,123s/^/#/" FRModel.model
   make
 fi
 
@@ -77,7 +79,7 @@ echo "Start runnning LHC.${1}.${2} (mg job # = ${sample})"
 rnum=$(shuf -i 1-99999999 -n 1)
 sed -e "s/__NEVENTS__/${EVTpRUN}/g" ${Hw_Loc}/hw7_validation/FullShower/HAHM/13TeV/QCD_M5_13TeV-mg-hw/LHC.in > ${outputdir}/LHC.in
 sed -i "s/__SEED__/${rnum}/g" "${outputdir}/LHC.in"
-sed -i "s/__DIR__/\/gv0\/Users\/taehee\/HerwigSample\/mg\/${sample}\/${2}/g" "${outputdir}/LHC.in"
+sed -i "s/__DIR__/\/gv0\/Users\/taehee\/HerwigSample\/mg\/MZp-${ZprimeMass}\/${sample}\/${2}/g" "${outputdir}/LHC.in"
 if [ "$ZprimeMass" -lt 9 ];then
     sed -i '37s/^/#/' LHC.in
 fi
@@ -89,7 +91,8 @@ fi
 Herwig read LHC.in 
 Herwig run LHC.run 
 
-rm -rf *.cc ${UFOName}* __pycache__ Makefile param_card.dat RAnalysis.* *tex *out Loop*
+mv FRModel.model ..
+rm -rf FR* *.cc ${UFOName}* __pycache__ Makefile param_card.dat RAnalysis.* *tex *out Loop*
 
 echo ""
 now=$(date +"%T")
