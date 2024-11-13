@@ -17,7 +17,7 @@ nevents=100000
 ebeam=6500
 
 MG="$Hw_Loc/opt/$MG_version/bin/mg5_aMC"
-outputdir=/gv0/Users/taehee/HerwigSample/mg/M-${5}_Pt-${3}To${4}_${1}/${2}
+outputdir=/gv0/Users/taehee/HerwigSample/mg/MZp-${5}/Pt-${3}To${4}_${1}/${2}
 
 if [[ ! -d "$outputdir" ]]; then
   echo "Make $outputdir directory."
@@ -25,7 +25,6 @@ if [[ ! -d "$outputdir" ]]; then
 else
   echo "$outputdir exists."
 fi
-cd $outputdir/
 
 # Herwig7 basic setups
 #ln -s $(which python3) $Singularity_Loc/.local/bin/python
@@ -163,7 +162,6 @@ if $runFO12j;then
   $MG $FO12j_File &> MG_${FO12j_DIR}.log 
 fi
 
-cd $outputdir
 cp mg/Events/run_01/unweighted_events.lhe.gz $outputdir
 rm -rf mg
 rm MG_setup.dat  py.py
