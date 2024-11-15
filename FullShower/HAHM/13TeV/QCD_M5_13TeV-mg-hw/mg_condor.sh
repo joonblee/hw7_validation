@@ -49,12 +49,13 @@ if $runRS; then
   echo "Run RS.${1}.${2}"
   RS_File="MG_setup.dat"
   RS_DIR=mg
-  if [[ -d "$outputdir/$RS_DIR" ]]; then
-    echo "$RS_DIR exists, quit."
-    exit 1
-  else
-    echo "No $RS_DIR directory. Run MG5 to generate a new sample."
-  fi
+  mkdir $RS_DIR
+  #if [[ -d "$outputdir/$RS_DIR" ]]; then
+  #  echo "$RS_DIR exists, quit."
+  #  exit 1
+  #else
+  #  echo "No $RS_DIR directory. Run MG5 to generate a new sample."
+  #fi
   echo "set auto_update 0"                     >> $RS_File
   echo "import model HAHM_variableMW_v3_UFO"   >> $RS_File
   echo "generate p p > b b~ HIG=0 HIW=0 QED=0"  >> $RS_File
@@ -163,8 +164,6 @@ if $runFO12j;then
 fi
 
 cp mg/Events/run_01/unweighted_events.lhe.gz $outputdir
-rm -rf mg
-rm MG_setup.dat  py.py
 
 #rm py.py MG_setup_FO.dat MG_setup_RS.dat MG5_debug 
 
