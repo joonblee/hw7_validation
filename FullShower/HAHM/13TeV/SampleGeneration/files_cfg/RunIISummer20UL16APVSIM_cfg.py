@@ -2,7 +2,7 @@
 # using: 
 # Revision: 1.19 
 # Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
-# with command line options: --python_filename RunIISummer20UL16APVSIM_cfg.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM --fileout file:__INPUT__.root --conditions 106X_mcRun2_asymptotic_preVFP_v8 --beamspot Realistic25ns13TeV2016Collision --step SIM --geometry DB:Extended --filein file:__OUTPUT__.root --era Run2_2016_HIPM --runUnscheduled --no_exec --mc -n 1
+# with command line options: --python_filename RunIISummer20UL16APVSIM_cfg.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM --fileout file:__OUTPUT__.root --conditions 106X_mcRun2_asymptotic_preVFP_v8 --beamspot Realistic25ns13TeV2016Collision --step SIM --geometry DB:Extended --filein file:__INPUT__.root --era Run2_2016_HIPM --runUnscheduled --no_exec --mc -n 1
 import FWCore.ParameterSet.Config as cms
 
 from Configuration.Eras.Era_Run2_2016_HIPM_cff import Run2_2016_HIPM
@@ -28,7 +28,7 @@ process.maxEvents = cms.untracked.PSet(
 
 # Input source
 process.source = cms.Source("PoolSource",
-    fileNames = cms.untracked.vstring('file:__OUTPUT__.root'),
+    fileNames = cms.untracked.vstring('file:__INPUT__.root'),
     secondaryFileNames = cms.untracked.vstring()
 )
 
@@ -53,7 +53,7 @@ process.RAWSIMoutput = cms.OutputModule("PoolOutputModule",
         filterName = cms.untracked.string('')
     ),
     eventAutoFlushCompressedSize = cms.untracked.int32(20971520),
-    fileName = cms.untracked.string('file:__INPUT__.root'),
+    fileName = cms.untracked.string('file:__OUTPUT__.root'),
     outputCommands = process.RAWSIMEventContent.outputCommands+['keep GenEventInfoProduct_*_*_*'],
     splitLevel = cms.untracked.int32(0)
 )

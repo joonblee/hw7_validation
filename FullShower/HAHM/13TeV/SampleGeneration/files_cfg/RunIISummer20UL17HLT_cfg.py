@@ -2,7 +2,7 @@
 # using: 
 # Revision: 1.19 
 # Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
-# with command line options: --python_filename RunIISummer20UL17HLT_cfg.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-RAW --fileout file:__OUTPUT__root --conditions 94X_mc2017_realistic_v15 --customise_commands process.source.bypassVersionCheck = cms.untracked.bool(True) --step HLT:2e34v40 --geometry DB:Extended --filein file:__INPUT__.root --era Run2_2017 --no_exec --mc -n 1
+# with command line options: --python_filename RunIISummer20UL17HLT_cfg.py --eventcontent RAWSIM --customise Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM-RAW --fileout file:__OUTPUT__.root --conditions 94X_mc2017_realistic_v15 --customise_commands process.source.bypassVersionCheck = cms.untracked.bool(True) --step HLT:2e34v40 --geometry DB:Extended --filein file:__INPUT__.root --era Run2_2017 --no_exec --mc -n 1
 import FWCore.ParameterSet.Config as cms
 
 from Configuration.StandardSequences.Eras import eras
@@ -52,7 +52,7 @@ process.RAWSIMoutput = cms.OutputModule("PoolOutputModule",
         filterName = cms.untracked.string('')
     ),
     eventAutoFlushCompressedSize = cms.untracked.int32(20971520),
-    fileName = cms.untracked.string('file:__OUTPUT__root'),
+    fileName = cms.untracked.string('file:__OUTPUT__.root'),
     outputCommands = process.RAWSIMEventContent.outputCommands+['keep GenEventInfoProduct_*_*_*'],
     splitLevel = cms.untracked.int32(0)
 )

@@ -66,7 +66,7 @@ process.filterZprime = cms.EDFilter("CandViewCountFilter",
 '''
 process.selectMu = cms.EDFilter("GenParticleSelector",
     src = cms.InputTag("genParticles"),
-    cut = cms.string("abs(pdgId)==13 && pt>10. && abs(eta)<2.4")
+    cut = cms.string("abs(pdgId)==13 && pt>10.")
 )
 process.selectMupair = cms.EDProducer("CandViewShallowCloneCombiner",
     decay = cms.string("selectMu@+ selectMu@-"),
@@ -81,11 +81,11 @@ process.filterMupair = cms.EDFilter("CandViewCountFilter",
 # option 2: select two final state muons
 process.selectFinalMu = cms.EDFilter("GenParticleSelector",
     src = cms.InputTag("genParticles"),
-    cut = cms.string("pdgId==13 && abs(eta)<2.4 && status==1")
+    cut = cms.string("pdgId==13 && pt>8. && abs(eta)<2.5 && status==1")
 )
 process.selectFinalAntimu = cms.EDFilter("GenParticleSelector",
     src = cms.InputTag("genParticles"),
-    cut = cms.string("pdgId==-13 && abs(eta)<2.4 && status==1")
+    cut = cms.string("pdgId==-13 && pt>8. && abs(eta)<2.5 && status==1")
 )
 process.filterFinalMu = cms.EDFilter("CandViewCountFilter",
     src = cms.InputTag("selectFinalMu"),
@@ -99,7 +99,7 @@ process.filterFinalAntimu = cms.EDFilter("CandViewCountFilter",
 # Vertex smearing
 from IOMC.EventVertexGenerators.VtxSmearedParameters_cfi import *
 VtxSmearedCommon.src=cms.InputTag("source","generator")
-VtxSmeared = cms.EDProducer("BetafuncEvtVtxGenerator",
+process.generatorSmeared = cms.EDProducer("BetafuncEvtVtxGenerator",
     Realistic25ns13TeVEarly2018CollisionVtxSmearingParameters,
         VtxSmearedCommon
         )
