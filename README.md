@@ -395,6 +395,12 @@ singularity shell --env LC_ALL=C /cvmfs/singularity.opensciencegrid.org/openscie
 bash # To use nominal bash script, i.e. ~/.bashrc
 ```
 
+### For KNU, KISTI
+```
+singularity pull docker://opensciencegrid/osgvo-ubuntu-20.04
+singularity shell --env LC_ALL=C osgvo-ubuntu-20.04_latest.sif
+```
+
 ### Common
 
 To use bash commands only in this singularity, one should make `vi ~/.bashrc.singularity` (You can edit this file however you want. I'll explain later what actually needs to add inside.) and add following lines in the `~/.bashrc` file:
@@ -411,7 +417,7 @@ We need to install some dependencies.
 
 
 ## (2) Prepare dependencies
-### For tamsa1
+### For tamsa1 / KNU / KISTI
 
 There is a missing point in this script. Carefully check all things are set properly.
 
@@ -454,7 +460,8 @@ tar -xzf tk8.6.10-src.tar.gz
 cd tcl8.6.10/unix
 ./configure --prefix=$WD/.local
 make
-make installcd $WD/.local/src/tk8.6.10/unix
+make install
+cd $WD/.local/src/tk8.6.10/unix
 ./configure --prefix=$WD/.local --with-tcl=$WD/.local/lib
 make
 make install
@@ -469,7 +476,8 @@ export PATH=$PYTHONUSERBASE/bin:$PATH
 pip install --user cython
 pip install --user mercurial
 
-ln -s $(which python3) $WD/.local/bin/python ### for tamsa1 # not sure it really necessitates
+ln -s $(which python3) $WD/.local/bin/python
+### for tamsa1 # not sure it really necessitates
 # 'which python3' doesn't work in e.g. cms1, so replace it to 'command -v python3'
 export PATH=$WD/.local/bin:$PATH
 
@@ -481,6 +489,8 @@ cd autoconf-2.71
 make
 make install
 
+# libtool v.2.4.6 worked well in tamsa
+# but not in knu and kisti (v.2.4.7 is used instead)
 cd $WD/.local/src/
 wget http://ftpmirror.gnu.org/libtool/libtool-2.4.6.tar.gz
 tar -xzf libtool-2.4.6.tar.gz
@@ -494,11 +504,6 @@ export LIBTOOLIZE=${WD}/.local/bin/libtoolize
 export ACLOCAL_PATH=${WD}/.local/share/aclocal:$ACLOCAL_PATH
 
 pip install numpy
-
-# install HAHM_variableMW_v3_UFO
-cd $WD/opt/MG5_aMC_v3_5_1/models/
-wget https://cms-project-generators.web.cern.ch/cms-project-generators/HAHM_variableMW_v3_UFO.tar.gz
-tar zxf HAHM_variableMW_v3_UFO.tar.gz
 
 cd $WD
 ```
@@ -618,6 +623,15 @@ chmod +x herwig-bootstrap
 $ ./herwig-bootstrap -j 16 $PWD --herwig-hg --thepeg-hg --thepeg-version="default" --herwig-version="default"
 ```
 
+
+Also, you should also install the PDF that you need. [LHAPDF](https://lhapdf.hepforge.org/pdfsets.html)
+```
+cd $WD/share/LHAPDF
+wget http://lhapdfsets.web.cern.ch/lhapdfsets/current/NNPDF31_lo_as_0130.tar.gz
+wget http://lhapdfsets.web.cern.ch/lhapdfsets/current/NNPDF31_nnlo_as_0118.tar.gz
+tar xvf NNPDF31_lo_as_0130.tar.gz
+tar xvf NNPDF31_nnlo_as_0118.tar.gz
+```
 
 
 ### Optionals
@@ -753,6 +767,15 @@ insert /Herwig/NewPhysics/DecayConstructor:DisableModes 0 Zp->c,cbar;
 - `RAnalysis.cc`: Rivet analyzer.
 
 
+If you need a specific model for the madgraph, you can install it following commands below.
+```
+# e.g., HAHM
+cd $WD/opt/MG5_aMC_v3_5_1/models/
+wget https://cms-project-generators.web.cern.ch/cms-project-generators/HAHM_variableMW_v3_UFO.tar.gz
+tar zxf HAHM_variableMW_v3_UFO.tar.gz
+```
+
+
 ## (5) Run HW7 without condor
 
 ### For tamsa1
@@ -882,7 +905,7 @@ subprocess.CalledProcessError: Command '['autoreconf', '-vi']' returned non-zero
 ```
 Solution:
 ```
-cd ~/.local/src/
+cd $WD/.local/src/
 wget http://ftpmirror.gnu.org/libtool/libtool-2.4.6.tar.gz
 tar -xzf libtool-2.4.6.tar.gz
 cd libtool-2.4.6
