@@ -36,6 +36,7 @@ for i in range(len(eras)):
             pathCommon = os.path.join(dirCommon, infofile)
             alias = f"Zp_M-{zpmass}_Pt-{ptlow}to{pthigh}_hw7"
             nFile = int(subprocess.check_output(f"ls {filepath} | wc -l", shell=True).decode("utf-8").strip())
+            nEvent = nFile*100000
             with open(pathCommon,"w") as f:
                 f.write("# alias PD xsec nmc sumsign sumw\n")
-                f.write(f"{alias}\t{alias}\t{xsec[i]}\t{nFile}\t{nFile}")
+                f.write(f"{alias}\t{alias}\t{xsec[i]}\t{nEvent}\t{nEvent}")
