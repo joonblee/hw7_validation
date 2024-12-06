@@ -81,11 +81,11 @@ process.filterMupair = cms.EDFilter("CandViewCountFilter",
 # option 2: select two final state muons
 process.selectFinalMu = cms.EDFilter("GenParticleSelector",
     src = cms.InputTag("genParticles"),
-    cut = cms.string("pdgId==13 && pt>10. && abs(eta)<2.5 && status==1")
+    cut = cms.string("pdgId==13 && pt>8. && abs(eta)<2.5 && status==1")
 )
 process.selectFinalAntimu = cms.EDFilter("GenParticleSelector",
     src = cms.InputTag("genParticles"),
-    cut = cms.string("pdgId==-13 && pt>10. && abs(eta)<2.5 && status==1")
+    cut = cms.string("pdgId==-13 && pt>8. && abs(eta)<2.5 && status==1")
 )
 process.filterFinalMu = cms.EDFilter("CandViewCountFilter",
     src = cms.InputTag("selectFinalMu"),
