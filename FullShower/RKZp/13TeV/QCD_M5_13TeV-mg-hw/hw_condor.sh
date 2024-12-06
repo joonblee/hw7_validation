@@ -60,7 +60,7 @@ if [ "$CompileUFO" = true ] && [ ! -f FRModel.model ]; then
     cp -r /gv0/Users/taehee/HerwigSample/feynrules-current/Models/RKZp/RKZp_UFO ${WD}
     sed -i "127s/10./${ZprimeMass}/" ${UFOName}/parameters.py
     sed -i "23s/1./${Coupling}/" ${UFOName}/parameters.py #gbb
-    sed -i "187s/0.04*gbb/0.0/" ${UFOName}/parameters.py #gbs
+    sed -i "187s/0.04/0.0001/" ${UFOName}/parameters.py #gbs
   fi
   ufo2herwig ${UFOName} --enable-bsm-shower
   sed -i "s/echo \*.cc/echo FRModel*.cc/g" Makefile
