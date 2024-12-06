@@ -21,7 +21,7 @@ ZprimeMass=${4}
 Coupling=${5}
 
 outputdir=/gv0/Users/taehee/HerwigSample/hw/MZp-${ZprimeMass}/${sample}
-WD=${Hw_Loc}/hw7_validation/FullShower/HAHM/13TeV/QCD_M5_13TeV-mg-hw/tmp/MZp-${ZprimeMass}/${sample}/${2}
+WD=${Hw_Loc}/hw7_validation/FullShower/RKZp/13TeV/QCD_M5_13TeV-mg-hw/tmp/MZp-${ZprimeMass}/${sample}/${2}
 
 # Herwig7 basic setups
 #ln -s $(which python3) $Singularity_Loc/.local/bin/python
@@ -49,7 +49,7 @@ echo "Make a run directory, $outputdir"
 mkdir -p ${outputdir}
 mkdir -p ${WD}
 cd ${WD}
-cp $Hw_Loc/hw7_validation/FullShower/HAHM/13TeV/QCD_M5_13TeV-mg-hw/RAnalysis.cc ${WD}
+cp $Hw_Loc/hw7_validation/FullShower/RKZp/13TeV/QCD_M5_13TeV-mg-hw/RAnalysis.cc ${WD}
 
 RB="$Hw_Loc/bin/rivet-build"
 source "$Hw_Loc/bin/activate"
@@ -79,7 +79,7 @@ echo ""
 # run hw7
 echo "Start runnning LHC.${1}.${2} (mg job # = ${sample})"
 rnum=$(shuf -i 1-99999999 -n 1)
-sed -e "s/__NEVENTS__/${EVTpRUN}/g" ${Hw_Loc}/hw7_validation/FullShower/HAHM/13TeV/QCD_M5_13TeV-mg-hw/LHC.in > LHC.in
+sed -e "s/__NEVENTS__/${EVTpRUN}/g" ${Hw_Loc}/hw7_validation/FullShower/RKZp/13TeV/QCD_M5_13TeV-mg-hw/LHC.in > LHC.in
 sed -i "s/__SEED__/${rnum}/g" LHC.in
 sed -i "s/__DIR__/\/gv0\/Users\/taehee\/HerwigSample\/mg\/MZp-${ZprimeMass}\/${sample}\/${2}/g" LHC.in
 if [ "$ZprimeMass" -lt 9 ];then

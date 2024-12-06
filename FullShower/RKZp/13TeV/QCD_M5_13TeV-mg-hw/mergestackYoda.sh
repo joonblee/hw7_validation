@@ -16,7 +16,7 @@ echo ""
 
 Singularity_Loc=/data6/Users/taehee/HerwigWD/
 Hw_Loc=/data6/Users/taehee/HerwigWD/
-WD=$Hw_Loc/hw7_validation/FullShower/HAHM/13TeV/QCD_M5_13TeV-mg-hw/
+WD=$Hw_Loc/hw7_validation/FullShower/RKZp/13TeV/QCD_M5_13TeV-mg-hw/
 
 # Herwig7 basic setups
 #ln -s $(which python3) $Singularity_Loc/.local/bin/python
