@@ -469,6 +469,9 @@ make install
 pyenv install 2.7.18
 LDFLAGS="-L$WD/.local/lib" CPPFLAGS="-I$WD/.local/include" PKG_CONFIG_PATH="$WD/.local/lib/pkgconfig" pyenv install 3.8.10
 pyenv global 3.8.10 2.7.18
+curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+python3 get-pip.py
+rm get-pip.py
 pip3 install --user six 
 
 export PYTHONUSERBASE=$WD/.pyenv
@@ -489,15 +492,14 @@ cd autoconf-2.71
 make
 make install
 
-# libtool v.2.4.6 worked well in tamsa
-# but not in knu and kisti (v.2.4.7 is used instead)
 cd $WD/.local/src/
-wget http://ftpmirror.gnu.org/libtool/libtool-2.4.6.tar.gz
-tar -xzf libtool-2.4.6.tar.gz
-cd libtool-2.4.6
+wget http://ftpmirror.gnu.org/libtool/libtool-2.4.7.tar.gz
+tar -xzf libtool-2.4.7.tar.gz
+cd libtool-2.4.7
 ./configure --prefix=$WD/.local
 make
 make install
+# v.2.4.6 brings an error during Herwig installation
 
 export LIBTOOL=${WD}/.local/bin/libtool
 export LIBTOOLIZE=${WD}/.local/bin/libtoolize
