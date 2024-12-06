@@ -1,6 +1,8 @@
 #!/bin/bash
 
-mg_job_numbers=("2491183_50_80" "2491184_80_120" "2491185_120_170" "2491186_170_300" "2491187_300_470" "2491188_470_600" "2491189_600_800" "2491190_800_1000" "2491191_1000_9999")
+#SAMPLES=("Pt-60To65_1366782" "Pt-65To70_1366783" "Pt-70To75_1366784" "Pt-75To80_1366785" "Pt-80To85_1366786" "Pt-85To90_1366787" "Pt-90To100_1366788" "Pt-100To140_1366789" "Pt-140To200_1366790" "Pt-200To9999_1366792")
+
+zpmass=${1}
 
 #############
 ### setup ###
@@ -38,8 +40,9 @@ export PKG_CONFIG_PATH="$Singularity_Loc/.local/lib/pkgconfig"
 ### run ###
 ###########
 cd $WD
-mkdir yoda
-cd yoda
+rm -rf yoda_${zpmass}
+mkdir yoda_${zpmass}
+cd yoda_${zpmass}
 
 source "$Hw_Loc/bin/activate"
 
@@ -48,8 +51,8 @@ echo "#########################"
 echo "# Merge and Stack Yodas #"
 echo "#########################"
 index=0
-for job_number in "${mg_job_numbers[@]}"; do
-    yodafiles=$(find /gv0/Users/taehee/HerwigSample/hw/$job_number/ -type f -name "LHC.yoda")
+for sample in "${SAMPLES[@]}"; do
+    yodafiles=$(find /gv0/Users/taehee/HerwigSample/hw/MZp-${zpmass}/${sample}/ -type f -name "LHC.yoda")
     yodamerge -o "LHC-$index.yoda" $yodafiles
     index=$((index + 1))
 done
