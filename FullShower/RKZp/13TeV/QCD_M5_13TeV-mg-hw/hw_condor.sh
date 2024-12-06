@@ -22,6 +22,12 @@ Coupling=${5}
 
 outputdir=/gv0/Users/taehee/HerwigSample/hw/MZp-${ZprimeMass}/${sample}
 WD=${Hw_Loc}/hw7_validation/FullShower/RKZp/13TeV/QCD_M5_13TeV-mg-hw/tmp/MZp-${ZprimeMass}/${sample}/${2}
+if [[ -f "${outputdir}/${2}/LHC.hepmc" ]]; then
+    echo "${outputdir}/${2}/LHC.hepmc exists..."
+    exit 1
+else
+    rm -rf ${outputdir}/${2}
+fi
 
 # Herwig7 basic setups
 #ln -s $(which python3) $Singularity_Loc/.local/bin/python
