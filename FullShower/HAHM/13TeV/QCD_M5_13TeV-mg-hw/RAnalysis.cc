@@ -34,40 +34,8 @@ namespace Rivet {
       declare(FastJets(FinalState(), FastJets::ANTIKT, 0.4), "Jets");
 
       book(_n_evt, "N_evt", 5,0,5);
-      book(_n_njet, "n_njet", 5,0.,5.);
-
-      book(_h_Mzp,  "h_Mzp",  100,  0., 10.);
-      book(_h_ptzp,  "h_ptzp",  100,  0., 400.0);
-      book(_h_etazp, "h_etazp",  60, -3.,    3.);
-
-      book(_h_ptmu,   "h_pt(mu)",   100,  0., 500.0);
-      book(_h_ptmu1,   "h_pt(mu1)",   100,  0., 500.0);
-      book(_h_ptmu2,   "h_pt(mu2)",   100,  0., 500.0);
-
-      book(_h_etamu,  "h_eta(mu)",   60, -3.,    3.);
-
-      book(_h_ptj,   "h_pt(j)",   400,  0., 2000.0);
-      book(_h_ptj1,  "h_pt(j1)",  400,  0., 2000.0);
-      book(_h_ptj2,  "h_pt(j2)",  400,  0., 2000.0);
-      book(_h_ptj3,  "h_pt(j3)",  400,  0., 2000.0);
-
-      book(_h_etaj,  "h_eta(j)",   60, -3.,    3.);
-
-      book(_h_dR, "h_dR", 40, 0., 4.);
-      book(_h_dR_j_mu1, "h_dR(j,mu1)", 40, 0., 4.);
-      book(_h_dR_j_mu2, "h_dR(j,mu2)", 40, 0., 4.);
-      book(_h_dR_mu_mu, "h_dR(mu,mu)", 40, 0., 4.);
-
-      book(_h_mhat, "h_mhat", 60, 0., 600.);
-      book(_h_ht, "h_ht", 60, 0., 600.);
-    }
-
-    bool CheckParent(const Particle& p, int ParentId) {
-      for(const Particle& parent : p.parents()) {
-        if(parent.pid() == ParentId) return true;
-        if(parent.abspid() == 13) return CheckParent(parent,ParentId);
-      }
-      return false;
+      book(_n_rad, "N_rad", 5,0,5);
+      book(_h_ptj,   "h_pt(j)",   200,  0., 1000.0);
     }
 
     /// Perform the per-event analysis
@@ -80,101 +48,63 @@ namespace Rivet {
       const FinalState& fs = applyProjection<FinalState>(event, "FS");
       const FastJets& alljets = applyProjection<FastJets>(event, "Jets");
       const Jets& ptjets = alljets.jetsByPt(30.*GeV);   
+      const Particles& allPtls = event.allParticles();
 
-      Particle zp, mup, mum, mu1, mu2;
-      Particles muons;
-      // find particles
-      bool foundMup=0; bool foundMum=0;
-      for(const Particle& p : fs.particles()) {
-        if( !(p.abspid()==13 && CheckParent(p,1023) && p.pt()>10. && p.abseta()<2.4) ) continue;
-        muons.push_back(p);
-        _h_ptmu->fill(p.pt(),wgt);
-        _h_etamu->fill(p.eta(),wgt);
-        if( !foundMum && p.pid()==13 ) {
-          mum=p; foundMum=1;
-        }
-        else if( !foundMup && p.pid()==-13 ) {
-          mup=p; foundMup=1;
-        }
-        if( foundMum && foundMup ) 
-          break;
+      // check Z' radiation
+      /*
+      int nRad = 0;
+      for(const auto& p: allPtls){
+          if( p.abspid()==32 && p.hasChildWith(Cuts::abspid==13) )
+              nRad++;
       }
-      if(!(foundMum&&foundMup)) vetoEvent;
+      _n_rad->fill(nRad,wgt);
+      */
 
-      if(mum.pt() > mup.pt()) { mu1 = mum; mu2 = mup; }
-      else { mu1 = mup; mu2 = mum; }
-      _h_ptmu1->fill(mu1.pt(),wgt);
-      _h_ptmu2->fill(mu2.pt(),wgt);
-      _h_dR_mu_mu->fill(deltaR(mu1.momentum(),mu2.momentum()),wgt);
+      bool existRad = false;
+      for(const auto& p: allPtls){
+          if( p.abspid()==32 && p.hasChildWith(Cuts::abspid==13) ){
+              existRad = true;
+              break;
+          }
+      }
 
-      zp = Particle(1023, mup.momentum()+mum.momentum());
-
+      if( !existRad ) vetoEvent;
       _n_evt->fill(1,wgt);
-      _h_Mzp->fill(zp.mass(),wgt);
-      _h_ptzp->fill(zp.pt(),wgt);
-      _h_etazp->fill(zp.eta(),wgt);
 
-      if(ptjets.size()==2) {
-        _h_mhat->fill((ptjets[0].momentum()+ptjets[1].momentum()).mass(),wgt);
-        _h_ht->fill(ptjets[0].pt()+ptjets[1].pt(),wgt);
+      Particles muons;
+      for(const Particle& p : fs.particles()) {
+        if( p.abspid()==13 && p.abseta()<2.5 ) muons.push_back(p);
       }
-      else if(ptjets.size()==3) {
-        _h_mhat->fill((ptjets[0].momentum()+ptjets[1].momentum()+ptjets[2].momentum()).mass(),wgt);
-        _h_ht->fill(ptjets[0].pt()+ptjets[1].pt()+ptjets[2].pt(),wgt);
-      }
-      else if(ptjets.size()>3) {
-        _h_mhat->fill((ptjets[0].momentum()+ptjets[1].momentum()+ptjets[2].momentum()+ptjets[3].momentum()).mass(),wgt);
-        _h_ht->fill(ptjets[0].pt()+ptjets[1].pt()+ptjets[2].pt()+ptjets[3].pt(),wgt);
-      }
-      
-      //Event selection
-      bool passEvent = false;
+
+      // Event selection
       Jets jets;
-      for(const Jet& jet_:ptjets) {
-        if( !(jet_.pt() > 30. && jet_.abseta() < 2.4) ) continue;
-        Particle lmu, smu;
-        double lpt = -999; double spt = -999;
-        for(const Particle& mu : muons) {
-          if( !(mu.pt()>13.) ) continue;
-          if( !(deltaR(mu.momentum(),jet_.momentum())<0.3) ) continue;
-          if( mu.pt()>lpt ){
-              spt = lpt; lpt = mu.pt();
-              smu = lmu; lmu = mu;
+      for(const auto& jet_:ptjets){
+          bool pushJet = false;
+          if( !(jet_.pt() > 30. && jet_.abseta() < 2.4) ) continue;
+          if( !(jet_.bTagged()) ) continue;
+          Particles nisoMuons;
+          for(const auto& muon: muons){
+              if( !(muon.pt()>13. && muon.abseta()<2.4 ) ) continue;
+              if( !(deltaR(muon.momentum(),jet_.momentum())<0.3) ) continue;
+              nisoMuons.push_back(muon);
           }
-          else if( mu.pt()>spt ){
-              spt = mu.pt(); smu = mu;
+          if( nisoMuons.size()<2 ) continue;
+          for(const auto& mu1: nisoMuons){
+              for(const auto& mu2: nisoMuons){
+                  if( &mu1==&mu2 ) continue;
+                  if( mu1.charge()*mu2.charge()>0 ) continue;
+                  if( !(mu1.pt()>32.) ) continue;
+                  //if( !( (mu1.pt()+mu2.pt())/jet_.pt()<0.7 ) ) continue;
+                  pushJet = true;
+              }
           }
-        }
-        if( lpt<0 || spt<0 ) continue;
-        if( !(lpt>32.) ) continue;
-        if( !( (lpt+spt)/jet_.pt() <0.7 ) ) continue;
-        jets.push_back(jet_);
-        passEvent = true;
+          if( pushJet ) jets.push_back(jet_);
       }
-      if( !passEvent ) vetoEvent;
-
-      Jet jet; double dr=numeric_limits<double>::max(); unsigned int njet=0;
-      for(const Jet& jet_:jets) {
-        double dr_ = deltaR(jet_.momentum(),zp.momentum());
-        njet++;
+      for(const auto& jet_:jets) {
         _h_ptj->fill(jet_.pt(),wgt);
-        _h_etaj->fill(jet_.eta(),wgt);
-        if(njet==1) _h_ptj1->fill(jet_.pt(),wgt);
-        if(njet==2) _h_ptj2->fill(jet_.pt(),wgt);
-        if(njet==3) _h_ptj3->fill(jet_.pt(),wgt);
-        if( dr_ < dr ) {
-          jet = jet_;
-          dr = dr_;
-        }
-      }
-
-      if(njet>0) {
-        _h_dR->fill(dr,wgt);
-        _h_dR_j_mu1->fill(deltaR(jet.momentum(),mu1.momentum()),wgt);
-        _h_dR_j_mu2->fill(deltaR(jet.momentum(),mu2.momentum()),wgt);
         _n_evt->fill(2,wgt);
       }
-      _n_njet->fill(njet,wgt);
+
     }
 
     /// Normalise histograms etc., after the run
@@ -182,30 +112,8 @@ namespace Rivet {
       double weight = crossSection()/sumOfWeights()/femtobarn;
 
       scale(_n_evt, weight );
-      scale(_n_njet, weight );
-
-      scale(_h_Mzp, weight );
-      scale(_h_ptzp, weight );
-      scale(_h_etazp, weight );
-
-      scale(_h_ptmu, weight );
-      scale(_h_ptmu1, weight );
-      scale(_h_ptmu2, weight );
-      scale(_h_etamu, weight );
-
+      scale(_n_rad, weight );
       scale(_h_ptj, weight );
-      scale(_h_ptj1, weight );
-      scale(_h_ptj2, weight );
-      scale(_h_ptj3, weight );
-      scale(_h_etaj, weight );
-
-      scale(_h_dR, weight );
-      scale(_h_dR_j_mu1, weight );
-      scale(_h_dR_j_mu2, weight );
-      scale(_h_dR_mu_mu, weight );
-
-      scale(_h_mhat, weight );
-      scale(_h_ht, weight );
       // data file
       std::ofstream file;
       string fname = "RAnalysis.dat";
@@ -221,30 +129,8 @@ namespace Rivet {
     /// @name Histograms
     //@{
     Histo1DPtr _n_evt;
-    Histo1DPtr _n_njet;
-
-    Histo1DPtr _h_Mzp;
-    Histo1DPtr _h_ptzp;
-    Histo1DPtr _h_etazp;
-
-    Histo1DPtr _h_ptmu;
-    Histo1DPtr _h_ptmu1;
-    Histo1DPtr _h_ptmu2;
-    Histo1DPtr _h_etamu;
-
+    Histo1DPtr _n_rad;
     Histo1DPtr _h_ptj;
-    Histo1DPtr _h_ptj1;
-    Histo1DPtr _h_ptj2;
-    Histo1DPtr _h_ptj3;
-    Histo1DPtr _h_etaj;
-
-    Histo1DPtr _h_dR;
-    Histo1DPtr _h_dR_j_mu1;
-    Histo1DPtr _h_dR_j_mu2;
-    Histo1DPtr _h_dR_mu_mu;
-
-    Histo1DPtr _h_mhat;
-    Histo1DPtr _h_ht;
     //@}
   };
 
