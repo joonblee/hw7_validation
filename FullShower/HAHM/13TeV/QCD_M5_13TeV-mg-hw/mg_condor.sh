@@ -18,6 +18,9 @@ ebeam=6500
 
 MG="$Hw_Loc/opt/$MG_version/bin/mg5_aMC"
 outputdir=/gv0/Users/taehee/HerwigSample/mg/MZp-${5}/Pt-${3}To${4}_${1}/${2}
+WD="tmp/mg/MZp-${5}/Pt-${3}To${4}_${1}/${2}"
+mkdir -p ${WD}
+cd ${WD}
 
 if [[ ! -d "$outputdir" ]]; then
   echo "Make $outputdir directory."
@@ -57,8 +60,8 @@ if $runRS; then
   #  echo "No $RS_DIR directory. Run MG5 to generate a new sample."
   #fi
   echo "set auto_update 0"                     >> $RS_File
-  echo "import model HAHM_variableMW_v3_UFO"   >> $RS_File
-  echo "generate p p > b b~ HIG=0 HIW=0 QED=0"  >> $RS_File
+  echo "import model RKZp_UFO"                 >> $RS_File
+  echo "generate p p > b b~ QED=0"             >> $RS_File
   echo "output madevent $RS_DIR"               >> $RS_File
   echo "launch"                                >> $RS_File
   echo "set nevents $nevents"                  >> $RS_File
@@ -69,6 +72,7 @@ if $runRS; then
   echo "set etab 4."                           >> $RS_File
   echo "set mzdinput ${5}"                     >> $RS_File
   echo "set use_syst False"                    >> $RS_File
+  echo "set lhaid 303600"                      >> $RS_File
   $MG $RS_File
 fi
 
@@ -81,7 +85,7 @@ if $runFO0j;then
     rm -rf $FO0j_DIR
   fi
   echo "set auto_update 0"                     >> $FO0j_File
-  echo "import model HAHM_variableMW_v3_UFO"   >> $FO0j_File
+  echo "import model RKZp_UFO"                 >> $FO0j_File
   echo "generate p p > zp > mu+ mu-"           >> $FO0j_File
   echo "output madevent $FO0j_DIR"             >> $FO0j_File
   echo "launch"                                >> $FO0j_File
@@ -104,7 +108,7 @@ if $runFO1j;then
     rm -rf $FO1j_DIR
   fi
   echo "set auto_update 0"                     >> $FO1j_File
-  echo "import model HAHM_variableMW_v3_UFO"   >> $FO1j_File
+  echo "import model RKZp_UFO"                 >> $FO1j_File
   echo "generate p p > zp j HIG=0 HIW=0 QED=1" >> $FO1j_File
   echo "output madevent $FO1j_DIR"             >> $FO1j_File
   echo "launch"                                >> $FO1j_File
@@ -126,7 +130,7 @@ if $runFO2j;then
     rm -rf $FO2j_DIR
   fi
   echo "set auto_update 0"                     >> $FO2j_File
-  echo "import model HAHM_variableMW_v3_UFO"   >> $FO2j_File
+  echo "import model RKZp_UFO"                 >> $FO2j_File
   echo "generate p p > zp j j HIG=0 HIW=0 QED=1" >> $FO2j_File
   echo "output madevent $FO2j_DIR"             >> $FO2j_File
   echo "launch"                                >> $FO2j_File
@@ -148,7 +152,7 @@ if $runFO12j;then
     rm -rf $FO12j_DIR
   fi
   echo "set auto_update 0"                          >> $FO12j_File
-  echo "import model HAHM_variableMW_v3_UFO"        >> $FO12j_File
+  echo "import model RKZp_UFO"                      >> $FO12j_File
   echo "generate p p > zp j HIG=0 HIW=0 QED=1"      >> $FO12j_File
   echo "add process p p > zp j j HIG=0 HIW=0 QED=1" >> $FO12j_File
   echo "output madevent $FO12j_DIR"                 >> $FO12j_File
@@ -166,4 +170,3 @@ fi
 cp mg/Events/run_01/unweighted_events.lhe.gz $outputdir
 
 #rm py.py MG_setup_FO.dat MG_setup_RS.dat MG5_debug 
-
