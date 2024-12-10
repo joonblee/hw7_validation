@@ -12,8 +12,8 @@ arguments       = \$(Cluster) \$(Process) \$(sample) \$(zpmass) \$(coupling)
 output          = joblog/job.\$(Cluster).\$(Process).out
 error           = joblog/job.\$(Cluster).\$(Process).err
 log             = joblog/job.log
-+SingularityImage = "/data6/Users/taehee/herwig_sandbox"
-+SingularityBind  = "/data6/Users/taehee/HerwigWD:/data6/Users/taehee/HerwigWD"
++SingularityImage = "/data6/Users/taehee/Herwig/herwig_sandbox"
++SingularityBind  = "/data6/Users/taehee/Herwig/HerwigWD:/data6/Users/taehee/Herwig/HerwigWD"
 stream_output = True
 stream_error = True
 EOT

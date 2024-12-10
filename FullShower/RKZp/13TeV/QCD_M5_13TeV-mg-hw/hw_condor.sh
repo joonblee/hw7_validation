@@ -14,7 +14,7 @@ CompileUFO=true
 UFOName=RKZp_UFO
 EVTpRUN=100000
 
-Hw_Loc=/data6/Users/taehee/HerwigWD
+Hw_Loc=/data6/Users/taehee/Herwig/HerwigWD
 Singularity_Loc=$Hw_Loc
 sample=${3}
 ZprimeMass=${4}
@@ -100,6 +100,8 @@ mv ${WD} ${outputdir}
 cd ${outputdir}/${2}
 Herwig read LHC.in 
 Herwig run LHC.run 
+pip install pyhepmc
+python3 filter.py
 
 mv FRModel.model ..
 rm -rf FR* *.cc ${UFOName}* __pycache__ Makefile param_card.dat RAnalysis.* *tex *out Loop*

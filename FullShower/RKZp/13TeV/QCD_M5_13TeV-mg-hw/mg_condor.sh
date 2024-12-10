@@ -9,7 +9,7 @@ runFO1j=false
 runFO2j=false
 runFO12j=false
 
-Hw_Loc=/data6/Users/taehee/HerwigWD
+Hw_Loc=/data6/Users/taehee/Herwig/HerwigWD
 Singularity_Loc=$Hw_Loc
 MG_version="MG5_aMC_v3_5_1"
 
