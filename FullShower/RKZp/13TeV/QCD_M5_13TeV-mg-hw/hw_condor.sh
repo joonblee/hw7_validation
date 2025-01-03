@@ -20,13 +20,13 @@ sample=${3}
 ZprimeMass=${4}
 Coupling=${5}
 
-outputdir=/gv0/Users/taehee/HerwigSample/hw/MZp-${ZprimeMass}/${sample}
-WD=${Hw_Loc}/hw7_validation/FullShower/RKZp/13TeV/QCD_M5_13TeV-mg-hw/tmp/MZp-${ZprimeMass}/${sample}/${2}
-if [[ -f "${outputdir}/${2}/LHC.hepmc" ]]; then
-    echo "${outputdir}/${2}/LHC.hepmc exists..."
+outputdir=/gv0/Users/taehee/HerwigSample/hw/MZp-${ZprimeMass}/gbb-${Coupling//./p}/${sample}/${2}
+WD=/tmp/HerwigSample/MZp-${ZprimeMass}/gbb-${Coupling//./p}/${sample}/${2}
+if [[ -f "${outputdir}/LHC.hepmc" ]]; then
+    echo "${outputdir}/LHC.hepmc exists..."
     exit 1
 else
-    rm -rf ${outputdir}/${2}
+    rm -rf ${outputdir}
 fi
 
 # Herwig7 basic setups
@@ -51,11 +51,11 @@ export PKG_CONFIG_PATH="$Singularity_Loc/.local/lib/pkgconfig"
 ### run ###
 ###########
 
-echo "Make a run directory, $outputdir"
-mkdir -p ${outputdir}
 mkdir -p ${WD}
 cd ${WD}
-cp $Hw_Loc/hw7_validation/FullShower/RKZp/13TeV/QCD_M5_13TeV-mg-hw/RAnalysis.cc ${WD}
+echo "Current working directory"
+pwd -P
+cp $Hw_Loc/hw7_validation/FullShower/RKZp/13TeV/QCD_M5_13TeV-mg-hw/RAnalysis.cc .
 
 RB="$Hw_Loc/bin/rivet-build"
 source "$Hw_Loc/bin/activate"
@@ -63,7 +63,7 @@ source "$Hw_Loc/bin/activate"
 # compiling ufo file
 if [ "$CompileUFO" = true ] && [ ! -f FRModel.model ]; then
   if [[ ! -d ${UFOName} ]]; then
-    cp -r /gv0/Users/taehee/HerwigSample/feynrules-current/Models/RKZp/RKZp_UFO ${WD}
+    cp -r /gv0/Users/taehee/HerwigSample/feynrules-current/Models/RKZp/RKZp_UFO .
     sed -i "127s/10./${ZprimeMass}/" ${UFOName}/parameters.py
     sed -i "23s/1./${Coupling}/" ${UFOName}/parameters.py #gbb
     sed -i "187s/0.04/0.0001/" ${UFOName}/parameters.py #gbs
@@ -79,7 +79,7 @@ fi
 echo "Compile the rivet analysis, RAnalysis.cc"
 chmod +x $RB
 $RB Rivet.so RAnalysis.cc
-export RIVET_ANALYSIS_PATH=$outputdir/$2
+export RIVET_ANALYSIS_PATH=$(pwd -P)
 echo ""
 
 # run hw7
@@ -96,15 +96,14 @@ if [ "$ZprimeMass" -lt 4 ];then
     sed -i '43,44s/^/#/' LHC.in
 fi
 
-mv ${WD} ${outputdir}
-cd ${outputdir}/${2}
 Herwig read LHC.in 
 Herwig run LHC.run 
-pip install pyhepmc
-python3 filter.py
 
-mv FRModel.model ..
-rm -rf FR* *.cc ${UFOName}* __pycache__ Makefile param_card.dat RAnalysis.* *tex *out Loop*
+echo "Make a run directory, $outputdir"
+mkdir -p ${outputdir}
+mv *.hepmc ${outputdir}
+mv LHC.yoda ${outputdir}
+mv LHC.log LHC-FRModel.in LHC.in FRModel.model ${outputdir}
 
 echo ""
 now=$(date +"%T")

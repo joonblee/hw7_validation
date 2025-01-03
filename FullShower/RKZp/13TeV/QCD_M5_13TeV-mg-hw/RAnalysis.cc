@@ -51,24 +51,14 @@ namespace Rivet {
       const Particles& allPtls = event.allParticles();
 
       // check Z' radiation
-      /*
       int nRad = 0;
       for(const auto& p: allPtls){
           if( p.abspid()==32 && p.hasChildWith(Cuts::abspid==13) )
               nRad++;
       }
       _n_rad->fill(nRad,wgt);
-      */
 
-      bool existRad = false;
-      for(const auto& p: allPtls){
-          if( p.abspid()==32 && p.hasChildWith(Cuts::abspid==13) ){
-              existRad = true;
-              break;
-          }
-      }
-
-      if( !existRad ) vetoEvent;
+      if( nRad<1 ) vetoEvent;
       _n_evt->fill(1,wgt);
 
       Particles muons;

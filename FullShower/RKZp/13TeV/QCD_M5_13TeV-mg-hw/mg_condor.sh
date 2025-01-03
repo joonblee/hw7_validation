@@ -31,21 +31,23 @@ fi
 
 # Herwig7 basic setups
 #ln -s $(which python3) $Singularity_Loc/.local/bin/python
-export PATH=$Singularity_Loc/.local/bin:$PATH
-export LIBTOOL=$Singularity_Loc/.local/bin/libtool
-export LIBTOOLIZE=$Singularity_Loc/.local/bin/libtoolize
-export ACLOCAL_PATH=$Singularity_Loc/.local/share/aclocal:$ACLOCAL_PATH
+#export PATH=$Singularity_Loc/.local/bin:$PATH
+#export LIBTOOL=$Singularity_Loc/.local/bin/libtool
+#export LIBTOOLIZE=$Singularity_Loc/.local/bin/libtoolize
+#export ACLOCAL_PATH=$Singularity_Loc/.local/share/aclocal:$ACLOCAL_PATH
 export PATH="$Singularity_Loc/.pyenv/bin:$PATH"
 export PYENV_ROOT=$Singularity_Loc/.pyenv
 export PATH=$PYENV_ROOT/bin:$PATH
 eval "$(pyenv init --path)"
 eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
-export PYTHONUSERBASE=$Singularity_Loc/.pyenv
-export PATH=$PYTHONUSERBASE/bin:$PATH
-export LDFLAGS="-L$Singularity_Loc/.local/lib"
-export CPPFLAGS="-I$Singularity_Loc/.local/include"
-export PKG_CONFIG_PATH="$Singularity_Loc/.local/lib/pkgconfig"
+#export PYTHONUSERBASE=$Singularity_Loc/.pyenv
+#export PATH=$PYTHONUSERBASE/bin:$PATH
+#export LDFLAGS="-L$Singularity_Loc/.local/lib"
+#export CPPFLAGS="-I$Singularity_Loc/.local/include"
+#export PKG_CONFIG_PATH="$Singularity_Loc/.local/lib/pkgconfig"
+#export LD_LIBRARY=$Singluarity_Loc/.local/lib64:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$Singularity_Loc/opt/$MG_version/HEPTools/lhapdf6_py3//lib:$LD_LIBRARY_PATH
 
 # setup file for RS to be stored
 if $runRS; then
@@ -61,7 +63,7 @@ if $runRS; then
   #fi
   echo "set auto_update 0"                     >> $RS_File
   echo "import model RKZp_UFO"                 >> $RS_File
-  echo "generate p p > b b~ QED=0"             >> $RS_File
+  echo "generate p p > b b~ QED=0 BSMU1=0"     >> $RS_File
   echo "output madevent $RS_DIR"               >> $RS_File
   echo "launch"                                >> $RS_File
   echo "set nevents $nevents"                  >> $RS_File
@@ -72,6 +74,7 @@ if $runRS; then
   echo "set etab 4."                           >> $RS_File
   echo "set mzdinput ${5}"                     >> $RS_File
   echo "set use_syst False"                    >> $RS_File
+  echo "set pdlabel lhapdf"                    >> $RS_File
   echo "set lhaid 303600"                      >> $RS_File
   $MG $RS_File
 fi

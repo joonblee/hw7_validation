@@ -1,8 +1,9 @@
 #!/bin/bash
 
-#SAMPLES=("Pt-60To65_1366782" "Pt-65To70_1366783" "Pt-70To75_1366784" "Pt-75To80_1366785" "Pt-80To85_1366786" "Pt-85To90_1366787" "Pt-90To100_1366788" "Pt-100To140_1366789" "Pt-140To200_1366790" "Pt-200To9999_1366792")
+SAMPLES=("Pt-65To67_1821387" "Pt-67To70_1821388" "Pt-70To75_1821389" "Pt-75To80_1821390" "Pt-80To85_1821391" "Pt-85To90_1821392" "Pt-90To100_1821393" "Pt-100To120_1821394" "Pt-120To150_1821395" "Pt-150To9999_1821396")
 
 zpmass=${1}
+coupling=${2//./p}
 
 #############
 ### setup ###
@@ -14,8 +15,8 @@ echo "Starting time : $now"
 echo ""
 echo ""
 
-Singularity_Loc=/data6/Users/taehee/HerwigWD/
-Hw_Loc=/data6/Users/taehee/HerwigWD/
+Singularity_Loc=/data6/Users/taehee/Herwig/HerwigWD/
+Hw_Loc=/data6/Users/taehee/Herwig/HerwigWD/
 WD=$Hw_Loc/hw7_validation/FullShower/RKZp/13TeV/QCD_M5_13TeV-mg-hw/
 
 # Herwig7 basic setups
@@ -40,9 +41,9 @@ export PKG_CONFIG_PATH="$Singularity_Loc/.local/lib/pkgconfig"
 ### run ###
 ###########
 cd $WD
-rm -rf yoda_${zpmass}
-mkdir yoda_${zpmass}
-cd yoda_${zpmass}
+rm -rf yoda_${zpmass}_${coupling}
+mkdir yoda_${zpmass}_${coupling}
+cd yoda_${zpmass}_${coupling}
 
 source "$Hw_Loc/bin/activate"
 
@@ -52,7 +53,7 @@ echo "# Merge and Stack Yodas #"
 echo "#########################"
 index=0
 for sample in "${SAMPLES[@]}"; do
-    yodafiles=$(find /gv0/Users/taehee/HerwigSample/hw/MZp-${zpmass}/${sample}/ -type f -name "LHC.yoda")
+    yodafiles=$(find /gv0/Users/taehee/HerwigSample/hw/MZp-${zpmass}/gbb-${coupling}/${sample}/ -type f -name "LHC.yoda")
     yodamerge -o "LHC-$index.yoda" $yodafiles
     index=$((index + 1))
 done
