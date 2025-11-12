@@ -47,26 +47,27 @@ fi
 if $runFO;then
   FO_File="MG_setup_FO.dat"
   FO_DIR=FO
+  cp MG_filter/user_filter.py ${Hw_Loc}/opt/MG5_aMC_v3_3_2/PLUGIN/user_filter.py
   if [ -d "$FO_DIR" ]; then
     echo "$FO_DIR exists, erase"
     rm -rf $FO_DIR
   fi
-  echo "set auto_update 0"                     >> $FO_File
-  echo "import model B-L-4_UFO"                >> $FO_File
-  echo "generate u u~ > d d~ zp"               >> $FO_File
-  echo "output madevent $FO_DIR"               >> $FO_File
-  echo "launch"                                >> $FO_File
-  echo "set nevents $nevents"                  >> $FO_File
-  echo "set ebeam1 $ebeam"                     >> $FO_File
-  echo "set ebeam2 $ebeam"                     >> $FO_File
-  echo "set etaj 5."                           >> $FO_File
-  echo "set ptj 20."                           >> $FO_File
-  echo "set drjj 0.4"                          >> $FO_File
-  echo "set mass 9900032 10"                   >> $FO_File
-  echo "set mass 25 125"                       >> $FO_File
-  echo "set width 9900032 0.01"                >> $FO_File
-  echo "set systematics_program none"          >> $FO_File
-  echo "set systematics_arguments []"          >> $FO_File
+  echo "set auto_update 0"                        >> $FO_File
+  echo "import model B-L-4_UFO"                   >> $FO_File
+  echo "generate u u~ > d d~ zp --diagram_filter" >> $FO_File
+  echo "output madevent $FO_DIR"                  >> $FO_File
+  echo "launch"                                   >> $FO_File
+  echo "set nevents $nevents"                     >> $FO_File
+  echo "set ebeam1 $ebeam"                        >> $FO_File
+  echo "set ebeam2 $ebeam"                        >> $FO_File
+  echo "set etaj 5."                              >> $FO_File
+  echo "set ptj 20."                              >> $FO_File
+  echo "set drjj 0.4"                             >> $FO_File
+  echo "set mass 9900032 10"                      >> $FO_File
+  echo "set mass 25 125"                          >> $FO_File
+  echo "set width 9900032 0.01"                   >> $FO_File
+  echo "set systematics_program none"             >> $FO_File
+  echo "set systematics_arguments []"             >> $FO_File
   $MG $FO_File 
 fi
 
