@@ -47,7 +47,7 @@ fi
 if $runFO;then
   FO_File="MG_setup_FO.dat"
   FO_DIR=FO
-  cp MG_filter/user_filter.py ${Hw_Loc}/opt/MG5_aMC_v3_3_2/PLUGIN/user_filter.py
+  cp MG_filter/user_filter.py ${Hw_Loc}/opt/${MG_version}/PLUGIN/user_filter.py
   if [ -d "$FO_DIR" ]; then
     echo "$FO_DIR exists, erase"
     rm -rf $FO_DIR
